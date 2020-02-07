@@ -67,11 +67,11 @@ public class LoginAndSignUpService {
 
     private UserEntity createUserEntity(SignUpInputDto signUpInputDto) {
         UserEntity userEntity;
-        if (signUpInputDto.getUserType().equals(UserType.Patient.getValue())) {
+        if (signUpInputDto.getUserType().equals(UserType.Patient)) {
             userEntity = new PatientUserEntity();
-        } else if (signUpInputDto.getUserType().equals(UserType.Doctor.getValue())) {
+        } else if (signUpInputDto.getUserType().equals(UserType.Doctor)) {
             userEntity = new DoctorUserEntity();
-        } else if (signUpInputDto.getUserType().equals(UserType.Operator.getValue())) {
+        } else if (signUpInputDto.getUserType().equals(UserType.Operator)) {
             userEntity = new OperatorUserEntity();
         } else
             throw new UserException(1002, "user type not found");
