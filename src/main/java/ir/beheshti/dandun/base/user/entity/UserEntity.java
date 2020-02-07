@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class UserEntity implements UserDetails {
 
     @Column
     private Byte[] profilePhoto;
+
+    @Column
+    private Timestamp registerTime;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))
