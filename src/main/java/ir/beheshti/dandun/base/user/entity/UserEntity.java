@@ -36,7 +36,10 @@ public class UserEntity implements UserDetails {
     private String phoneNumber;
 
     @Column
-    private boolean isValidated;
+    private boolean isVerified;
+
+    @Column
+    private boolean isSignedUp;
 
     @Column
     private String verificationCode;

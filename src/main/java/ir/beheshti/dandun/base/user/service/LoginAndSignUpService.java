@@ -68,10 +68,12 @@ public class LoginAndSignUpService {
         Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(signUpInputDto.getPhoneNumber());
         if (userEntityOptional.isEmpty()) {
             throw new UserException(1007, "phone number not found");
-        } else if (userEntityOptional.get().isValidated()) {
+        } else if (!userEntityOptional.get().isVerified()) {
+            throw new UserException(1009, "phone number isn't verified");
+        } if (userEntityOptional.get().isSignedUp()) {
             throw new UserException(1008, "phone number already signed up");
         }
-        userEntityOptional.get().setValidated(true);
+        userEntityOptional.get().setSignedUp(true);
         userEntityOptional.get().setFirstName(signUpInputDto.getFirstName());
         userEntityOptional.get().setLastName(signUpInputDto.getLastName());
 
@@ -135,8 +137,17 @@ public class LoginAndSignUpService {
         Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(inputDto.getPhoneNumber());
         if (userEntityOptional.isEmpty()) {
             throw new UserException(1006, "phoneNumber not found");
+        } else if (userEntityOptional.get().isVerified()) {
+            throw new UserException(1010, "user already verified");
         }
-        return new SmsVerificationOutputDto(userEntityOptional.get().isValidated(),
-                userEntityOptional.get().getVerificationCode().equals(inputDto.getVerificationCode()));
+        boolean isVerified = userEntityOptional.get().getVerificationCode().equals(inputDto.getVerificationCode());
+        if (!isVerified) {
+            return new SmsVerificationOutputDto(null, false);
+        }
+        boolean isNewUser = !userEntityOptional.get().isSignedUp();
+        userEntityOptional.get().setVerified(true);
+        userEntityOptional.get().setVerificationCode(null);
+        userRepository.save(userEntityOptional.get());
+        return new SmsVerificationOutputDto(isNewUser, true);
     }
 }
