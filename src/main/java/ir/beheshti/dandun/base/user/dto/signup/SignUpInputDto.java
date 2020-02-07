@@ -1,5 +1,7 @@
 package ir.beheshti.dandun.base.user.dto.signup;
 
+import ir.beheshti.dandun.base.user.common.EnumNamePattern;
+import ir.beheshti.dandun.base.user.util.UserType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -15,6 +17,6 @@ public class SignUpInputDto {
     @NotNull
     private String lastName;
     @NotNull
-    @Size(min = 1, max = 3)
-    private Integer userType;
+    @EnumNamePattern(regexp = "Patient|Doctor|Operator")
+    private UserType userType;
 }

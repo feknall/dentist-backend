@@ -38,6 +38,8 @@ dependencies {
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
     compile 'io.jsonwebtoken:jjwt:0.7.0'
 
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    
     compile 'org.springdoc:springdoc-openapi-ui:1.1.44'
     compile 'org.springdoc:springdoc-openapi-core:1.1.44'
     

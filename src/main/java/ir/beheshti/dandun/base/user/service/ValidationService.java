@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 public class ValidationService {
 
     public boolean isPhoneNumber(String phoneNumber) {
+        if (phoneNumber.length() == 12)
+            return true;
         return false;
     }
 }
