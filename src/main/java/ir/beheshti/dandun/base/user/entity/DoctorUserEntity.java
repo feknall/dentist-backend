@@ -1,4 +1,4 @@
-package ir.beheshti.dandun.dandun.user.entity;
+package ir.beheshti.dandun.base.user.entity;
 
 import lombok.Data;
 
