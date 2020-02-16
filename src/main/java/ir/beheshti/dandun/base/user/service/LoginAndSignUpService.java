@@ -38,9 +38,13 @@ public class LoginAndSignUpService {
     private OperatorRepository operatorRepository;
     @Autowired
     private VerificationCodeService verificationCodeService;
+    @Autowired
+    private GeneralService generalService;
 
     public void sendVerificationCodeBySms(SmsInputDto smsInputDto) {
         String verificationCode = verificationCodeService.generateCode();
+        // todo remove this line of code after getting sms panel
+        verificationCode = "1234";
         setVerificationCodeToUserEntity(smsInputDto, verificationCode);
         verificationCodeService.sendSms(smsInputDto.getPhoneNumber(), verificationCode);
     }
@@ -61,7 +65,7 @@ public class LoginAndSignUpService {
     }
 
     public void signUp(SignUpInputDto signUpInputDto) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(signUpInputDto.getPhoneNumber());
+        Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(generalService.getCurrentUsername());
         if (userEntityOptional.isEmpty()) {
             throw new UserException(1007, "phone number not found");
         } else if (!userEntityOptional.get().isVerified()) {
