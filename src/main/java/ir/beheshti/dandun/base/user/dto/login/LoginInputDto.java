@@ -1,6 +1,5 @@
 package ir.beheshti.dandun.base.user.dto.login;
 
-import ir.beheshti.dandun.base.user.common.EnumNamePattern;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

@@ -8,4 +8,5 @@ import lombok.Data;
 public class SmsVerificationOutputDto {
     private Boolean isNewUser;
     private Boolean isValid;
+    private String token;
 }

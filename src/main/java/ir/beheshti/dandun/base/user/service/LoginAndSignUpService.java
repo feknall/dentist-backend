@@ -4,8 +4,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import ir.beheshti.dandun.base.security.SecurityConstants;
 import ir.beheshti.dandun.base.user.common.UserException;
-import ir.beheshti.dandun.base.user.dto.login.LoginInputDto;
-import ir.beheshti.dandun.base.user.dto.login.LoginOutputDto;
 import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationInputDto;
@@ -22,7 +20,6 @@ import ir.beheshti.dandun.base.user.util.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;
 
@@ -42,8 +39,7 @@ public class LoginAndSignUpService {
     @Autowired
     private VerificationCodeService verificationCodeService;
 
-    @Transactional
-    public void sendCode(SmsInputDto smsInputDto) {
+    public void sendVerificationCodeBySms(SmsInputDto smsInputDto) {
         String verificationCode = verificationCodeService.generateCode();
         setVerificationCodeToUserEntity(smsInputDto, verificationCode);
         verificationCodeService.sendSms(smsInputDto.getPhoneNumber(), verificationCode);
@@ -53,24 +49,25 @@ public class LoginAndSignUpService {
         Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(smsInputDto.getPhoneNumber());
         if (userEntityOptional.isEmpty()) {
             UserEntity userEntity = new UserEntity();
+            userEntity.setVerified(false);
             userEntity.setPhoneNumber(smsInputDto.getPhoneNumber());
             userEntity.setVerificationCode(verificationCode);
             userRepository.save(userEntity);
         } else {
             userEntityOptional.get().setVerificationCode(verificationCode);
+            userEntityOptional.get().setVerified(false);
             userRepository.save(userEntityOptional.get());
         }
     }
 
-    @Transactional
     public void signUp(SignUpInputDto signUpInputDto) {
-
         Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(signUpInputDto.getPhoneNumber());
         if (userEntityOptional.isEmpty()) {
             throw new UserException(1007, "phone number not found");
         } else if (!userEntityOptional.get().isVerified()) {
             throw new UserException(1009, "phone number isn't verified");
-        } if (userEntityOptional.get().isSignedUp()) {
+        }
+        if (userEntityOptional.get().isSignedUp()) {
             throw new UserException(1008, "phone number already signed up");
         }
         userEntityOptional.get().setSignedUp(true);
@@ -92,39 +89,6 @@ public class LoginAndSignUpService {
         }
     }
 
-    public LoginOutputDto login(LoginInputDto loginInputDto) {
-        if (!validationService.isPhoneNumber(loginInputDto.getPhoneNumber())) {
-            throw new UserException(1003, "phone number isn't valid");
-        }
-        Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(loginInputDto.getPhoneNumber());
-        if (userEntityOptional.isEmpty()) {
-            throw new UserException(1004, "user not found");
-        }
-        if (userEntityOptional.get().getVerificationCode().equals(loginInputDto.getVerificationCode())) {
-            LoginOutputDto loginOutputDto = new LoginOutputDto();
-            loginOutputDto.setAccessToken(buildToken(userEntityOptional.get().getPhoneNumber()));
-            return loginOutputDto;
-        } else {
-            throw new UserException(1005, "verification code isn't correct");
-        }
-    }
-
-//    private UserEntity createUserEntity(SignUpInputDto signUpInputDto) {
-//        UserEntity userEntity;
-//        if (signUpInputDto.getUserType().equals(UserType.Patient)) {
-//            userEntity = new PatientUserEntity();
-//        } else if (signUpInputDto.getUserType().equals(UserType.Doctor)) {
-//            userEntity = new DoctorUserEntity();
-//        } else if (signUpInputDto.getUserType().equals(UserType.Operator)) {
-//            userEntity = new OperatorUserEntity();
-//        } else
-//            throw new UserException(1002, "user type not found");
-//        userEntity.setFirstName(signUpInputDto.getFirstName());
-//        userEntity.setLastName(signUpInputDto.getLastName());
-//        userEntity.setPhoneNumber(signUpInputDto.getPhoneNumber());
-//        return userEntity;
-//    }
-
     private String buildToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -142,12 +106,12 @@ public class LoginAndSignUpService {
         }
         boolean isVerified = userEntityOptional.get().getVerificationCode().equals(inputDto.getVerificationCode());
         if (!isVerified) {
-            return new SmsVerificationOutputDto(null, false);
+            return new SmsVerificationOutputDto(null, false, null);
         }
         boolean isNewUser = !userEntityOptional.get().isSignedUp();
         userEntityOptional.get().setVerified(true);
         userEntityOptional.get().setVerificationCode(null);
         userRepository.save(userEntityOptional.get());
-        return new SmsVerificationOutputDto(isNewUser, true);
+        return new SmsVerificationOutputDto(isNewUser, true, buildToken(userEntityOptional.get().getPhoneNumber()));
     }
 }
