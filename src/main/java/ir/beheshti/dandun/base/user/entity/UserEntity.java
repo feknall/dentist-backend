@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.entity;
 
+import ir.beheshti.dandun.base.user.util.SexType;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,6 +50,30 @@ public class UserEntity implements UserDetails {
 
     @Column
     private Timestamp registerTime;
+
+    @Column
+    private String birthPlace;
+
+    @Column
+    private String job;
+
+    @Column
+    private String address;
+
+    @Column
+    private String telephone;
+
+    @Column
+    private String fatherName;
+
+    @Column
+    private SexType sex;
+
+    @Column
+    private String educationLevel;
+
+    @Column
+    private String marriageStatus;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))

@@ -1,8 +1,6 @@
 package ir.beheshti.dandun.base.user.controller;
 
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
-import ir.beheshti.dandun.base.user.dto.login.LoginInputDto;
-import ir.beheshti.dandun.base.user.dto.login.LoginOutputDto;
 import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationInputDto;
