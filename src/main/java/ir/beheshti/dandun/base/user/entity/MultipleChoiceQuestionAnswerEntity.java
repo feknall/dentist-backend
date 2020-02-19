@@ -6,18 +6,24 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table
-public class MultipleChoiceQuestionEntity {
+@Table(name = "MultipleChoiceQuestionAnswer")
+public class MultipleChoiceQuestionAnswerEntity {
 
     @Id
-    @Column(name = "MultipleChoiceQuestionId")
+    @Column(name = "MultipleChoiceQuestionAnswerId")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(name = "EssentialQuestionId")
     private Integer essentialQuestionId;
 
+    @Column
+    private String description;
+
+    @Column
+    private Integer choiceOrder;
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "EssentialQuestionId", referencedColumnName = "EssentialQuestionId")
+    @JoinColumn(name = "EssentialQuestionId", referencedColumnName = "EssentialQuestionId", insertable = false, updatable = false)
     private EssentialQuestionEntity essentialQuestionEntity;
 }

@@ -1,15 +1,15 @@
 package ir.beheshti.dandun.base.user.util;
 
 public enum QuestionType {
-    Open(1), ZeroToFive(2), TrueFalse(3), MultipleChoice(4);
+    Open("Open"), TrueFalse("TrueFalse"), MultipleChoice("MultipleChoice");
 
-    int value;
+    String value;
 
-    QuestionType(int value) {
+    QuestionType(String value) {
         this.value = value;
     }
 
-    public int getValue() {
+    public String getValue() {
         return value;
     }
 }

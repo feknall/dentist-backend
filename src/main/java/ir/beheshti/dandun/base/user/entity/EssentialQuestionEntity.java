@@ -4,9 +4,10 @@ import ir.beheshti.dandun.base.user.util.QuestionType;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
-@Table
+@Table(name = "EssentialQuestion")
 @Entity
 public class EssentialQuestionEntity {
 
@@ -18,6 +19,12 @@ public class EssentialQuestionEntity {
     @Column
     private String description;
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private QuestionType questionType;
+
+    @Column
+    private Integer questionOrder;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "essentialQuestionEntity")
+    private List<MultipleChoiceQuestionAnswerEntity> multipleChoiceQuestionAnswerEntityList;
 }

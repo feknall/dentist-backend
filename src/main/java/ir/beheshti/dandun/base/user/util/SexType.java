@@ -1,7 +1,7 @@
 package ir.beheshti.dandun.base.user.util;
 
 public enum SexType {
-    Man(1), Woman(2), Unknown(3);
+    Man(1), Woman(2);
 
     int value;
 
