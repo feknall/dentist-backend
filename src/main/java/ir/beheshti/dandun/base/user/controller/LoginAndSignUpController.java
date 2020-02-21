@@ -19,8 +19,11 @@ import javax.validation.Valid;
 @RequestMapping(path = "/api/v1/user")
 public class LoginAndSignUpController {
 
-    @Autowired
-    private LoginAndSignUpService loginAndSignUpService;
+    private final LoginAndSignUpService loginAndSignUpService;
+
+    public LoginAndSignUpController(LoginAndSignUpService loginAndSignUpService) {
+        this.loginAndSignUpService = loginAndSignUpService;
+    }
 
     @PostMapping(path = "/sms")
     public ResponseEntity<BaseOutputDto> sendSmsForUser(@Valid @RequestBody SmsInputDto input) {

@@ -79,6 +79,15 @@ public class UserEntity implements UserDetails {
     @JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))
     private List<RoleEntity> roleEntityList;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<UserMultipleChoiceQuestionAnswerEntity> userMultipleChoiceQuestionAnswerEntityList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<UserOpenQuestionAnswerEntity> userOpenQuestionAnswerEntityList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<UserTrueFalseQuestionAnswerEntity> userTrueFalseQuestionAnswerEntityList;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

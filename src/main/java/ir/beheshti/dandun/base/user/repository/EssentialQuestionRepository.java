@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EssentialQuestionRepository extends JpaRepository<EssentialQuestionEntity, Integer> {
 
+    int countByIdIn(Iterable<Integer> ids);
+
 }

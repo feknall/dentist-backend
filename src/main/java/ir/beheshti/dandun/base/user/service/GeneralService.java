@@ -37,7 +37,7 @@ public class GeneralService {
         return userEntityOptional.get();
     }
 
-    public Integer getCurrentUserId() {
+    public int getCurrentUserId() {
         return getCurrentUserEntity().getId();
     }
 }

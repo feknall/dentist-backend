@@ -2,13 +2,13 @@ package ir.beheshti.dandun.base.user.dto.question;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class AnswerInputDto {
+public class OpenAnswerInputDto {
+    @NotNull
     private Integer questionId;
-    private Integer zeroToFile;
-    private Boolean trueFalse;
+    @NotEmpty
     private String description;
-    private Integer questionChoiceId;
 }
