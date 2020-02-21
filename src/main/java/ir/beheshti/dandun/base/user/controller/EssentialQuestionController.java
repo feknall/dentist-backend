@@ -1,10 +1,7 @@
 package ir.beheshti.dandun.base.user.controller;
 
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
-import ir.beheshti.dandun.base.user.dto.question.MultipleChoiceAnswerInputDto;
-import ir.beheshti.dandun.base.user.dto.question.OpenAnswerInputDto;
-import ir.beheshti.dandun.base.user.dto.question.QuestionOutputDto;
-import ir.beheshti.dandun.base.user.dto.question.TrueFalseAnswerInputDto;
+import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.service.EssentialQuestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +45,10 @@ public class EssentialQuestionController {
     public ResponseEntity<BaseOutputDto> fillTrueFalseAnswer(@Valid @RequestBody TrueFalseAnswerInputDto trueFalseAnswerInputDto) {
         essentialQuestionService.fillTrueFalseAnswer(trueFalseAnswerInputDto);
         return ResponseEntity.ok(new BaseOutputDto("true false choice answer filled successfully"));
+    }
+
+    @GetMapping(path = "/answer/user")
+    public ResponseEntity<List<UserQuestionAnswerOutputDto>> getUserAnswers() {
+        return ResponseEntity.ok(essentialQuestionService.getUserAnswers());
     }
 }

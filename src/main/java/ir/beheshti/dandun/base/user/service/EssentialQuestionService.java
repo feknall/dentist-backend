@@ -2,12 +2,10 @@ package ir.beheshti.dandun.base.user.service;
 
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
-import ir.beheshti.dandun.base.user.dto.question.MultipleChoiceAnswerInputDto;
-import ir.beheshti.dandun.base.user.dto.question.OpenAnswerInputDto;
-import ir.beheshti.dandun.base.user.dto.question.QuestionOutputDto;
-import ir.beheshti.dandun.base.user.dto.question.TrueFalseAnswerInputDto;
+import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.repository.*;
+import ir.beheshti.dandun.base.user.util.QuestionType;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -48,15 +46,15 @@ public class EssentialQuestionService {
     }
 
     public void fillOpenAnswer(OpenAnswerInputDto inputDto) {
-        validateQuestionExistence(inputDto.getQuestionId());
+        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.Open);
         saveOrUpdateOpenAnswer(inputDto.getQuestionId(), inputDto.getDescription());
     }
 
     @Transactional
     public void fillMultipleChoiceAnswer(MultipleChoiceAnswerInputDto inputDto) {
-        validateQuestionExistence(inputDto.getQuestionId());
+        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.MultipleChoice);
 
-        if (multipleChoiceQuestionAnswerRepository.countByIdAndEssentialQuestionIdIn(inputDto.getAnswerIdList(), inputDto.getQuestionId())
+        if (multipleChoiceQuestionAnswerRepository.countByIdInAndEssentialQuestionEntityId(inputDto.getAnswerIdList(), inputDto.getQuestionId())
                 != inputDto.getAnswerIdList().size()) {
             throw new UserException(ErrorCodeAndMessage.SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_CODE,
                     ErrorCodeAndMessage.SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_MESSAGE);
@@ -81,7 +79,7 @@ public class EssentialQuestionService {
 
     @Transactional
     public void fillTrueFalseAnswer(TrueFalseAnswerInputDto inputDto) {
-        validateQuestionExistence(inputDto.getQuestionId());
+        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.TrueFalse);
 
         int currentUserId = generalService.getCurrentUserId();
         if (userTrueFalseQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
@@ -113,11 +111,34 @@ public class EssentialQuestionService {
     }
 
     private EssentialQuestionEntity validateQuestionExistence(int questionId) {
+        return validateQuestionExistence(questionId, null);
+    }
+
+    private EssentialQuestionEntity validateQuestionExistence(int questionId, QuestionType questionType) {
         Optional<EssentialQuestionEntity> questionEntityOptional = essentialQuestionRepository.findById(questionId);
         if (questionEntityOptional.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.QUESTION_NOT_FOUND_CODE, ErrorCodeAndMessage.QUESTION_NOT_FOUND_MESSAGE);
         }
+        if (questionType != null && !questionEntityOptional.get().getQuestionType().equals(questionType)) {
+           throw new UserException(ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_CODE, ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_MESSAGE);
+        }
         return questionEntityOptional.get();
     }
 
+    public List<UserQuestionAnswerOutputDto> getUserAnswers() {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        List<UserQuestionAnswerOutputDto> outputDtoList = new ArrayList<>();
+        userEntity
+                .getUserOpenQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto::ofOpenAnswer).forEach(outputDtoList::add);
+        userEntity
+                .getUserTrueFalseQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto::ofTrueFalse).forEach(outputDtoList::add);
+        if (!userEntity.getUserMultipleChoiceQuestionAnswerEntityList().isEmpty()) {
+            outputDtoList.add(UserQuestionAnswerOutputDto.ofMultipleChoice(userEntity.getUserMultipleChoiceQuestionAnswerEntityList()));
+        }
+        return outputDtoList;
+    }
 }

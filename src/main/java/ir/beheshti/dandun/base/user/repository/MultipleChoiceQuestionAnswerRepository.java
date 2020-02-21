@@ -12,6 +12,5 @@ public interface MultipleChoiceQuestionAnswerRepository extends JpaRepository<Mu
     @Override
     List<MultipleChoiceQuestionAnswerEntity> findAllById(Iterable<Integer> integers);
 
-    List<MultipleChoiceQuestionAnswerEntity> findAllByIdAndEssentialQuestionId(Iterable<Integer> ids, int questionId);
-    int countByIdAndEssentialQuestionIdIn(Iterable<Integer> ids, int questionId);
+    int countByIdInAndEssentialQuestionEntityId(Iterable<Integer> ids, int questionId);
 }

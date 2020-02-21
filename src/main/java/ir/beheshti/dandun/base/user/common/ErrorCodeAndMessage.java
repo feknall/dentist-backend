@@ -4,6 +4,9 @@ public abstract class ErrorCodeAndMessage {
     public static final int QUESTION_NOT_FOUND_CODE = 7000;
     public static final String QUESTION_NOT_FOUND_MESSAGE = "question not found";
 
+    public static final int QUESTION_TYPE_DOESNT_MATCH_CODE = 7003;
+    public static final String QUESTION_TYPE_DOESNT_MATCH_MESSAGE = "question with this type not found";
+
     public static final int SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_CODE = 7001;
     public static final String SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_MESSAGE = "some answers don't belong to this question";
 
