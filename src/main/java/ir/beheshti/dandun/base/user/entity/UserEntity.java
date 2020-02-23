@@ -75,6 +75,9 @@ public class UserEntity implements UserDetails {
     @Column
     private String marriageStatus;
 
+    @Column
+    private Timestamp birthDate;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))
     private List<RoleEntity> roleEntityList;

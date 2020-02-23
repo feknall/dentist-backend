@@ -141,4 +141,10 @@ public class EssentialQuestionService {
         }
         return outputDtoList;
     }
+
+    public IsCompleteAnswerOutputDto isUserAnswersComplete() {
+        IsCompleteAnswerOutputDto dto = new IsCompleteAnswerOutputDto();
+        dto.setComplete(getUserAnswers().size() == 7);
+        return dto;
+    }
 }

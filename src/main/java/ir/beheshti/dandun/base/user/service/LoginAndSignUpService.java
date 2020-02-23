@@ -8,6 +8,8 @@ import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationOutputDto;
+import ir.beheshti.dandun.base.user.dto.user.UserInfoInputDto;
+import ir.beheshti.dandun.base.user.dto.user.UserInfoOutputDto;
 import ir.beheshti.dandun.base.user.entity.DoctorUserEntity;
 import ir.beheshti.dandun.base.user.entity.OperatorUserEntity;
 import ir.beheshti.dandun.base.user.entity.PatientUserEntity;
@@ -17,6 +19,7 @@ import ir.beheshti.dandun.base.user.repository.OperatorRepository;
 import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.UserType;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -117,5 +120,16 @@ public class LoginAndSignUpService {
         userEntityOptional.get().setVerificationCode(null);
         userRepository.save(userEntityOptional.get());
         return new SmsVerificationOutputDto(isNewUser, true, buildToken(userEntityOptional.get().getPhoneNumber()));
+    }
+
+    public UserInfoOutputDto getUserInfo() {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        return UserInfoOutputDto.fromEntity(userEntity);
+    }
+
+    public void updateUserInfo(UserInfoInputDto input) {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        BeanUtils.copyProperties(input, userEntity);
+        userRepository.save(userEntity);
     }
 }

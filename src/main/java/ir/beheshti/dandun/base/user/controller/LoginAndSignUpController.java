@@ -5,13 +5,12 @@ import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationOutputDto;
+import ir.beheshti.dandun.base.user.dto.user.UserInfoInputDto;
+import ir.beheshti.dandun.base.user.dto.user.UserInfoOutputDto;
 import ir.beheshti.dandun.base.user.service.LoginAndSignUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -40,6 +39,17 @@ public class LoginAndSignUpController {
     public ResponseEntity<BaseOutputDto> signUp(@Valid @RequestBody SignUpInputDto input) {
         loginAndSignUpService.signUp(input);
         return ResponseEntity.ok(new BaseOutputDto("user added successfully"));
+    }
+
+    @GetMapping(path = "/info")
+    public ResponseEntity<UserInfoOutputDto> getUserInfo() {
+        return ResponseEntity.ok(loginAndSignUpService.getUserInfo());
+    }
+
+    @PostMapping(path = "/info")
+    public ResponseEntity<BaseOutputDto> updateUserInfo(@Valid @RequestBody UserInfoInputDto input) {
+        loginAndSignUpService.updateUserInfo(input);
+        return ResponseEntity.ok(new BaseOutputDto("user updated successfully"));
     }
 
 }

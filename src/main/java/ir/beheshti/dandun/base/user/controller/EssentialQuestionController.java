@@ -51,4 +51,9 @@ public class EssentialQuestionController {
     public ResponseEntity<List<UserQuestionAnswerOutputDto>> getUserAnswers() {
         return ResponseEntity.ok(essentialQuestionService.getUserAnswers());
     }
+
+    @GetMapping(path = "/answer/user/is-complete")
+    public ResponseEntity<IsCompleteAnswerOutputDto> isUserAnswersComplete() {
+        return ResponseEntity.ok(essentialQuestionService.isUserAnswersComplete());
+    }
 }
