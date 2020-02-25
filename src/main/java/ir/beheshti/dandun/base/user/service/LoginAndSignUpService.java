@@ -3,6 +3,7 @@ package ir.beheshti.dandun.base.user.service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import ir.beheshti.dandun.base.security.SecurityConstants;
+import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
@@ -70,30 +71,39 @@ public class LoginAndSignUpService {
     public void signUp(SignUpInputDto signUpInputDto) {
         Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(generalService.getCurrentUsername());
         if (userEntityOptional.isEmpty()) {
-            throw new UserException(1007, "phone number not found");
+            throw new UserException(ErrorCodeAndMessage.PHONE_NUMBER_NOT_FOUND_CODE, ErrorCodeAndMessage.PHONE_NUMBER_NOT_FOUND_MESSAGE);
         } else if (!userEntityOptional.get().isVerified()) {
-            throw new UserException(1009, "phone number isn't verified");
+            throw new UserException(ErrorCodeAndMessage.PHONE_NUBMER_IS_NOT_VERIFIED_CODE,
+                    ErrorCodeAndMessage.PHONE_NUBMER_IS_NOT_VERIFIED_MESSAGE);
+        } else if (userEntityOptional.get().isSignedUp()) {
+            throw new UserException(ErrorCodeAndMessage.PHONE_NUMBER_ALREADY_SINGED_UP_CODE,
+                    ErrorCodeAndMessage.PHONE_NUMBER_ALREADY_SINGED_UP_MESSAGE);
         }
-        if (userEntityOptional.get().isSignedUp()) {
-            throw new UserException(1008, "phone number already signed up");
-        }
+
         userEntityOptional.get().setSignedUp(true);
         userEntityOptional.get().setFirstName(signUpInputDto.getFirstName());
         userEntityOptional.get().setLastName(signUpInputDto.getLastName());
 
         if (signUpInputDto.getUserType().equals(UserType.Patient)) {
+            userEntityOptional.get().setUserType(UserType.Patient);
+
             PatientUserEntity patientUserEntity = new PatientUserEntity();
-            patientUserEntity.setId(userEntityOptional.get().getId());
+            patientUserEntity.setPatientId(userEntityOptional.get().getId());
             patientRepository.save(patientUserEntity);
         } else if (signUpInputDto.getUserType().equals(UserType.Doctor)) {
+            userEntityOptional.get().setUserType(UserType.Doctor);
+
             DoctorUserEntity doctorUserEntity = new DoctorUserEntity();
-            doctorUserEntity.setId(userEntityOptional.get().getId());
+            doctorUserEntity.setDoctorId(userEntityOptional.get().getId());
             doctorRepository.save(doctorUserEntity);
         } else if (signUpInputDto.getUserType().equals(UserType.Operator)) {
+            userEntityOptional.get().setUserType(UserType.Operator);
+
             OperatorUserEntity operatorUserEntity = new OperatorUserEntity();
-            operatorUserEntity.setId(userEntityOptional.get().getId());
+            operatorUserEntity.setOperatorId(userEntityOptional.get().getId());
             operatorRepository.save(operatorUserEntity);
         }
+        userRepository.save(userEntityOptional.get());
     }
 
     private String buildToken(String username) {

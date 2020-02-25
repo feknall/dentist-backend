@@ -6,6 +6,7 @@ import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;
 import ir.beheshti.dandun.base.user.repository.MultipleChoiceQuestionAnswerRepository;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,14 @@ public class Startup {
     @Autowired
     private MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
 
+    @Value("${dandun.questions.insert}")
+    private Boolean insertQuestions;
+
     @EventListener
     public void appReady(ApplicationReadyEvent event) {
+        if (!insertQuestions)
+            return;
+
         EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setDescription("ارزیابی وضعیت سلامت بیمار از نگاه خود:");
         entity.setQuestionType(QuestionType.MultipleChoice);

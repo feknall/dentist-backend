@@ -5,7 +5,6 @@ import ir.beheshti.dandun.base.user.entity.UserOpenQuestionAnswerEntity;
 import ir.beheshti.dandun.base.user.entity.UserTrueFalseQuestionAnswerEntity;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import lombok.Data;
-import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashSet;

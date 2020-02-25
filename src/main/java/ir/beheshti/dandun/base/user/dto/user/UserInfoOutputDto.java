@@ -2,6 +2,7 @@ package ir.beheshti.dandun.base.user.dto.user;
 
 import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.util.SexType;
+import ir.beheshti.dandun.base.user.util.UserType;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -24,6 +25,7 @@ public class UserInfoOutputDto {
     private String educationLevel;
     private String marriageStatus;
     private Timestamp birthDate;
+    private UserType userType;
 
     public static UserInfoOutputDto fromEntity(UserEntity entity) {
         UserInfoOutputDto outputDto = new UserInfoOutputDto();

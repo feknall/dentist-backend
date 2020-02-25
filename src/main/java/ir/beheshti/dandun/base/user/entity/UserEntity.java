@@ -1,6 +1,7 @@
 package ir.beheshti.dandun.base.user.entity;
 
 import ir.beheshti.dandun.base.user.util.SexType;
+import ir.beheshti.dandun.base.user.util.UserType;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -77,6 +78,9 @@ public class UserEntity implements UserDetails {
 
     @Column
     private Timestamp birthDate;
+
+    @Column
+    private UserType userType;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))
