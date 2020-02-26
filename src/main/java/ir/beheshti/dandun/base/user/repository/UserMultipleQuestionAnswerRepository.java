@@ -12,4 +12,5 @@ public interface UserMultipleQuestionAnswerRepository extends JpaRepository<User
 
     List<UserMultipleChoiceQuestionAnswerEntity> findByUserIdAndMultipleChoiceQuestionAnswerIdIsIn(int userId, Iterable<Integer> answerIds);
     boolean existsByUserIdAndMultipleChoiceQuestionAnswerIdIsIn(int userId, Iterable<Integer> answerIds);
+    void deleteAllByUserId(int userId);
 }

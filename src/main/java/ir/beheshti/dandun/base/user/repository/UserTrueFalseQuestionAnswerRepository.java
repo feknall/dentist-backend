@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface UserTrueFalseQuestionAnswerRepository extends JpaRepository<UserTrueFalseQuestionAnswerEntity, Integer> {
 
     boolean existsByUserIdAndEssentialQuestionId(int userId, int questionId);
+
+    void deleteAllByUserId(int userId);
 }

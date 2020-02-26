@@ -23,7 +23,7 @@ public class MultipleChoiceQuestionAnswerEntity {
     @Column
     private Integer choiceOrder;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "EssentialQuestionId", referencedColumnName = "EssentialQuestionId", insertable = false, updatable = false)
     private EssentialQuestionEntity essentialQuestionEntity;
 }

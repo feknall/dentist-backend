@@ -20,11 +20,11 @@ public class UserMultipleChoiceQuestionAnswerEntity {
     @Column(name = "UserId")
     private int userId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "MultipleChoiceQuestionAnswerId", referencedColumnName = "MultipleChoiceQuestionAnswerId", insertable = false, updatable = false)
     private MultipleChoiceQuestionAnswerEntity multipleChoiceQuestionAnswerEntity;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserId", referencedColumnName = "UserId", insertable = false, updatable = false)
     private UserEntity userEntity;
 }

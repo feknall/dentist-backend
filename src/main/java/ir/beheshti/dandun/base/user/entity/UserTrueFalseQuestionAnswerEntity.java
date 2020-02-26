@@ -24,11 +24,11 @@ public class UserTrueFalseQuestionAnswerEntity {
     private int userId;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "EssentialQuestionId", referencedColumnName = "EssentialQuestionId", insertable = false, updatable = false)
     private EssentialQuestionEntity essentialQuestionEntity;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserId", referencedColumnName = "UserId", insertable = false, updatable = false)
     private UserEntity userEntity;
 

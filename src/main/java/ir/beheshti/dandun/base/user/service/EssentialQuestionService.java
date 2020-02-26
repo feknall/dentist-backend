@@ -150,8 +150,14 @@ public class EssentialQuestionService {
 
     @Transactional
     public void fillAllAnswers(AllAnswerOpenDto allAnswerOpenDto) {
+        int currentUserId = generalService.getCurrentUserId();
+        userMultipleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         allAnswerOpenDto.getMultipleChoiceAnswerInputDtoList().forEach(this::fillMultipleChoiceAnswer);
+
+        userOpenQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         allAnswerOpenDto.getOpenAnswerInputDtoList().forEach(this::fillOpenAnswer);
+
+        userTrueFalseQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         allAnswerOpenDto.getTrueFalseAnswerInputDtoList().forEach(this::fillTrueFalseAnswer);
     }
 }
