@@ -54,17 +54,17 @@ public class EssentialQuestionService {
     public void fillMultipleChoiceAnswer(MultipleChoiceAnswerInputDto inputDto) {
         validateQuestionExistence(inputDto.getQuestionId(), QuestionType.MultipleChoice);
 
-        if (multipleChoiceQuestionAnswerRepository.countByIdInAndEssentialQuestionEntityId(inputDto.getAnswerIdList(), inputDto.getQuestionId())
-                != inputDto.getAnswerIdList().size()) {
-            throw new UserException(ErrorCodeAndMessage.SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_CODE,
-                    ErrorCodeAndMessage.SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_MESSAGE);
-        }
-
         int currentUserId = generalService.getCurrentUserId();
         if (userMultipleQuestionAnswerRepository
                 .existsByUserIdAndMultipleChoiceQuestionAnswerIdIsIn(currentUserId, inputDto.getAnswerIdList())) {
             throw new UserException(ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_CODE,
                     ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_MESSAGE);
+        }
+
+        if (multipleChoiceQuestionAnswerRepository.countByIdInAndEssentialQuestionEntityId(inputDto.getAnswerIdList(), inputDto.getQuestionId())
+                != inputDto.getAnswerIdList().size()) {
+            throw new UserException(ErrorCodeAndMessage.SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_CODE,
+                    ErrorCodeAndMessage.SOME_ANSWERS_DONT_BELONG_TO_THIS_QUESTION_MESSAGE);
         }
 
         List<UserMultipleChoiceQuestionAnswerEntity> userAnswerEntityList = new ArrayList<>();
@@ -146,5 +146,12 @@ public class EssentialQuestionService {
         IsCompleteAnswerOutputDto dto = new IsCompleteAnswerOutputDto();
         dto.setComplete(getUserAnswers().size() == 7);
         return dto;
+    }
+
+    @Transactional
+    public void fillAllAnswers(AllAnswerOpenDto allAnswerOpenDto) {
+        allAnswerOpenDto.getMultipleChoiceAnswerInputDtoList().forEach(this::fillMultipleChoiceAnswer);
+        allAnswerOpenDto.getOpenAnswerInputDtoList().forEach(this::fillOpenAnswer);
+        allAnswerOpenDto.getTrueFalseAnswerInputDtoList().forEach(this::fillTrueFalseAnswer);
     }
 }

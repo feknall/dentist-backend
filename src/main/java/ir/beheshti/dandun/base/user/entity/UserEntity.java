@@ -67,7 +67,7 @@ public class UserEntity implements UserDetails {
     @Column
     private String fatherName;
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private SexType sex;
 
     @Column
@@ -79,7 +79,7 @@ public class UserEntity implements UserDetails {
     @Column
     private Timestamp birthDate;
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 
     @ManyToMany(fetch = FetchType.LAZY)

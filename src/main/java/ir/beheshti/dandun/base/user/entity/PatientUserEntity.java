@@ -15,7 +15,7 @@ public class PatientUserEntity {
     @Column(name = "PatientId")
     private int patientId;
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private PatientStateType patientStateType;
 
     @OneToOne(cascade = CascadeType.ALL)

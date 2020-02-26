@@ -47,6 +47,12 @@ public class EssentialQuestionController {
         return ResponseEntity.ok(new BaseOutputDto("true false choice answer filled successfully"));
     }
 
+    @PostMapping(path = "/answer")
+    public ResponseEntity<BaseOutputDto> fillAllAnswers(@Valid @RequestBody AllAnswerOpenDto allAnswerOpenDto) {
+        essentialQuestionService.fillAllAnswers(allAnswerOpenDto);
+        return ResponseEntity.ok(new BaseOutputDto("all answers completed successfully"));
+    }
+
     @GetMapping(path = "/answer/user")
     public ResponseEntity<List<UserQuestionAnswerOutputDto>> getUserAnswers() {
         return ResponseEntity.ok(essentialQuestionService.getUserAnswers());
