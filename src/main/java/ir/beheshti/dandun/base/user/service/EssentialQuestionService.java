@@ -144,7 +144,7 @@ public class EssentialQuestionService {
 
     public IsCompleteAnswerOutputDto isUserAnswersComplete() {
         IsCompleteAnswerOutputDto dto = new IsCompleteAnswerOutputDto();
-        dto.setComplete(getUserAnswers().size() == 7);
+        dto.setComplete(getUserAnswers().size() == 6);
         return dto;
     }
 
