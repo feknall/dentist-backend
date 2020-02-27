@@ -1,6 +1,8 @@
 package ir.beheshti.dandun.base.user.controller;
 
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
+import ir.beheshti.dandun.base.user.dto.operator.OperatorLoginInputDto;
+import ir.beheshti.dandun.base.user.dto.operator.OperatorLoginOutputDto;
 import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationInputDto;
@@ -33,6 +35,11 @@ public class LoginAndSignUpController {
     @PostMapping(path = "/sms/verify")
     public ResponseEntity<SmsVerificationOutputDto> verifyPhoneNumber(@Valid @RequestBody SmsVerificationInputDto inputDto) {
         return ResponseEntity.ok(loginAndSignUpService.verifyPhoneNumber(inputDto));
+    }
+
+    @PostMapping(path = "/operator/login")
+    public ResponseEntity<OperatorLoginOutputDto> loginOperator(@Valid @RequestBody OperatorLoginInputDto operatorLoginInputDto) {
+        return ResponseEntity.ok(loginAndSignUpService.loginOperator(operatorLoginInputDto));
     }
 
     @PostMapping(path = "/signup")

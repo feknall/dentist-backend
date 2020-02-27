@@ -62,4 +62,6 @@ public class EssentialQuestionController {
     public ResponseEntity<IsCompleteAnswerOutputDto> isUserAnswersComplete() {
         return ResponseEntity.ok(essentialQuestionService.isUserAnswersComplete());
     }
+
+    //todo: create a section to fill user photos when answering essential questions.
 }

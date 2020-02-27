@@ -2,9 +2,12 @@ package ir.beheshti.dandun.base;
 
 import ir.beheshti.dandun.base.user.entity.EssentialQuestionEntity;
 import ir.beheshti.dandun.base.user.entity.MultipleChoiceQuestionAnswerEntity;
+import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;
 import ir.beheshti.dandun.base.user.repository.MultipleChoiceQuestionAnswerRepository;
+import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.QuestionType;
+import ir.beheshti.dandun.base.user.util.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -21,6 +24,9 @@ public class Startup {
 
     @Autowired
     private MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${dandun.questions.insert}")
     private Boolean insertQuestions;
@@ -218,5 +224,13 @@ public class Startup {
         entity.setDescription("آیا سیگار می‌کشید؟");
         entity.setQuestionType(QuestionType.TrueFalse);
         essentialQuestionRepository.save(entity);
+
+        UserEntity operator = new UserEntity();
+        operator.setUserType(UserType.Operator);
+        operator.setPhoneNumber("operator");
+        operator.setPassword("operator");
+        operator.setVerified(true);
+        operator.setSignedUp(true);
+        userRepository.save(operator);
     }
 }

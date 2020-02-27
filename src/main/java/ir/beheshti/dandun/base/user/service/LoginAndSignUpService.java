@@ -5,6 +5,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import ir.beheshti.dandun.base.security.SecurityConstants;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
+import ir.beheshti.dandun.base.user.dto.operator.OperatorLoginInputDto;
+import ir.beheshti.dandun.base.user.dto.operator.OperatorLoginOutputDto;
 import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationInputDto;
@@ -141,5 +143,17 @@ public class LoginAndSignUpService {
         UserEntity userEntity = generalService.getCurrentUserEntity();
         BeanUtils.copyProperties(input, userEntity);
         userRepository.save(userEntity);
+    }
+
+    public OperatorLoginOutputDto loginOperator(OperatorLoginInputDto operatorLoginInputDto) {
+        Optional<UserEntity> userEntity = userRepository.findByPhoneNumber(operatorLoginInputDto.getUsername());
+        if (userEntity.isEmpty() || userEntity.get().getUserType() != UserType.Operator) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        } else if (!operatorLoginInputDto.getPassword().equals(userEntity.get().getPassword())) {
+            throw new UserException(1, "wrong password");
+        }
+        OperatorLoginOutputDto dto = new OperatorLoginOutputDto();
+        dto.setToken(buildToken(operatorLoginInputDto.getUsername()));
+        return dto;
     }
 }

@@ -26,6 +26,9 @@ public class OperatorController {
         return ResponseEntity.ok(new BaseOutputDto("patient state completed successfully"));
     }
 
+
+
+    // todo: currently user uses this method to get his/her state. create another rest. because this rest is for operator.
     @GetMapping(path = "/patient/{patientId}")
     public ResponseEntity<PatientOutputDto> getPatientState(@PathVariable int patientId) {
         return ResponseEntity.ok(operatorService.getPatientState(patientId));
