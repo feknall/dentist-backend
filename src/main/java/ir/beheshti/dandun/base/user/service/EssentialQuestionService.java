@@ -168,7 +168,7 @@ public class EssentialQuestionService {
 
     public IsCompleteAnswerOutputDto isUserAnswersComplete() {
         IsCompleteAnswerOutputDto dto = new IsCompleteAnswerOutputDto();
-        dto.setComplete(getUserAnswersByUser().size() == 6);
+        dto.setComplete(!getUserAnswersByUser().isEmpty());
         dto.setPatientStateType(operatorService.getPatientStateByUser().getPatientStateType());
         return dto;
     }
