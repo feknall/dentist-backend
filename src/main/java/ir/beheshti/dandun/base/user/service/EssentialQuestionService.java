@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class EssentialQuestionService {
 
+    private final UserRepository userRepository;
     private final EssentialQuestionRepository essentialQuestionRepository;
     private final GeneralService generalService;
     private final UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository;
@@ -24,7 +25,14 @@ public class EssentialQuestionService {
     private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
     private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
 
-    public EssentialQuestionService(EssentialQuestionRepository essentialQuestionRepository, GeneralService generalService, UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository, UserTrueFalseQuestionAnswerRepository userTrueFalseQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository) {
+    public EssentialQuestionService(UserRepository userRepository,
+                                    EssentialQuestionRepository essentialQuestionRepository,
+                                    GeneralService generalService,
+                                    UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository,
+                                    UserTrueFalseQuestionAnswerRepository userTrueFalseQuestionAnswerRepository,
+                                    UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository,
+                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository) {
+        this.userRepository = userRepository;
         this.essentialQuestionRepository = essentialQuestionRepository;
         this.generalService = generalService;
         this.userOpenQuestionAnswerRepository = userOpenQuestionAnswerRepository;
@@ -125,26 +133,39 @@ public class EssentialQuestionService {
         return questionEntityOptional.get();
     }
 
-    public List<UserQuestionAnswerOutputDto> getUserAnswers() {
-        UserEntity userEntity = generalService.getCurrentUserEntity();
+    public List<UserQuestionAnswerOutputDto> getUserAnswersByUser() {
+        return getUserAnswers(generalService.getCurrentUserId());
+    }
+
+    public List<UserQuestionAnswerOutputDto> getUserAnswersByOperator(int userId) {
+        return getUserAnswers(userId);
+    }
+
+    private List<UserQuestionAnswerOutputDto> getUserAnswers(int userId) {
+        Optional<UserEntity> userEntity = userRepository.findById(userId);
+        if (userEntity.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
         List<UserQuestionAnswerOutputDto> outputDtoList = new ArrayList<>();
         userEntity
+                .get()
                 .getUserOpenQuestionAnswerEntityList()
                 .stream()
                 .map(UserQuestionAnswerOutputDto::ofOpenAnswer).forEach(outputDtoList::add);
         userEntity
+                .get()
                 .getUserTrueFalseQuestionAnswerEntityList()
                 .stream()
                 .map(UserQuestionAnswerOutputDto::ofTrueFalse).forEach(outputDtoList::add);
-        if (!userEntity.getUserMultipleChoiceQuestionAnswerEntityList().isEmpty()) {
-            outputDtoList.add(UserQuestionAnswerOutputDto.ofMultipleChoice(userEntity.getUserMultipleChoiceQuestionAnswerEntityList()));
+        if (!userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().isEmpty()) {
+            outputDtoList.add(UserQuestionAnswerOutputDto.ofMultipleChoice(userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList()));
         }
         return outputDtoList;
     }
 
     public IsCompleteAnswerOutputDto isUserAnswersComplete() {
         IsCompleteAnswerOutputDto dto = new IsCompleteAnswerOutputDto();
-        dto.setComplete(getUserAnswers().size() == 6);
+        dto.setComplete(getUserAnswersByUser().size() == 6);
         return dto;
     }
 

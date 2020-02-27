@@ -4,6 +4,8 @@ import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateInputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateOutputDto;
+import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto;
+import ir.beheshti.dandun.base.user.service.EssentialQuestionService;
 import ir.beheshti.dandun.base.user.service.OperatorService;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +22,19 @@ public class OperatorController {
     @Autowired
     private OperatorService operatorService;
 
+    @Autowired
+    private EssentialQuestionService essentialQuestionService;
+
     @PostMapping(path = "/patient")
     public ResponseEntity<BaseOutputDto> fillPatientState(@Valid @RequestBody PatientStateInputDto patientStateInputDto) {
         operatorService.fillPatientState(patientStateInputDto);
         return ResponseEntity.ok(new BaseOutputDto("patient state completed successfully"));
     }
 
-
+    @GetMapping(path = "/patient/{patientId}/answer")
+    public ResponseEntity<List<UserQuestionAnswerOutputDto>> getUserAnswers(@Valid @PathVariable int patientId) {
+        return ResponseEntity.ok(essentialQuestionService.getUserAnswersByOperator(patientId));
+    }
 
     // todo: currently user uses this method to get his/her state. create another rest. because this rest is for operator.
     @GetMapping(path = "/patient/{patientId}")
