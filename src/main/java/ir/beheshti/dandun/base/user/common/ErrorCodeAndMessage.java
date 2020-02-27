@@ -25,4 +25,10 @@ public abstract class ErrorCodeAndMessage {
     public static final int PHONE_NUMBER_ALREADY_SINGED_UP_CODE = 1008;
     public static final String PHONE_NUMBER_ALREADY_SINGED_UP_MESSAGE = "phone number already signed up";
 
+    public static final int USER_DOES_NOT_HAVE_PHOTO_CODE = 7005;
+    public static final String USER_DOES_NOT_HAVE_PHOTO_MESSAGE = "user doesn't have photo";
+
+
+    public static final int INTERNAL_SERVER_ERROR_CODE = 1000;
+    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal server error";
 }

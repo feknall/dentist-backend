@@ -6,6 +6,7 @@ import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.repository.*;
 import ir.beheshti.dandun.base.user.util.QuestionType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,6 +25,7 @@ public class EssentialQuestionService {
     private final UserTrueFalseQuestionAnswerRepository userTrueFalseQuestionAnswerRepository;
     private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
     private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
+    private final OperatorService operatorService;
 
     public EssentialQuestionService(UserRepository userRepository,
                                     EssentialQuestionRepository essentialQuestionRepository,
@@ -31,7 +33,7 @@ public class EssentialQuestionService {
                                     UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository,
                                     UserTrueFalseQuestionAnswerRepository userTrueFalseQuestionAnswerRepository,
                                     UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository,
-                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository) {
+                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, OperatorService operatorService) {
         this.userRepository = userRepository;
         this.essentialQuestionRepository = essentialQuestionRepository;
         this.generalService = generalService;
@@ -39,6 +41,7 @@ public class EssentialQuestionService {
         this.userTrueFalseQuestionAnswerRepository = userTrueFalseQuestionAnswerRepository;
         this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
         this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
+        this.operatorService = operatorService;
     }
 
     public List<QuestionOutputDto> getAll() {
@@ -166,6 +169,7 @@ public class EssentialQuestionService {
     public IsCompleteAnswerOutputDto isUserAnswersComplete() {
         IsCompleteAnswerOutputDto dto = new IsCompleteAnswerOutputDto();
         dto.setComplete(getUserAnswersByUser().size() == 6);
+        dto.setPatientStateType(operatorService.getPatientStateByUser().getPatientStateType());
         return dto;
     }
 

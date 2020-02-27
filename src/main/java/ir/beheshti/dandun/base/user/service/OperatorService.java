@@ -18,8 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class OperatorService {
 
-    @Autowired
-    private PatientRepository patientRepository;
+    private final PatientRepository patientRepository;
+    private final GeneralService generalService;
+
+    public OperatorService(PatientRepository patientRepository, GeneralService generalService) {
+        this.patientRepository = patientRepository;
+        this.generalService = generalService;
+    }
 
     public void fillPatientState(PatientStateInputDto patientStateInputDto) {
         Optional<PatientUserEntity> patientUserEntityOptional = patientRepository.findById(patientStateInputDto.getPatientId());
@@ -30,7 +35,15 @@ public class OperatorService {
         patientRepository.save(patientUserEntityOptional.get());
     }
 
-    public PatientOutputDto getPatientState(int patientId) {
+    public PatientOutputDto getPatientStateByUser() {
+        return getPatientState(generalService.getCurrentUserId());
+    }
+
+    public PatientOutputDto getPatientStateByOperator(int patientId) {
+        return getPatientState(patientId);
+    }
+
+    private PatientOutputDto getPatientState(int patientId) {
         Optional<PatientUserEntity> patientUserEntityOptional = patientRepository.findById(patientId);
         if (patientUserEntityOptional.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
