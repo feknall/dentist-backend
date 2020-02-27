@@ -163,28 +163,4 @@ public class LoginAndSignUpService {
         dto.setToken(buildToken(operatorLoginInputDto.getUsername()));
         return dto;
     }
-
-    public void updateUserInfoPhoto(MultipartFile file) {
-        UserEntity userEntity = generalService.getCurrentUserEntity();
-        try {
-            userEntity.setProfilePhoto(utilityService.toByteWrapper(file.getBytes()));
-            userRepository.save(userEntity);
-        } catch (IOException e) {
-            throw new UserException(ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_CODE, ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_MESSAGE);
-        }
-    }
-
-    public void removeUserInfoPhoto() {
-        UserEntity userEntity = generalService.getCurrentUserEntity();
-        userEntity.setProfilePhoto(null);
-        userRepository.save(userEntity);
-    }
-
-    public byte[] getUserInfoPhoto() {
-        UserEntity userEntity = generalService.getCurrentUserEntity();
-        if (userEntity.getProfilePhoto() == null) {
-            throw new UserException(ErrorCodeAndMessage.USER_DOES_NOT_HAVE_PHOTO_CODE, ErrorCodeAndMessage.USER_DOES_NOT_HAVE_PHOTO_MESSAGE);
-        }
-        return Base64.getEncoder().encode(utilityService.fromByteWrapper(userEntity.getProfilePhoto()));
-    }
 }

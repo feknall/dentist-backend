@@ -58,22 +58,4 @@ public class LoginAndSignUpController {
         loginAndSignUpService.updateUserInfo(input);
         return ResponseEntity.ok(new BaseOutputDto("user updated successfully"));
     }
-
-    @DeleteMapping(path = "/info/photo")
-    public ResponseEntity<BaseOutputDto> removeUserInfoPhoto() {
-        loginAndSignUpService.removeUserInfoPhoto();
-        return ResponseEntity.ok(new BaseOutputDto("user photo removed successfully"));
-    }
-
-    @PostMapping(path = "/info/photo")
-    public ResponseEntity<BaseOutputDto> uploadUserInfoPhoto(@RequestParam("photo") MultipartFile file) {
-        loginAndSignUpService.updateUserInfoPhoto(file);
-        return ResponseEntity.ok(new BaseOutputDto("user photo updated successfully"));
-    }
-
-    @GetMapping(path = "/info/photo")
-    public byte[] getUserInfoPhoto() {
-        return loginAndSignUpService.getUserInfoPhoto();
-    }
-
 }
