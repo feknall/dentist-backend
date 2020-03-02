@@ -16,4 +16,7 @@ public class DoctorUserEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "DoctorId", referencedColumnName = "UserId")
     private UserEntity userEntity;
+
+    @Column
+    private boolean isActive;
 }

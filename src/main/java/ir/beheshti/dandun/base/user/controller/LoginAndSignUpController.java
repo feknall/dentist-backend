@@ -10,6 +10,8 @@ import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationOutputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserInfoInputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserInfoOutputDto;
 import ir.beheshti.dandun.base.user.service.LoginAndSignUpService;
+import ir.beheshti.dandun.base.user.service.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,9 +23,11 @@ import javax.validation.Valid;
 public class LoginAndSignUpController {
 
     private final LoginAndSignUpService loginAndSignUpService;
+    private final ProfileService profileService;
 
-    public LoginAndSignUpController(LoginAndSignUpService loginAndSignUpService) {
+    public LoginAndSignUpController(LoginAndSignUpService loginAndSignUpService, ProfileService profileService) {
         this.loginAndSignUpService = loginAndSignUpService;
+        this.profileService = profileService;
     }
 
     @PostMapping(path = "/sms")
@@ -58,4 +62,22 @@ public class LoginAndSignUpController {
         loginAndSignUpService.updateUserInfo(input);
         return ResponseEntity.ok(new BaseOutputDto("user updated successfully"));
     }
+
+    @DeleteMapping(path = "/profile/photo")
+    public ResponseEntity<BaseOutputDto> removeUserInfoPhoto() {
+        profileService.removeUserInfoPhoto();
+        return ResponseEntity.ok(new BaseOutputDto("user photo removed successfully"));
+    }
+
+    @PostMapping(path = "/profile/photo")
+    public ResponseEntity<BaseOutputDto> uploadUserInfoPhoto(@RequestParam("photo") MultipartFile file) {
+        profileService.updateUserInfoPhoto(file);
+        return ResponseEntity.ok(new BaseOutputDto("user photo updated successfully"));
+    }
+
+    @GetMapping(path = "/profile/photo")
+    public byte[] getUserInfoPhoto() {
+        return profileService.getUserInfoPhoto();
+    }
+
 }

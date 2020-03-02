@@ -38,13 +38,35 @@ public class EssentialQuestionController {
     @PostMapping(path = "/answer/multiple-choice")
     public ResponseEntity<BaseOutputDto> fillMultipleChoiceAnswer(@Valid @RequestBody MultipleChoiceAnswerInputDto multipleChoiceAnswerInputDto) {
         essentialQuestionService.fillMultipleChoiceAnswer(multipleChoiceAnswerInputDto);
-        return ResponseEntity.ok(new BaseOutputDto("multiple choice answer filled successfully"));
+        return ResponseEntity.ok(new BaseOutputDto("multiple-choice answer filled successfully"));
     }
 
-    @PostMapping(path = "/answer/true-false")
-    public ResponseEntity<BaseOutputDto> fillTrueFalseAnswer(@Valid @RequestBody TrueFalseAnswerInputDto trueFalseAnswerInputDto) {
-        essentialQuestionService.fillTrueFalseAnswer(trueFalseAnswerInputDto);
-        return ResponseEntity.ok(new BaseOutputDto("true false choice answer filled successfully"));
+    @PostMapping(path = "/answer/single-choice")
+    public ResponseEntity<BaseOutputDto> fillSingleAnswer(@Valid @RequestBody SingleAnswerInputDto singleAnswerInputDto) {
+        essentialQuestionService.fillSingleAnswer(singleAnswerInputDto);
+        return ResponseEntity.ok(new BaseOutputDto("single-choice answer filled successfully"));
+    }
+
+    @PostMapping(path = "/answer/range")
+    public ResponseEntity<BaseOutputDto> fillRangeAnswer(@Valid @RequestBody RangeAnswerInputDto rangeAnswerInputDto) {
+        essentialQuestionService.fillRangeAnswer(rangeAnswerInputDto);
+        return ResponseEntity.ok(new BaseOutputDto("range answer filled successfully"));
+    }
+
+    @PostMapping(path = "/answer/image")
+    public ResponseEntity<BaseOutputDto> fillImageAnswer(@Valid @RequestBody ImageAnswerInputDto imageAnswerInputDto) {
+        essentialQuestionService.fillImageAnswer(imageAnswerInputDto);
+        return ResponseEntity.ok(new BaseOutputDto("image answer filled successfully"));
+    }
+
+    @GetMapping(path = "/answer/image")
+    public ResponseEntity<ImageIdsOutputDto> getUserImageAnswerIds(@Valid @RequestBody ImageAnswerInputDto imageAnswerInputDto) {
+        return ResponseEntity.ok(essentialQuestionService.getUserImageAnswerIds(imageAnswerInputDto));
+    }
+
+    @GetMapping(path = "/answer/image/{imageId}")
+    public ResponseEntity<ImageAnswerOutputDto> getImageAnswer(@PathVariable Integer imageId) {
+        return ResponseEntity.ok(essentialQuestionService.getUserImageAnswer(imageId));
     }
 
     @PostMapping(path = "/answer")
@@ -62,6 +84,4 @@ public class EssentialQuestionController {
     public ResponseEntity<IsCompleteAnswerOutputDto> isUserAnswersComplete() {
         return ResponseEntity.ok(essentialQuestionService.isUserAnswersComplete());
     }
-
-    //todo: create a section to fill user photos when answering essential questions.
 }

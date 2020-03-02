@@ -6,6 +6,7 @@ import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;
 import ir.beheshti.dandun.base.user.repository.MultipleChoiceQuestionAnswerRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
+import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import ir.beheshti.dandun.base.user.util.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class Startup {
@@ -35,34 +38,186 @@ public class Startup {
     public void appReady(ApplicationReadyEvent event) {
         if (!insertQuestions)
             return;
+        insertPublicQuestions();
+        insertDoctorQuestions();
+        insertPatientQuestions();
+    }
 
+    private void insertPublicQuestions() {
+        insertSen();
+        insertJensiat();
+    }
+
+    private void insertDoctorQuestions() {
+        insertZamineFaaliat();
+        insertModateFaaliat();
+        insertAddressMatab();
+        insertTelephone();
+    }
+
+    private void insertModateFaaliat() {
         EssentialQuestionEntity entity = new EssentialQuestionEntity();
-        entity.setDescription("ارزیابی وضعیت سلامت بیمار از نگاه خود:");
+        entity.setDescription("مدت فعالیت شما:");
+        entity.setQuestionType(QuestionType.Range);
+        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
+        essentialQuestionRepository.save(entity);
+    }
+
+    private void insertAddressMatab() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
+        entity.setDescription("لطفا آدرس مطب خود را وارد کنید:");
+        entity.setQuestionType(QuestionType.Open);
+        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
+        essentialQuestionRepository.save(entity);
+    }
+
+    private void insertTelephone() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
+        entity.setDescription("لطفا تلفن مطب را وارد کنید:");
+        entity.setQuestionType(QuestionType.Open);
+        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
+        essentialQuestionRepository.save(entity);
+    }
+
+    private void insertZamineFaaliat() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
+        entity.setDescription("لطفا زمینه فعالیت خود را مشخص کنید:");
         entity.setQuestionType(QuestionType.MultipleChoice);
+        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
+        essentialQuestionRepository.save(entity);
+
+        MultipleChoiceQuestionAnswerEntity ans1 = new MultipleChoiceQuestionAnswerEntity();
+        ans1.setDescription("ترمیم و زیبایی");
+        ans1.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans2 = new MultipleChoiceQuestionAnswerEntity();
+        ans2.setDescription("ارتودنسی");
+        ans2.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans3 = new MultipleChoiceQuestionAnswerEntity();
+        ans3.setDescription("پروتز");
+        ans3.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans4 = new MultipleChoiceQuestionAnswerEntity();
+        ans4.setDescription("عمومی");
+        ans4.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans5 = new MultipleChoiceQuestionAnswerEntity();
+        ans5.setDescription("اطفال");
+        ans5.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans6 = new MultipleChoiceQuestionAnswerEntity();
+        ans6.setDescription("جراحی");
+        ans6.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans7 = new MultipleChoiceQuestionAnswerEntity();
+        ans7.setDescription("ایمپلنت");
+        ans7.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans8 = new MultipleChoiceQuestionAnswerEntity();
+        ans8.setDescription("اندو");
+        ans8.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity ans9 = new MultipleChoiceQuestionAnswerEntity();
+        ans9.setDescription("سایر موارد");
+        ans9.setEssentialQuestionId(entity.getId());
+        multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(ans1, ans2, ans3, ans4,
+                ans5, ans6, ans7, ans8, ans9));
+    }
+
+    private void insertPatientQuestions() {
+        insertSalamati();
+        insertBarrasi();
+        insertDandun();
+        insertBimari();
+        insertDaru();
+        insertSigar();
+        insertOperator();
+    }
+
+    private void insertSen() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
+        entity.setQuestionOwnerType(QuestionOwnerType.Public);
+        entity.setDescription("سن:");
+        entity.setQuestionType(QuestionType.Range);
+        essentialQuestionRepository.save(entity);
+    }
+
+    private void insertJensiat() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
+        entity.setQuestionOwnerType(QuestionOwnerType.Public);
+        entity.setDescription("جنسیت:");
+        entity.setQuestionType(QuestionType.SingleChoice);
         essentialQuestionRepository.save(entity);
 
         MultipleChoiceQuestionAnswerEntity answer1 = new MultipleChoiceQuestionAnswerEntity();
-        answer1.setDescription("عالی");
+        answer1.setDescription("مرد");
         answer1.setEssentialQuestionId(entity.getId());
         MultipleChoiceQuestionAnswerEntity answer2 = new MultipleChoiceQuestionAnswerEntity();
-        answer2.setDescription("خوب");
+        answer2.setDescription("زن");
         answer2.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity answer3 = new MultipleChoiceQuestionAnswerEntity();
-        answer3.setDescription("متوسط");
-        answer3.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity answer4 = new MultipleChoiceQuestionAnswerEntity();
-        answer4.setDescription("ضعیف");
-        answer4.setEssentialQuestionId(entity.getId());
-        multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(answer1, answer2, answer3, answer4));
+    }
 
-        entity = new EssentialQuestionEntity();
+    private void insertOperator() {
+        List<UserEntity> userEntityList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            UserEntity operator = new UserEntity();
+            operator.setUserType(UserType.Operator);
+            operator.setPhoneNumber("operator" + i);
+            operator.setPassword("operator" + i);
+            operator.setVerified(true);
+            operator.setSignedUp(true);
+            userEntityList.add(operator);
+        }
+        userRepository.saveAll(userEntityList);
+    }
+
+    private void insertBarrasi() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setDescription("خواستار بررسی وضعیت سلامت دهان و دندان‌هایم هستم:");
-        entity.setQuestionType(QuestionType.TrueFalse);
+        entity.setQuestionType(QuestionType.SingleChoice);
+        entity.setQuestionOwnerType(QuestionOwnerType.Patient);
         essentialQuestionRepository.save(entity);
 
-        entity = new EssentialQuestionEntity();
+        MultipleChoiceQuestionAnswerEntity yesAnswer = new MultipleChoiceQuestionAnswerEntity();
+        yesAnswer.setDescription("بله");
+        yesAnswer.setEssentialQuestionId(entity.getId());
+        MultipleChoiceQuestionAnswerEntity noAnswer = new MultipleChoiceQuestionAnswerEntity();
+        noAnswer.setDescription("خیر");
+        noAnswer.setEssentialQuestionId(entity.getId());
+    }
+
+    private void insertSalamati() {
+        EssentialQuestionEntity salamati = new EssentialQuestionEntity();
+        salamati.setDescription("لطفا وضعیت سلامت خود را ارزیابی نمایید:");
+        salamati.setQuestionType(QuestionType.MultipleChoice);
+        salamati.setQuestionOwnerType(QuestionOwnerType.Patient);
+        essentialQuestionRepository.save(salamati);
+
+        MultipleChoiceQuestionAnswerEntity answer1 = new MultipleChoiceQuestionAnswerEntity();
+        answer1.setDescription("کاملا سالم");
+        answer1.setEssentialQuestionId(salamati.getId());
+        MultipleChoiceQuestionAnswerEntity answer2 = new MultipleChoiceQuestionAnswerEntity();
+        answer2.setDescription("سابقه‌ی بیماری");
+        answer2.setEssentialQuestionId(salamati.getId());
+        MultipleChoiceQuestionAnswerEntity answer3 = new MultipleChoiceQuestionAnswerEntity();
+        answer3.setDescription("نمیدانم");
+        answer3.setEssentialQuestionId(salamati.getId());
+        multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(answer1, answer2, answer3));
+
+        EssentialQuestionEntity tahteNazar = new EssentialQuestionEntity();
+        tahteNazar.setDescription("آیا تحت نظر پزشک هستید؟");
+        tahteNazar.setQuestionType(QuestionType.MultipleChoice);
+        tahteNazar.setQuestionOwnerType(QuestionOwnerType.Patient);
+        tahteNazar.setDependOnId(answer2.getId());
+        essentialQuestionRepository.save(tahteNazar);
+
+        MultipleChoiceQuestionAnswerEntity are = new MultipleChoiceQuestionAnswerEntity();
+        are.setDescription("بله");
+        are.setEssentialQuestionId(tahteNazar.getId());
+        MultipleChoiceQuestionAnswerEntity na = new MultipleChoiceQuestionAnswerEntity();
+        na.setDescription("خیر");
+        na.setEssentialQuestionId(tahteNazar.getId());
+        multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(are, na));
+    }
+
+    private void insertDandun() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setDescription("شکایت اصلی شما چیست؟ و خواستار چه درمانی می‌باشید؟");
         entity.setQuestionType(QuestionType.MultipleChoice);
+        entity.setQuestionOwnerType(QuestionOwnerType.Patient);
         essentialQuestionRepository.save(entity);
 
         MultipleChoiceQuestionAnswerEntity answerEntity1 = new MultipleChoiceQuestionAnswerEntity();
@@ -95,10 +250,13 @@ public class Startup {
 
         multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(answerEntity1, answerEntity2, answerEntity3,
                 answerEntity4, answerEntity5, answerEntity6, answerEntity7));
+    }
 
-        entity = new EssentialQuestionEntity();
+    private void insertBimari() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setDescription("سابقه‌ی بیماری خاصی دارید؟");
         entity.setQuestionType(QuestionType.MultipleChoice);
+        entity.setQuestionOwnerType(QuestionOwnerType.Patient);
         essentialQuestionRepository.save(entity);
 
         MultipleChoiceQuestionAnswerEntity ans1 = new MultipleChoiceQuestionAnswerEntity();
@@ -163,10 +321,13 @@ public class Startup {
 
         multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(ans1, ans2, ans3, ans4, ans5,
                 ans6, ans7, ans8, ans9, ans10, ans11, ans12, ans13, ans14, ans15));
+    }
 
-        entity = new EssentialQuestionEntity();
+    private void insertDaru() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setDescription("آیا سابقه‌ی مصرف داروی خاصی دارید؟");
         entity.setQuestionType(QuestionType.MultipleChoice);
+        entity.setQuestionOwnerType(QuestionOwnerType.Patient);
         essentialQuestionRepository.save(entity);
 
         MultipleChoiceQuestionAnswerEntity daru1 = new MultipleChoiceQuestionAnswerEntity();
@@ -219,18 +380,23 @@ public class Startup {
 
         multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(daru1, daru2, daru3, daru4, daru5, daru6, daru7, daru8, daru9,
                 daru10, daru11, daru12));
+    }
 
-        entity = new EssentialQuestionEntity();
+    private void insertSigar() {
+        EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setDescription("آیا سیگار می‌کشید؟");
-        entity.setQuestionType(QuestionType.TrueFalse);
+        entity.setQuestionType(QuestionType.SingleChoice);
+        entity.setQuestionOwnerType(QuestionOwnerType.Patient);
         essentialQuestionRepository.save(entity);
 
-        UserEntity operator = new UserEntity();
-        operator.setUserType(UserType.Operator);
-        operator.setPhoneNumber("operator");
-        operator.setPassword("operator");
-        operator.setVerified(true);
-        operator.setSignedUp(true);
-        userRepository.save(operator);
+        MultipleChoiceQuestionAnswerEntity sigarYes = new MultipleChoiceQuestionAnswerEntity();
+        sigarYes.setDescription("بله");
+        sigarYes.setEssentialQuestionId(entity.getId());
+
+        MultipleChoiceQuestionAnswerEntity sigarNo = new MultipleChoiceQuestionAnswerEntity();
+        sigarNo.setDescription("خیر");
+        sigarNo.setEssentialQuestionId(entity.getId());
+
+        multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(sigarYes, sigarNo));
     }
 }

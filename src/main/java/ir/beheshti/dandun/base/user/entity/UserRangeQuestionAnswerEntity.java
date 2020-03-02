@@ -6,30 +6,28 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "UserTrueFalseQuestionAnswer")
-public class UserTrueFalseQuestionAnswerEntity {
+@Table(name = "UserRangeQuestionAnswer")
+public class UserRangeQuestionAnswerEntity {
 
     @Id
-    @Column(name = "UserTrueFalseQuestionAnswerId")
+    @Column(name = "UserRangeQuestionAnswerId")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(name = "EssentialQuestionId")
     private int essentialQuestionId;
 
-    @Column
-    private boolean answer;
+    @Column(name = "Value")
+    private int value;
 
     @Column(name = "UserId")
     private int userId;
-
 
     @ManyToOne
     @JoinColumn(name = "EssentialQuestionId", referencedColumnName = "EssentialQuestionId", insertable = false, updatable = false)
     private EssentialQuestionEntity essentialQuestionEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "UserId", referencedColumnName = "UserId", insertable = false, updatable = false)
     private UserEntity userEntity;
-
 }

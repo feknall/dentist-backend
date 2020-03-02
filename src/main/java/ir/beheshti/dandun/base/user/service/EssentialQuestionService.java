@@ -6,11 +6,11 @@ import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.repository.*;
 import ir.beheshti.dandun.base.user.util.QuestionType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,26 +22,32 @@ public class EssentialQuestionService {
     private final EssentialQuestionRepository essentialQuestionRepository;
     private final GeneralService generalService;
     private final UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository;
-    private final UserTrueFalseQuestionAnswerRepository userTrueFalseQuestionAnswerRepository;
+    private final UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
+    private final UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository;
     private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
     private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
     private final OperatorService operatorService;
+    private final UserImageQuestionAnswerRepository userImageQuestionAnswerRepository;
+    private final UtilityService utilityService;
 
     public EssentialQuestionService(UserRepository userRepository,
                                     EssentialQuestionRepository essentialQuestionRepository,
                                     GeneralService generalService,
                                     UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository,
-                                    UserTrueFalseQuestionAnswerRepository userTrueFalseQuestionAnswerRepository,
-                                    UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository,
-                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, OperatorService operatorService) {
+                                    UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository,
+                                    UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository,
+                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, OperatorService operatorService, UserImageQuestionAnswerRepository userImageQuestionAnswerRepository, UtilityService utilityService) {
         this.userRepository = userRepository;
         this.essentialQuestionRepository = essentialQuestionRepository;
         this.generalService = generalService;
         this.userOpenQuestionAnswerRepository = userOpenQuestionAnswerRepository;
-        this.userTrueFalseQuestionAnswerRepository = userTrueFalseQuestionAnswerRepository;
+        this.userSingleQuestionAnswerRepository = userSingleQuestionAnswerRepository;
+        this.userRangeQuestionAnswerRepository = userRangeQuestionAnswerRepository;
         this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
         this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
         this.operatorService = operatorService;
+        this.userImageQuestionAnswerRepository = userImageQuestionAnswerRepository;
+        this.utilityService = utilityService;
     }
 
     public List<QuestionOutputDto> getAll() {
@@ -79,7 +85,7 @@ public class EssentialQuestionService {
         }
 
         List<UserMultipleChoiceQuestionAnswerEntity> userAnswerEntityList = new ArrayList<>();
-        for (int i: inputDto.getAnswerIdList()) {
+        for (int i : inputDto.getAnswerIdList()) {
             UserMultipleChoiceQuestionAnswerEntity userAnswerEntity = new UserMultipleChoiceQuestionAnswerEntity();
             userAnswerEntity.setUserId(currentUserId);
             userAnswerEntity.setMultipleChoiceQuestionAnswerId(i);
@@ -89,22 +95,54 @@ public class EssentialQuestionService {
     }
 
     @Transactional
-    public void fillTrueFalseAnswer(TrueFalseAnswerInputDto inputDto) {
-        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.TrueFalse);
+    public void fillSingleAnswer(SingleAnswerInputDto inputDto) {
+        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.SingleChoice);
 
         int currentUserId = generalService.getCurrentUserId();
-        if (userTrueFalseQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
+        if (userSingleQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
             throw new UserException(ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_CODE,
                     ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_MESSAGE);
         }
 
-        UserTrueFalseQuestionAnswerEntity userTrueFalseQuestionAnswerEntity = new UserTrueFalseQuestionAnswerEntity();
-        userTrueFalseQuestionAnswerEntity.setUserId(currentUserId);
-        userTrueFalseQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
-        userTrueFalseQuestionAnswerEntity.setAnswer(inputDto.getAnswer());
-        userTrueFalseQuestionAnswerRepository.save(userTrueFalseQuestionAnswerEntity);
+        UserSingleQuestionAnswerEntity userSingleQuestionAnswerEntity = new UserSingleQuestionAnswerEntity();
+        userSingleQuestionAnswerEntity.setUserId(currentUserId);
+        userSingleQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
+        userSingleQuestionAnswerEntity.setMultipleChoiceQuestionAnswerId(inputDto.getAnswerId());
+        userSingleQuestionAnswerRepository.save(userSingleQuestionAnswerEntity);
     }
 
+    @Transactional
+    public void fillRangeAnswer(RangeAnswerInputDto inputDto) {
+        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.Range);
+
+        int currentUserId = generalService.getCurrentUserId();
+        if (userSingleQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
+            throw new UserException(ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_CODE,
+                    ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_MESSAGE);
+        }
+
+        UserRangeQuestionAnswerEntity userRangeQuestionAnswerEntity = new UserRangeQuestionAnswerEntity();
+        userRangeQuestionAnswerEntity.setUserId(currentUserId);
+        userRangeQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
+        userRangeQuestionAnswerEntity.setValue(inputDto.getValue());
+        userRangeQuestionAnswerRepository.save(userRangeQuestionAnswerEntity);
+    }
+
+    @Transactional
+    public void fillImageAnswer(ImageAnswerInputDto inputDto) {
+        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.Image);
+
+        int currentUserId = generalService.getCurrentUserId();
+
+        List<UserImageQuestionAnswerEntity> entityList = new ArrayList<>();
+        UserImageQuestionAnswerEntity userImageQuestionAnswerEntity = new UserImageQuestionAnswerEntity();
+        userImageQuestionAnswerEntity.setUserId(currentUserId);
+        userImageQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
+        userImageQuestionAnswerEntity.setImage(utilityService.toByteWrapper(inputDto.getImage().getBytes()));
+        entityList.add(userImageQuestionAnswerEntity);
+
+        userImageQuestionAnswerRepository.saveAll(entityList);
+    }
 
     private void saveOrUpdateOpenAnswer(int questionId, String description) {
         int currentUserId = generalService.getCurrentUserId();
@@ -131,7 +169,7 @@ public class EssentialQuestionService {
             throw new UserException(ErrorCodeAndMessage.QUESTION_NOT_FOUND_CODE, ErrorCodeAndMessage.QUESTION_NOT_FOUND_MESSAGE);
         }
         if (questionType != null && !questionEntityOptional.get().getQuestionType().equals(questionType)) {
-           throw new UserException(ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_CODE, ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_MESSAGE);
+            throw new UserException(ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_CODE, ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_MESSAGE);
         }
         return questionEntityOptional.get();
     }
@@ -150,18 +188,34 @@ public class EssentialQuestionService {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
         List<UserQuestionAnswerOutputDto> outputDtoList = new ArrayList<>();
+
+        // Open Answers
         userEntity
                 .get()
                 .getUserOpenQuestionAnswerEntityList()
                 .stream()
                 .map(UserQuestionAnswerOutputDto::ofOpenAnswer).forEach(outputDtoList::add);
+
+        // Single-Choice Answers
         userEntity
                 .get()
-                .getUserTrueFalseQuestionAnswerEntityList()
+                .getUserSingleQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto::ofTrueFalse).forEach(outputDtoList::add);
+                .map(UserQuestionAnswerOutputDto::ofSingle).forEach(outputDtoList::add);
+
+        // Range Answers
+        userEntity
+                .get()
+                .getUserRangeQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto::ofRange).forEach(outputDtoList::add);
+
+        // Multiple-Choice Answers
         if (!userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().isEmpty()) {
-            outputDtoList.add(UserQuestionAnswerOutputDto.ofMultipleChoice(userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList()));
+            outputDtoList.add(UserQuestionAnswerOutputDto
+                    .ofMultipleChoice(userEntity
+                            .get()
+                            .getUserMultipleChoiceQuestionAnswerEntityList()));
         }
         return outputDtoList;
     }
@@ -176,13 +230,36 @@ public class EssentialQuestionService {
     @Transactional
     public void fillAllAnswers(AllAnswerOpenDto allAnswerOpenDto) {
         int currentUserId = generalService.getCurrentUserId();
+
         userMultipleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         allAnswerOpenDto.getMultipleChoiceAnswerInputDtoList().forEach(this::fillMultipleChoiceAnswer);
+
+        userRangeQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        allAnswerOpenDto.getRangeAnswerInputDtoList().forEach(this::fillRangeAnswer);
 
         userOpenQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         allAnswerOpenDto.getOpenAnswerInputDtoList().forEach(this::fillOpenAnswer);
 
-        userTrueFalseQuestionAnswerRepository.deleteAllByUserId(currentUserId);
-        allAnswerOpenDto.getTrueFalseAnswerInputDtoList().forEach(this::fillTrueFalseAnswer);
+        userSingleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        allAnswerOpenDto.getSingleAnswerInputDtoList().forEach(this::fillSingleAnswer);
+    }
+
+    public ImageIdsOutputDto getUserImageAnswerIds(ImageAnswerInputDto imageAnswerInputDto) {
+        int currentUserId = generalService.getCurrentUserId();
+        List<Integer> imageIds = userImageQuestionAnswerRepository.findAllByUserIdAndEssentialQuestionId(currentUserId, imageAnswerInputDto.getQuestionId());
+        ImageIdsOutputDto outputDto = new ImageIdsOutputDto();
+        outputDto.setImageIds(imageIds);
+        return outputDto;
+    }
+
+    public ImageAnswerOutputDto getUserImageAnswer(Integer imageId) {
+        int currentUserId = generalService.getCurrentUserId();
+        Optional<UserImageQuestionAnswerEntity> entity = userImageQuestionAnswerRepository.findByIdAndUserId(imageId, currentUserId);
+        if (entity.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.ANSWER_IMAGE_NOT_FOUND_CODE, ErrorCodeAndMessage.ANSWER_IMAGE_NOT_FOUND_MESSAGE);
+        }
+        ImageAnswerOutputDto outputDto = new ImageAnswerOutputDto();
+        outputDto.setImage(Arrays.toString(entity.get().getImage()));
+        return outputDto;
     }
 }

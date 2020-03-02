@@ -93,7 +93,13 @@ public class UserEntity implements UserDetails {
     private List<UserOpenQuestionAnswerEntity> userOpenQuestionAnswerEntityList;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
-    private List<UserTrueFalseQuestionAnswerEntity> userTrueFalseQuestionAnswerEntityList;
+    private List<UserSingleQuestionAnswerEntity> userSingleQuestionAnswerEntityList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<UserImageQuestionAnswerEntity> userImageQuestionAnswerEntityList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<UserRangeQuestionAnswerEntity> userRangeQuestionAnswerEntityList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

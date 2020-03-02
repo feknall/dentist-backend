@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.entity;
 
+import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import lombok.Data;
 
@@ -21,6 +22,12 @@ public class EssentialQuestionEntity {
 
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionOwnerType questionOwnerType;
+
+    @Column
+    private Integer dependOnId;
 
     @Column
     private Integer questionOrder;

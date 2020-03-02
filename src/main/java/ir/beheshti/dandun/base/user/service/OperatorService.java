@@ -4,11 +4,9 @@ import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.operator.PatientOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateInputDto;
-import ir.beheshti.dandun.base.user.dto.operator.PatientStateOutputDto;
 import ir.beheshti.dandun.base.user.entity.PatientUserEntity;
 import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

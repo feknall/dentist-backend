@@ -5,9 +5,9 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class TrueFalseAnswerInputDto {
+public class RangeAnswerInputDto {
     @NotNull
     private Integer questionId;
     @NotNull
-    private Boolean answer;
+    private Integer value;
 }

@@ -24,13 +24,8 @@ import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.UserType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
@@ -82,8 +77,8 @@ public class LoginAndSignUpService {
         if (userEntityOptional.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.PHONE_NUMBER_NOT_FOUND_CODE, ErrorCodeAndMessage.PHONE_NUMBER_NOT_FOUND_MESSAGE);
         } else if (!userEntityOptional.get().isVerified()) {
-            throw new UserException(ErrorCodeAndMessage.PHONE_NUBMER_IS_NOT_VERIFIED_CODE,
-                    ErrorCodeAndMessage.PHONE_NUBMER_IS_NOT_VERIFIED_MESSAGE);
+            throw new UserException(ErrorCodeAndMessage.PHONE_NUMBER_IS_NOT_VERIFIED_CODE,
+                    ErrorCodeAndMessage.PHONE_NUMBER_IS_NOT_VERIFIED_MESSAGE);
         } else if (userEntityOptional.get().isSignedUp()) {
             throw new UserException(ErrorCodeAndMessage.PHONE_NUMBER_ALREADY_SINGED_UP_CODE,
                     ErrorCodeAndMessage.PHONE_NUMBER_ALREADY_SINGED_UP_MESSAGE);

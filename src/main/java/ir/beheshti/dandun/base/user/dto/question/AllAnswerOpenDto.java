@@ -10,7 +10,9 @@ public class AllAnswerOpenDto {
     @NotNull
     private List<OpenAnswerInputDto> openAnswerInputDtoList;
     @NotNull
-    private List<TrueFalseAnswerInputDto> trueFalseAnswerInputDtoList;
+    private List<SingleAnswerInputDto> singleAnswerInputDtoList;
+    @NotNull
+    private List<RangeAnswerInputDto> rangeAnswerInputDtoList;
     @NotNull
     private List<MultipleChoiceAnswerInputDto> multipleChoiceAnswerInputDtoList;
 }

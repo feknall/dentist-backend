@@ -2,7 +2,8 @@ package ir.beheshti.dandun.base.user.dto.question;
 
 import ir.beheshti.dandun.base.user.entity.UserMultipleChoiceQuestionAnswerEntity;
 import ir.beheshti.dandun.base.user.entity.UserOpenQuestionAnswerEntity;
-import ir.beheshti.dandun.base.user.entity.UserTrueFalseQuestionAnswerEntity;
+import ir.beheshti.dandun.base.user.entity.UserRangeQuestionAnswerEntity;
+import ir.beheshti.dandun.base.user.entity.UserSingleQuestionAnswerEntity;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import lombok.Data;
 
@@ -15,8 +16,9 @@ import java.util.Set;
 public class UserQuestionAnswerOutputDto {
     private Integer questionId;
     private QuestionType questionType;
-    private Boolean trueFalseAnswer;
+    private Integer multipleChoiceQuestionAnswerId;
     private String openAnswer;
+    private Integer value;
     private List<MultipleChoiceAnswerOutputDto> multipleChoiceAnswer;
 
     public static UserQuestionAnswerOutputDto ofOpenAnswer(UserOpenQuestionAnswerEntity entity) {
@@ -27,11 +29,19 @@ public class UserQuestionAnswerOutputDto {
         return dto;
     }
 
-    public static UserQuestionAnswerOutputDto ofTrueFalse(UserTrueFalseQuestionAnswerEntity entity) {
+    public static UserQuestionAnswerOutputDto ofSingle(UserSingleQuestionAnswerEntity entity) {
         UserQuestionAnswerOutputDto dto = new UserQuestionAnswerOutputDto();
         dto.questionId = entity.getEssentialQuestionEntity().getId();
-        dto.questionType = QuestionType.TrueFalse;
-        dto.trueFalseAnswer = entity.isAnswer();
+        dto.questionType = QuestionType.SingleChoice;
+        dto.multipleChoiceQuestionAnswerId = entity.getMultipleChoiceQuestionAnswerId();
+        return dto;
+    }
+
+    public static UserQuestionAnswerOutputDto ofRange(UserRangeQuestionAnswerEntity entity) {
+        UserQuestionAnswerOutputDto dto = new UserQuestionAnswerOutputDto();
+        dto.questionId = entity.getEssentialQuestionEntity().getId();
+        dto.questionType = QuestionType.Range;
+        dto.value = entity.getValue();
         return dto;
     }
 
