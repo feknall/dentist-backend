@@ -12,7 +12,7 @@ public class PatientStateOutputDto {
     public static PatientStateOutputDto fromEntity(PatientUserEntity patientUserEntity) {
         PatientStateOutputDto dto = new PatientStateOutputDto();
         dto.patientId = patientUserEntity.getPatientId();
-        dto.setPatientStateType(patientUserEntity.getPatientStateType() != null ? patientUserEntity.getPatientStateType() : PatientStateType.UN_CATEGORIZED);
+        dto.setPatientStateType(patientUserEntity.getPatientStateType());
         return dto;
     }
 }

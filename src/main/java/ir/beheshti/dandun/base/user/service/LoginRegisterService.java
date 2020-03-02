@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class LoginAndSignUpService {
+public class LoginRegisterService {
 
     @Autowired
     private ValidationService validationService;
@@ -95,7 +95,7 @@ public class LoginAndSignUpService {
 
             PatientUserEntity patientUserEntity = new PatientUserEntity();
             patientUserEntity.setPatientId(userEntityOptional.get().getId());
-            patientUserEntity.setPatientStateType(PatientStateType.UN_CATEGORIZED);
+            patientUserEntity.setPatientStateType(PatientStateType.NOT_ANSWERED);
             patientRepository.save(patientUserEntity);
         } else if (signUpInputDto.getUserType().equals(UserType.Doctor)) {
             userEntityOptional.get().setUserType(UserType.Doctor);

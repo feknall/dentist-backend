@@ -2,14 +2,14 @@ package ir.beheshti.dandun.base.user.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
+import ir.beheshti.dandun.base.user.dto.user.UserImageInputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserImageOutputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserInfoInputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserInfoOutputDto;
-import ir.beheshti.dandun.base.user.service.LoginAndSignUpService;
+import ir.beheshti.dandun.base.user.service.LoginRegisterService;
 import ir.beheshti.dandun.base.user.service.ProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -18,22 +18,22 @@ import javax.validation.Valid;
 @RequestMapping(path = "/api/v1/user/profile")
 public class UserProfileController {
 
-    private final LoginAndSignUpService loginAndSignUpService;
+    private final LoginRegisterService loginRegisterService;
     private final ProfileService profileService;
 
-    public UserProfileController(LoginAndSignUpService loginAndSignUpService, ProfileService profileService) {
-        this.loginAndSignUpService = loginAndSignUpService;
+    public UserProfileController(LoginRegisterService loginRegisterService, ProfileService profileService) {
+        this.loginRegisterService = loginRegisterService;
         this.profileService = profileService;
     }
 
     @GetMapping(path = "/info")
     public ResponseEntity<UserInfoOutputDto> getUserInfo() {
-        return ResponseEntity.ok(loginAndSignUpService.getUserInfo());
+        return ResponseEntity.ok(loginRegisterService.getUserInfo());
     }
 
     @PostMapping(path = "/info")
     public ResponseEntity<BaseOutputDto> updateUserInfo(@Valid @RequestBody UserInfoInputDto input) {
-        loginAndSignUpService.updateUserInfo(input);
+        loginRegisterService.updateUserInfo(input);
         return ResponseEntity.ok(new BaseOutputDto("user updated successfully"));
     }
 
@@ -44,8 +44,8 @@ public class UserProfileController {
     }
 
     @PostMapping(path = "/photo")
-    public ResponseEntity<BaseOutputDto> uploadUserInfoPhoto(@RequestParam("photo") MultipartFile file) {
-        profileService.updateUserInfoPhoto(file);
+    public ResponseEntity<BaseOutputDto> uploadUserInfoPhoto(@Valid @RequestBody UserImageInputDto userImageInputDto) {
+        profileService.updateUserInfoPhoto(userImageInputDto);
         return ResponseEntity.ok(new BaseOutputDto("user photo updated successfully"));
     }
 

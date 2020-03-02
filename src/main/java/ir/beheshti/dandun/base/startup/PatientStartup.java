@@ -83,7 +83,7 @@ public class PatientStartup implements Insert {
         tahteNazar.setDescription("آیا تحت نظر پزشک هستید؟");
         tahteNazar.setQuestionType(QuestionType.MultipleChoice);
         tahteNazar.setQuestionOwnerType(QuestionOwnerType.Patient);
-        tahteNazar.setDependOnId(answer2.getId());
+        tahteNazar.setDependOnAnswerId(answer2.getId());
         essentialQuestionRepository.save(tahteNazar);
 
         MultipleChoiceQuestionAnswerEntity are = new MultipleChoiceQuestionAnswerEntity();

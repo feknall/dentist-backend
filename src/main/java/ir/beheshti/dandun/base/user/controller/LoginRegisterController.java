@@ -8,14 +8,12 @@ import ir.beheshti.dandun.base.user.dto.signup.SignUpInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationInputDto;
 import ir.beheshti.dandun.base.user.dto.sms.SmsVerificationOutputDto;
-import ir.beheshti.dandun.base.user.dto.user.UserImageOutputDto;
-import ir.beheshti.dandun.base.user.dto.user.UserInfoInputDto;
-import ir.beheshti.dandun.base.user.dto.user.UserInfoOutputDto;
-import ir.beheshti.dandun.base.user.service.LoginAndSignUpService;
-import ir.beheshti.dandun.base.user.service.ProfileService;
+import ir.beheshti.dandun.base.user.service.LoginRegisterService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -24,62 +22,31 @@ import javax.validation.Valid;
 @RequestMapping(path = "/api/v1/user/login-register/")
 public class LoginRegisterController {
 
-    private final LoginAndSignUpService loginAndSignUpService;
-    private final ProfileService profileService;
+    private final LoginRegisterService loginRegisterService;
 
-    public LoginRegisterController(LoginAndSignUpService loginAndSignUpService, ProfileService profileService) {
-        this.loginAndSignUpService = loginAndSignUpService;
-        this.profileService = profileService;
+    public LoginRegisterController(LoginRegisterService loginRegisterService) {
+        this.loginRegisterService = loginRegisterService;
     }
 
     @PostMapping(path = "/sms")
     public ResponseEntity<BaseOutputDto> sendSmsForUser(@Valid @RequestBody SmsInputDto input) {
-        loginAndSignUpService.sendVerificationCodeBySms(input);
+        loginRegisterService.sendVerificationCodeBySms(input);
         return ResponseEntity.ok(new BaseOutputDto("sms sent successfully"));
     }
 
     @PostMapping(path = "/sms/verify")
     public ResponseEntity<SmsVerificationOutputDto> verifyPhoneNumber(@Valid @RequestBody SmsVerificationInputDto inputDto) {
-        return ResponseEntity.ok(loginAndSignUpService.verifyPhoneNumber(inputDto));
+        return ResponseEntity.ok(loginRegisterService.verifyPhoneNumber(inputDto));
     }
 
     @PostMapping(path = "/operator/login")
     public ResponseEntity<OperatorLoginOutputDto> loginOperator(@Valid @RequestBody OperatorLoginInputDto operatorLoginInputDto) {
-        return ResponseEntity.ok(loginAndSignUpService.loginOperator(operatorLoginInputDto));
+        return ResponseEntity.ok(loginRegisterService.loginOperator(operatorLoginInputDto));
     }
 
     @PostMapping(path = "/signup")
     public ResponseEntity<BaseOutputDto> signUp(@Valid @RequestBody SignUpInputDto input) {
-        loginAndSignUpService.signUp(input);
+        loginRegisterService.signUp(input);
         return ResponseEntity.ok(new BaseOutputDto("user added successfully"));
     }
-
-    @GetMapping(path = "/info")
-    public ResponseEntity<UserInfoOutputDto> getUserInfo() {
-        return ResponseEntity.ok(loginAndSignUpService.getUserInfo());
-    }
-
-    @PostMapping(path = "/info")
-    public ResponseEntity<BaseOutputDto> updateUserInfo(@Valid @RequestBody UserInfoInputDto input) {
-        loginAndSignUpService.updateUserInfo(input);
-        return ResponseEntity.ok(new BaseOutputDto("user updated successfully"));
-    }
-
-    @DeleteMapping(path = "/profile/photo")
-    public ResponseEntity<BaseOutputDto> removeUserInfoPhoto() {
-        profileService.removeUserInfoPhoto();
-        return ResponseEntity.ok(new BaseOutputDto("user photo removed successfully"));
-    }
-
-    @PostMapping(path = "/profile/photo")
-    public ResponseEntity<BaseOutputDto> uploadUserInfoPhoto(@RequestParam("photo") MultipartFile file) {
-        profileService.updateUserInfoPhoto(file);
-        return ResponseEntity.ok(new BaseOutputDto("user photo updated successfully"));
-    }
-
-    @GetMapping(path = "/profile/photo")
-    public ResponseEntity<UserImageOutputDto> getUserInfoPhoto() {
-        return ResponseEntity.ok(profileService.getUserInfoImage());
-    }
-
 }

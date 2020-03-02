@@ -5,8 +5,7 @@ import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.repository.*;
-import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
-import ir.beheshti.dandun.base.user.util.QuestionType;
+import ir.beheshti.dandun.base.user.util.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,6 +18,8 @@ import java.util.stream.Collectors;
 @Service
 public class EssentialQuestionService {
 
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
     private final EssentialQuestionRepository essentialQuestionRepository;
     private final GeneralService generalService;
@@ -31,13 +32,16 @@ public class EssentialQuestionService {
     private final UserImageQuestionAnswerRepository userImageQuestionAnswerRepository;
     private final UtilityService utilityService;
 
-    public EssentialQuestionService(UserRepository userRepository,
+    public EssentialQuestionService(PatientRepository patientRepository, DoctorRepository doctorRepository, UserRepository userRepository,
                                     EssentialQuestionRepository essentialQuestionRepository,
                                     GeneralService generalService,
                                     UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository,
                                     UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository,
                                     UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository,
-                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, OperatorService operatorService, UserImageQuestionAnswerRepository userImageQuestionAnswerRepository, UtilityService utilityService) {
+                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, OperatorService operatorService,
+                                    UserImageQuestionAnswerRepository userImageQuestionAnswerRepository, UtilityService utilityService) {
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.essentialQuestionRepository = essentialQuestionRepository;
         this.generalService = generalService;
@@ -238,9 +242,21 @@ public class EssentialQuestionService {
 
     public IsCompleteAnswerOutputDto isUserAnswersComplete() {
         IsCompleteAnswerOutputDto dto = new IsCompleteAnswerOutputDto();
-        dto.setComplete(!getUserAnswersByUser().isEmpty());
-        dto.setPatientStateType(operatorService.getPatientStateByUser().getPatientStateType());
-        return dto;
+        Optional<PatientUserEntity> patientUserEntityOptional = patientRepository.findById(generalService.getCurrentUserId());
+        if (patientUserEntityOptional.isPresent()) {
+            dto.setComplete(!patientUserEntityOptional.get().getPatientStateType().equals(PatientStateType.NOT_ANSWERED));
+            dto.setPatientStateType(patientUserEntityOptional.get().getPatientStateType());
+            return dto;
+        }
+
+        Optional<DoctorUserEntity> doctorUserEntityOptional = doctorRepository.findById(generalService.getCurrentUserId());
+        if (doctorUserEntityOptional.isPresent()) {
+            dto.setComplete(!doctorUserEntityOptional.get().getDoctorStateType().equals(DoctorStateType.NOT_ANSWERED));
+            dto.setDoctorStateType(doctorUserEntityOptional.get().getDoctorStateType());
+            return dto;
+        }
+
+        throw new UserException(ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_CODE, ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_MESSAGE);
     }
 
     @Transactional
@@ -258,6 +274,29 @@ public class EssentialQuestionService {
 
         userSingleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         allAnswerOpenDto.getSingleAnswerInputDtoList().forEach(this::fillSingleAnswer);
+
+        updateUserStateAfterAnsweringQuestions(currentUserId);
+    }
+
+    private void updateUserStateAfterAnsweringQuestions(int currentUserId) {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        if (userEntity.getUserType().equals(UserType.Patient)) {
+            Optional<PatientUserEntity> patientUserEntityOptional = patientRepository.findById(currentUserId);
+            if (patientUserEntityOptional.isEmpty()) {
+                throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
+                        ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+            }
+            patientUserEntityOptional.get().setPatientStateType(PatientStateType.PENDING);
+            patientRepository.save(patientUserEntityOptional.get());
+        } else if (userEntity.getUserType().equals(UserType.Doctor)) {
+            Optional<DoctorUserEntity> doctorUserEntityOptional = doctorRepository.findById(currentUserId);
+            if (doctorUserEntityOptional.isEmpty()) {
+                throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
+                        ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+            }
+            doctorUserEntityOptional.get().setDoctorStateType(DoctorStateType.PENDING);
+            doctorRepository.save(doctorUserEntityOptional.get());
+        }
     }
 
     public ImageIdsOutputDto getUserImageAnswerIds(ImageAnswerInputDto imageAnswerInputDto) {

@@ -2,14 +2,12 @@ package ir.beheshti.dandun.base.user.service;
 
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
+import ir.beheshti.dandun.base.user.dto.user.UserImageInputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserImageOutputDto;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 @Service
@@ -25,14 +23,10 @@ public class ProfileService {
         this.utilityService = utilityService;
     }
 
-    public void updateUserInfoPhoto(MultipartFile file) {
+    public void updateUserInfoPhoto(UserImageInputDto userImageInputDto) {
         UserEntity userEntity = generalService.getCurrentUserEntity();
-        try {
-            userEntity.setProfilePhoto(utilityService.toByteWrapper(file.getBytes()));
-            userRepository.save(userEntity);
-        } catch (IOException e) {
-            throw new UserException(ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_CODE, ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_MESSAGE);
-        }
+        userEntity.setProfilePhoto(utilityService.toByteWrapper(userImageInputDto.getImage().getBytes()));
+        userRepository.save(userEntity);
     }
 
     public void removeUserInfoPhoto() {

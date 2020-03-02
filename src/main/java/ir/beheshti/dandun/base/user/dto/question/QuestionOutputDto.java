@@ -12,6 +12,7 @@ public class QuestionOutputDto {
     private Integer id;
     private String description;
     private QuestionType questionType;
+    private Integer dependAnswerOnId;
     private List<QuestionChoiceAnswerOutputDto> questionChoiceAnswerOutputDtoList;
 
     public static QuestionOutputDto fromEntity(EssentialQuestionEntity entity) {
@@ -19,6 +20,7 @@ public class QuestionOutputDto {
         outputDto.setId(entity.getId());
         outputDto.setDescription(entity.getDescription());
         outputDto.setQuestionType(entity.getQuestionType());
+        outputDto.setDependAnswerOnId(entity.getDependOnAnswerId());
         outputDto.setQuestionChoiceAnswerOutputDtoList(entity
                 .getMultipleChoiceQuestionAnswerEntityList()
                 .stream()

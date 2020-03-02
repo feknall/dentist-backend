@@ -27,7 +27,7 @@ public class EssentialQuestionEntity {
     private QuestionOwnerType questionOwnerType;
 
     @Column
-    private Integer dependOnId;
+    private Integer dependOnAnswerId;
 
     @Column
     private Integer questionOrder;

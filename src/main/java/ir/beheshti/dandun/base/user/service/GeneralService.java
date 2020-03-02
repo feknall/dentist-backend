@@ -1,11 +1,15 @@
 package ir.beheshti.dandun.base.user.service;
 
+import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
+import ir.beheshti.dandun.base.user.entity.DoctorUserEntity;
+import ir.beheshti.dandun.base.user.entity.PatientUserEntity;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
+import ir.beheshti.dandun.base.user.repository.DoctorRepository;
+import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.UserType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -15,9 +19,14 @@ import java.util.Optional;
 @Service
 public class GeneralService {
 
+
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
     private final UserRepository userRepository;
 
-    public GeneralService(UserRepository userRepository) {
+    public GeneralService(DoctorRepository doctorRepository, PatientRepository patientRepository, UserRepository userRepository) {
+        this.doctorRepository = doctorRepository;
+        this.patientRepository = patientRepository;
         this.userRepository = userRepository;
     }
 
@@ -30,11 +39,29 @@ public class GeneralService {
         }
     }
 
+    public PatientUserEntity getCurrentPatient() {
+        int userId = getCurrentUserId();
+        Optional<PatientUserEntity> patientUserEntityOptional = patientRepository.findById(userId);
+        if (patientUserEntityOptional.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
+        return patientUserEntityOptional.get();
+    }
+
+    public DoctorUserEntity getCurrentDoctor() {
+        int userId = getCurrentUserId();
+        Optional<DoctorUserEntity> doctorUserEntityOptional = doctorRepository.findById(userId);
+        if (doctorUserEntityOptional.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
+        return doctorUserEntityOptional.get();
+    }
+
     public UserEntity getCurrentUserEntity() {
         String username = getCurrentUsername();
         Optional<UserEntity> userEntityOptional = userRepository.findByPhoneNumber(username);
         if (userEntityOptional.isEmpty()) {
-            throw new UserException(5000, "user not found");
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
         return userEntityOptional.get();
     }

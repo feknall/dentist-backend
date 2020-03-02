@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.dto.question;
 
+import ir.beheshti.dandun.base.user.util.DoctorStateType;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
 import lombok.Data;
 
@@ -7,4 +8,5 @@ import lombok.Data;
 public class IsCompleteAnswerOutputDto {
     private boolean isComplete;
     private PatientStateType patientStateType;
+    private DoctorStateType doctorStateType;
 }
