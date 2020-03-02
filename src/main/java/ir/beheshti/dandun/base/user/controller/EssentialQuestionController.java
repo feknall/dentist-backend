@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.service.EssentialQuestionService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Essential Questions", description = "Things related about getting and answering questions by patient or doctor")
 @RestController
 @RequestMapping(path = "/api/v1/question")
 public class EssentialQuestionController {
@@ -73,6 +75,12 @@ public class EssentialQuestionController {
     public ResponseEntity<BaseOutputDto> fillAllAnswers(@Valid @RequestBody AllAnswerOpenDto allAnswerOpenDto) {
         essentialQuestionService.fillAllAnswers(allAnswerOpenDto);
         return ResponseEntity.ok(new BaseOutputDto("all answers completed successfully"));
+    }
+
+    @DeleteMapping(path = "/answer")
+    public ResponseEntity<BaseOutputDto> deleteAllAnswers() {
+        essentialQuestionService.deleteAllAnswers();
+        return ResponseEntity.ok(new BaseOutputDto("all answers deleted successfully"));
     }
 
     @GetMapping(path = "/answer/user")

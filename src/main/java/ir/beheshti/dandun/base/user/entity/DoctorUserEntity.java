@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.entity;
 
+import ir.beheshti.dandun.base.user.util.DoctorStateType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +18,6 @@ public class DoctorUserEntity {
     @JoinColumn(name = "DoctorId", referencedColumnName = "UserId")
     private UserEntity userEntity;
 
-    @Column
-    private boolean isActive;
+    @Enumerated(EnumType.STRING)
+    private DoctorStateType doctorStateType;
 }

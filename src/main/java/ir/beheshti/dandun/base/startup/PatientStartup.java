@@ -1,120 +1,31 @@
-package ir.beheshti.dandun.base;
+package ir.beheshti.dandun.base.startup;
 
 import ir.beheshti.dandun.base.user.entity.EssentialQuestionEntity;
 import ir.beheshti.dandun.base.user.entity.MultipleChoiceQuestionAnswerEntity;
-import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;
 import ir.beheshti.dandun.base.user.repository.MultipleChoiceQuestionAnswerRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
-import ir.beheshti.dandun.base.user.util.UserType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
-public class Startup {
+public class PatientStartup implements Insert {
 
-    @Autowired
-    private EssentialQuestionRepository essentialQuestionRepository;
-
-    @Autowired
-    private MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final EssentialQuestionRepository essentialQuestionRepository;
+    private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
+    private final UserRepository userRepository;
 
     @Value("${dandun.questions.insert}")
     private Boolean insertQuestions;
 
-    @EventListener
-    public void appReady(ApplicationReadyEvent event) {
-        if (!insertQuestions)
-            return;
-        insertPublicQuestions();
-        insertDoctorQuestions();
-        insertPatientQuestions();
-    }
-
-    private void insertPublicQuestions() {
-        insertSen();
-        insertJensiat();
-    }
-
-    private void insertDoctorQuestions() {
-        insertZamineFaaliat();
-        insertModateFaaliat();
-        insertAddressMatab();
-        insertTelephone();
-    }
-
-    private void insertModateFaaliat() {
-        EssentialQuestionEntity entity = new EssentialQuestionEntity();
-        entity.setDescription("مدت فعالیت شما:");
-        entity.setQuestionType(QuestionType.Range);
-        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
-        essentialQuestionRepository.save(entity);
-    }
-
-    private void insertAddressMatab() {
-        EssentialQuestionEntity entity = new EssentialQuestionEntity();
-        entity.setDescription("لطفا آدرس مطب خود را وارد کنید:");
-        entity.setQuestionType(QuestionType.Open);
-        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
-        essentialQuestionRepository.save(entity);
-    }
-
-    private void insertTelephone() {
-        EssentialQuestionEntity entity = new EssentialQuestionEntity();
-        entity.setDescription("لطفا تلفن مطب را وارد کنید:");
-        entity.setQuestionType(QuestionType.Open);
-        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
-        essentialQuestionRepository.save(entity);
-    }
-
-    private void insertZamineFaaliat() {
-        EssentialQuestionEntity entity = new EssentialQuestionEntity();
-        entity.setDescription("لطفا زمینه فعالیت خود را مشخص کنید:");
-        entity.setQuestionType(QuestionType.MultipleChoice);
-        entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
-        essentialQuestionRepository.save(entity);
-
-        MultipleChoiceQuestionAnswerEntity ans1 = new MultipleChoiceQuestionAnswerEntity();
-        ans1.setDescription("ترمیم و زیبایی");
-        ans1.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans2 = new MultipleChoiceQuestionAnswerEntity();
-        ans2.setDescription("ارتودنسی");
-        ans2.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans3 = new MultipleChoiceQuestionAnswerEntity();
-        ans3.setDescription("پروتز");
-        ans3.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans4 = new MultipleChoiceQuestionAnswerEntity();
-        ans4.setDescription("عمومی");
-        ans4.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans5 = new MultipleChoiceQuestionAnswerEntity();
-        ans5.setDescription("اطفال");
-        ans5.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans6 = new MultipleChoiceQuestionAnswerEntity();
-        ans6.setDescription("جراحی");
-        ans6.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans7 = new MultipleChoiceQuestionAnswerEntity();
-        ans7.setDescription("ایمپلنت");
-        ans7.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans8 = new MultipleChoiceQuestionAnswerEntity();
-        ans8.setDescription("اندو");
-        ans8.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity ans9 = new MultipleChoiceQuestionAnswerEntity();
-        ans9.setDescription("سایر موارد");
-        ans9.setEssentialQuestionId(entity.getId());
-        multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(ans1, ans2, ans3, ans4,
-                ans5, ans6, ans7, ans8, ans9));
+    public PatientStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, UserRepository userRepository) {
+        this.essentialQuestionRepository = essentialQuestionRepository;
+        this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
+        this.userRepository = userRepository;
     }
 
     private void insertPatientQuestions() {
@@ -124,44 +35,15 @@ public class Startup {
         insertBimari();
         insertDaru();
         insertSigar();
-        insertOperator();
+        insertAks();
     }
 
-    private void insertSen() {
+    private void insertAks() {
         EssentialQuestionEntity entity = new EssentialQuestionEntity();
-        entity.setQuestionOwnerType(QuestionOwnerType.Public);
-        entity.setDescription("سن:");
-        entity.setQuestionType(QuestionType.Range);
+        entity.setQuestionOwnerType(QuestionOwnerType.Patient);
+        entity.setDescription("لطفا تصاویر مرتبط را بارگذاری کنید:");
+        entity.setQuestionType(QuestionType.Image);
         essentialQuestionRepository.save(entity);
-    }
-
-    private void insertJensiat() {
-        EssentialQuestionEntity entity = new EssentialQuestionEntity();
-        entity.setQuestionOwnerType(QuestionOwnerType.Public);
-        entity.setDescription("جنسیت:");
-        entity.setQuestionType(QuestionType.SingleChoice);
-        essentialQuestionRepository.save(entity);
-
-        MultipleChoiceQuestionAnswerEntity answer1 = new MultipleChoiceQuestionAnswerEntity();
-        answer1.setDescription("مرد");
-        answer1.setEssentialQuestionId(entity.getId());
-        MultipleChoiceQuestionAnswerEntity answer2 = new MultipleChoiceQuestionAnswerEntity();
-        answer2.setDescription("زن");
-        answer2.setEssentialQuestionId(entity.getId());
-    }
-
-    private void insertOperator() {
-        List<UserEntity> userEntityList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            UserEntity operator = new UserEntity();
-            operator.setUserType(UserType.Operator);
-            operator.setPhoneNumber("operator" + i);
-            operator.setPassword("operator" + i);
-            operator.setVerified(true);
-            operator.setSignedUp(true);
-            userEntityList.add(operator);
-        }
-        userRepository.saveAll(userEntityList);
     }
 
     private void insertBarrasi() {
@@ -398,5 +280,10 @@ public class Startup {
         sigarNo.setEssentialQuestionId(entity.getId());
 
         multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(sigarYes, sigarNo));
+    }
+
+    @Override
+    public void insert() {
+        insertPatientQuestions();
     }
 }

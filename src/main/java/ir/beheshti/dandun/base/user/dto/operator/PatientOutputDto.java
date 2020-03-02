@@ -16,7 +16,7 @@ public class PatientOutputDto {
         dto.setPatientId(entity.getPatientId());
         dto.setFirstName(entity.getUserEntity().getFirstName());
         dto.setLastName(entity.getUserEntity().getLastName());
-        dto.setPatientStateType(entity.getPatientStateType() != null ? entity.getPatientStateType() : PatientStateType.UNCATEGORIZED);
+        dto.setPatientStateType(entity.getPatientStateType() != null ? entity.getPatientStateType() : PatientStateType.UN_CATEGORIZED);
         return dto;
     }
 }

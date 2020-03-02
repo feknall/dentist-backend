@@ -2,10 +2,7 @@ package ir.beheshti.dandun.base.user.dto.operator;
 
 import ir.beheshti.dandun.base.user.entity.PatientUserEntity;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 public class PatientStateOutputDto {
@@ -15,7 +12,7 @@ public class PatientStateOutputDto {
     public static PatientStateOutputDto fromEntity(PatientUserEntity patientUserEntity) {
         PatientStateOutputDto dto = new PatientStateOutputDto();
         dto.patientId = patientUserEntity.getPatientId();
-        dto.setPatientStateType(patientUserEntity.getPatientStateType() != null ? patientUserEntity.getPatientStateType() : PatientStateType.UNCATEGORIZED);
+        dto.setPatientStateType(patientUserEntity.getPatientStateType() != null ? patientUserEntity.getPatientStateType() : PatientStateType.UN_CATEGORIZED);
         return dto;
     }
 }

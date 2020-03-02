@@ -13,11 +13,17 @@ public abstract class ErrorCodeAndMessage {
     public static final int QUESTION_TYPE_DOESNT_MATCH_CODE = 7003;
     public static final String QUESTION_TYPE_DOESNT_MATCH_MESSAGE = "question with this type not found";
 
+    public static final int USER_NOT_FOUND_CODE = 7004;
+    public static final String USER_NOT_FOUND_MESSAGE = "user not found";
+
     public static final int ANSWER_IMAGE_NOT_FOUND_CODE = 7005;
     public static final String ANSWER_IMAGE_NOT_FOUND_MESSAGE = "image not found";
 
-    public static final int USER_NOT_FOUND_CODE = 7004;
-    public static final String USER_NOT_FOUND_MESSAGE = "user not found";
+    public static final int QUESTION_OWNER_DOESNT_MATCH_CODE = 7006;
+    public static final String QUESTION_OWNER_DOESNT_MATCH_MESSAGE = "question with this owner not found";
+
+    public static final int QUESTION_OWNER_NOT_ALLOWED_CODE = 7007;
+    public static final String QUESTION_OWNER_NOT_ALLOWED_MESSAGE = "owner type not found";
 
     public static final int PHONE_NUMBER_NOT_FOUND_CODE = 1007;
     public static final String PHONE_NUMBER_NOT_FOUND_MESSAGE = "phone number not found";

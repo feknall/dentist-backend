@@ -21,6 +21,8 @@ import ir.beheshti.dandun.base.user.repository.DoctorRepository;
 import ir.beheshti.dandun.base.user.repository.OperatorRepository;
 import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
+import ir.beheshti.dandun.base.user.util.DoctorStateType;
+import ir.beheshti.dandun.base.user.util.PatientStateType;
 import ir.beheshti.dandun.base.user.util.UserType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,12 +95,14 @@ public class LoginAndSignUpService {
 
             PatientUserEntity patientUserEntity = new PatientUserEntity();
             patientUserEntity.setPatientId(userEntityOptional.get().getId());
+            patientUserEntity.setPatientStateType(PatientStateType.UN_CATEGORIZED);
             patientRepository.save(patientUserEntity);
         } else if (signUpInputDto.getUserType().equals(UserType.Doctor)) {
             userEntityOptional.get().setUserType(UserType.Doctor);
 
             DoctorUserEntity doctorUserEntity = new DoctorUserEntity();
             doctorUserEntity.setDoctorId(userEntityOptional.get().getId());
+            doctorUserEntity.setDoctorStateType(DoctorStateType.PENDING);
             doctorRepository.save(doctorUserEntity);
         } else if (signUpInputDto.getUserType().equals(UserType.Operator)) {
             userEntityOptional.get().setUserType(UserType.Operator);

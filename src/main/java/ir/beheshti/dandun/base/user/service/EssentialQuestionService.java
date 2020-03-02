@@ -5,6 +5,7 @@ import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.repository.*;
+import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +52,15 @@ public class EssentialQuestionService {
     }
 
     public List<QuestionOutputDto> getAll() {
-        List<EssentialQuestionEntity> questions = essentialQuestionRepository.findAll();
+        Optional<QuestionOwnerType> ownerType = generalService.getQuestionOwnerTypeFromCurrentUser();
+        if (ownerType.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.QUESTION_OWNER_NOT_ALLOWED_CODE, ErrorCodeAndMessage.QUESTION_OWNER_NOT_ALLOWED_MESSAGE);
+        }
+        return getAllQuestionsByQuestionOwner(ownerType.get());
+    }
+
+    private List<QuestionOutputDto> getAllQuestionsByQuestionOwner(QuestionOwnerType ownerType) {
+        List<EssentialQuestionEntity> questions = essentialQuestionRepository.findAllByQuestionOwnerTypeEqualsOrQuestionOwnerTypeEquals(ownerType, QuestionOwnerType.Public);
         return questions
                 .stream()
                 .map(QuestionOutputDto::fromEntity)
@@ -167,9 +176,16 @@ public class EssentialQuestionService {
         Optional<EssentialQuestionEntity> questionEntityOptional = essentialQuestionRepository.findById(questionId);
         if (questionEntityOptional.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.QUESTION_NOT_FOUND_CODE, ErrorCodeAndMessage.QUESTION_NOT_FOUND_MESSAGE);
-        }
-        if (questionType != null && !questionEntityOptional.get().getQuestionType().equals(questionType)) {
+        } else if (questionType != null && !questionEntityOptional.get().getQuestionType().equals(questionType)) {
             throw new UserException(ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_CODE, ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_MESSAGE);
+        } else {
+            Optional<QuestionOwnerType> ownerType = generalService.getQuestionOwnerTypeFromCurrentUser();
+            if (ownerType.isEmpty()) {
+                throw new UserException(ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_CODE, ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_MESSAGE);
+            }
+            if (!ownerType.get().equals(questionEntityOptional.get().getQuestionOwnerType())) {
+                throw new UserException(ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_CODE, ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_MESSAGE);
+            }
         }
         return questionEntityOptional.get();
     }
@@ -261,5 +277,15 @@ public class EssentialQuestionService {
         ImageAnswerOutputDto outputDto = new ImageAnswerOutputDto();
         outputDto.setImage(Arrays.toString(entity.get().getImage()));
         return outputDto;
+    }
+
+    @Transactional
+    public void deleteAllAnswers() {
+        int currentUserId = generalService.getCurrentUserId();
+        userImageQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        userMultipleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        userRangeQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        userOpenQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        userSingleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
     }
 }
