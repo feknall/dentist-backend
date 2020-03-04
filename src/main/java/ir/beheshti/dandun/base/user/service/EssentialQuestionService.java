@@ -335,4 +335,17 @@ public class EssentialQuestionService {
         userOpenQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         userSingleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
     }
+
+    public void deleteImageById(Integer imageId) {
+        int currentUserId = generalService.getCurrentUserId();
+        Optional<UserImageQuestionAnswerEntity> imageQuestionAnswerEntityOptional = userImageQuestionAnswerRepository.findByIdAndUserId(imageId, currentUserId);
+        if (imageQuestionAnswerEntityOptional.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.ANSWER_IMAGE_NOT_FOUND_CODE, ErrorCodeAndMessage.ANSWER_IMAGE_NOT_FOUND_MESSAGE);
+        }
+        userImageQuestionAnswerRepository.delete(imageQuestionAnswerEntityOptional.get());
+    }
+
+    public void deleteAllImageAnswers() {
+        userImageQuestionAnswerRepository.deleteAll();
+    }
 }

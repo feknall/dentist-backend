@@ -71,6 +71,18 @@ public class EssentialQuestionController {
         return ResponseEntity.ok(essentialQuestionService.getUserImageAnswer(imageId));
     }
 
+    @DeleteMapping(path = "/answer/image/{imageId}")
+    public ResponseEntity<BaseOutputDto> deleteImageById(@PathVariable Integer imageId) {
+        essentialQuestionService.deleteImageById(imageId);
+        return ResponseEntity.ok(new BaseOutputDto("image removed successfully"));
+    }
+
+    @DeleteMapping(path = "/answer/image")
+    public ResponseEntity<BaseOutputDto> deleteAllImageAnswers() {
+        essentialQuestionService.deleteAllImageAnswers();
+        return ResponseEntity.ok(new BaseOutputDto("all images removed successfully"));
+    }
+
     @PostMapping(path = "/answer")
     public ResponseEntity<BaseOutputDto> fillAllAnswers(@Valid @RequestBody AllAnswerOpenDto allAnswerOpenDto) {
         essentialQuestionService.fillAllAnswers(allAnswerOpenDto);
