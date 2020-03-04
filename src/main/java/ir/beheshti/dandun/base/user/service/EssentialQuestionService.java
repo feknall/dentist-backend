@@ -346,6 +346,6 @@ public class EssentialQuestionService {
     }
 
     public void deleteAllImageAnswers() {
-        userImageQuestionAnswerRepository.deleteAll();
+        userImageQuestionAnswerRepository.deleteAllByUserId(generalService.getCurrentUserId());
     }
 }
