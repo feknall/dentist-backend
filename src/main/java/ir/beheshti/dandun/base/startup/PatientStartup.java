@@ -59,12 +59,13 @@ public class PatientStartup implements Insert {
         MultipleChoiceQuestionAnswerEntity noAnswer = new MultipleChoiceQuestionAnswerEntity();
         noAnswer.setDescription("خیر");
         noAnswer.setEssentialQuestionId(entity.getId());
+        multipleChoiceQuestionAnswerRepository.saveAll(Arrays.asList(yesAnswer, noAnswer));
     }
 
     private void insertSalamati() {
         EssentialQuestionEntity salamati = new EssentialQuestionEntity();
         salamati.setDescription("لطفا وضعیت سلامت خود را ارزیابی نمایید:");
-        salamati.setQuestionType(QuestionType.MultipleChoice);
+        salamati.setQuestionType(QuestionType.SingleChoice);
         salamati.setQuestionOwnerType(QuestionOwnerType.Patient);
         essentialQuestionRepository.save(salamati);
 
@@ -81,7 +82,7 @@ public class PatientStartup implements Insert {
 
         EssentialQuestionEntity tahteNazar = new EssentialQuestionEntity();
         tahteNazar.setDescription("آیا تحت نظر پزشک هستید؟");
-        tahteNazar.setQuestionType(QuestionType.MultipleChoice);
+        tahteNazar.setQuestionType(QuestionType.SingleChoice);
         tahteNazar.setQuestionOwnerType(QuestionOwnerType.Patient);
         tahteNazar.setDependOnAnswerId(answer2.getId());
         essentialQuestionRepository.save(tahteNazar);

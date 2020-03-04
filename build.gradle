@@ -46,6 +46,8 @@ dependencies {
     
     implementation 'com.jayway.jsonpath:json-path'
 
+    compile 'com.google.firebase:firebase-admin:6.8.1'
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
