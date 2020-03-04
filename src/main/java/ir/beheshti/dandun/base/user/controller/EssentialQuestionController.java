@@ -62,8 +62,8 @@ public class EssentialQuestionController {
     }
 
     @GetMapping(path = "/answer/image")
-    public ResponseEntity<ImageIdsOutputDto> getUserImageAnswerIds(@Valid @RequestBody ImageAnswerInputDto imageAnswerInputDto) {
-        return ResponseEntity.ok(essentialQuestionService.getUserImageAnswerIds(imageAnswerInputDto));
+    public ResponseEntity<List<ImageAnswerOutputDto>> getUserImageAnswer(@Valid @RequestBody ImageAnswerInputDto imageAnswerInputDto) {
+        return ResponseEntity.ok(essentialQuestionService.getUserImageAnswer(imageAnswerInputDto));
     }
 
     @GetMapping(path = "/answer/image/{imageId}")

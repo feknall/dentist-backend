@@ -10,5 +10,5 @@ public class ImageAnswerInputDto {
     @NotNull
     private Integer questionId;
     @NotNull
-    private String image;
+    private List<String> imageList;
 }

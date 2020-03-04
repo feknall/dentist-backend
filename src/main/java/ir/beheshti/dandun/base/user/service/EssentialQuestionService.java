@@ -148,11 +148,13 @@ public class EssentialQuestionService {
         int currentUserId = generalService.getCurrentUserId();
 
         List<UserImageQuestionAnswerEntity> entityList = new ArrayList<>();
-        UserImageQuestionAnswerEntity userImageQuestionAnswerEntity = new UserImageQuestionAnswerEntity();
-        userImageQuestionAnswerEntity.setUserId(currentUserId);
-        userImageQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
-        userImageQuestionAnswerEntity.setImage(utilityService.toByteWrapper(inputDto.getImage().getBytes()));
-        entityList.add(userImageQuestionAnswerEntity);
+        inputDto.getImageList().forEach(image -> {
+            UserImageQuestionAnswerEntity userImageQuestionAnswerEntity = new UserImageQuestionAnswerEntity();
+            userImageQuestionAnswerEntity.setUserId(currentUserId);
+            userImageQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
+            userImageQuestionAnswerEntity.setImage(utilityService.toByteWrapper(image.getBytes()));
+            entityList.add(userImageQuestionAnswerEntity);
+        });
 
         userImageQuestionAnswerRepository.saveAll(entityList);
     }
@@ -299,12 +301,18 @@ public class EssentialQuestionService {
         }
     }
 
-    public ImageIdsOutputDto getUserImageAnswerIds(ImageAnswerInputDto imageAnswerInputDto) {
+    public List<ImageAnswerOutputDto> getUserImageAnswer(ImageAnswerInputDto imageAnswerInputDto) {
         int currentUserId = generalService.getCurrentUserId();
-        List<Integer> imageIds = userImageQuestionAnswerRepository.findAllByUserIdAndEssentialQuestionId(currentUserId, imageAnswerInputDto.getQuestionId());
-        ImageIdsOutputDto outputDto = new ImageIdsOutputDto();
-        outputDto.setImageIds(imageIds);
-        return outputDto;
+        List<UserImageQuestionAnswerEntity> imageList = userImageQuestionAnswerRepository.findAllByUserIdAndEssentialQuestionId(currentUserId, imageAnswerInputDto.getQuestionId());
+        List<ImageAnswerOutputDto> outputDtoList = new ArrayList<>();
+        imageList.forEach(image -> {
+            ImageAnswerOutputDto outputDto = new ImageAnswerOutputDto();
+            outputDto.setImage(Arrays.toString(image.getImage()));
+            outputDto.setImageId(image.getId());
+            outputDto.setQuestionId(image.getEssentialQuestionId());
+            outputDtoList.add(outputDto);
+        });
+        return outputDtoList;
     }
 
     public ImageAnswerOutputDto getUserImageAnswer(Integer imageId) {

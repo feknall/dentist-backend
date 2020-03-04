@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class ImageIdsOutputDto {
 
-    private List<Integer> imageIds;
+    private List<String> imageList;
 }

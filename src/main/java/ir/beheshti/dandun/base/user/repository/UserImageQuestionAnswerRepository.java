@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface UserImageQuestionAnswerRepository extends JpaRepository<UserImageQuestionAnswerEntity, Integer> {
 
     boolean existsByUserIdAndEssentialQuestionId(int userId, int questionId);
-    List<Integer> findAllByUserIdAndEssentialQuestionId(int userId, int questionId);
+    List<UserImageQuestionAnswerEntity> findAllByUserIdAndEssentialQuestionId(int userId, int questionId);
     Optional<UserImageQuestionAnswerEntity> findByIdAndUserId(int imageId, int userId);
     void deleteAllByUserId(int userId);
 }
