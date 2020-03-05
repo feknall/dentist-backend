@@ -16,7 +16,7 @@ public class UserImageQuestionAnswerEntity {
     private int id;
 
     @Column(name = "Image")
-    private Byte[] image;
+    private String image;
 
     @Column(name = "EssentialQuestionId")
     private int essentialQuestionId;
@@ -25,7 +25,7 @@ public class UserImageQuestionAnswerEntity {
     private int userId;
 
     @ManyToOne
-    @JoinColumn(name = "UserImageQuestionAnswerId", referencedColumnName = "EssentialQuestionId",
+    @JoinColumn(name = "EssentialQuestionId", referencedColumnName = "EssentialQuestionId",
             insertable = false, updatable = false)
     private EssentialQuestionEntity essentialQuestionEntity;
 

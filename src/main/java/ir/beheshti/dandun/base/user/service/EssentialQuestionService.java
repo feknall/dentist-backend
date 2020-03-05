@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -141,7 +140,6 @@ public class EssentialQuestionService {
         userRangeQuestionAnswerRepository.save(userRangeQuestionAnswerEntity);
     }
 
-    @Transactional
     public void fillImageAnswer(ImageAnswerInputDto inputDto) {
         validateQuestionExistence(inputDto.getQuestionId(), QuestionType.Image);
 
@@ -152,7 +150,7 @@ public class EssentialQuestionService {
             UserImageQuestionAnswerEntity userImageQuestionAnswerEntity = new UserImageQuestionAnswerEntity();
             userImageQuestionAnswerEntity.setUserId(currentUserId);
             userImageQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
-            userImageQuestionAnswerEntity.setImage(utilityService.toByteWrapper(image.getBytes()));
+            userImageQuestionAnswerEntity.setImage(image);
             entityList.add(userImageQuestionAnswerEntity);
         });
 
@@ -307,7 +305,7 @@ public class EssentialQuestionService {
         List<ImageAnswerOutputDto> outputDtoList = new ArrayList<>();
         imageList.forEach(image -> {
             ImageAnswerOutputDto outputDto = new ImageAnswerOutputDto();
-            outputDto.setImage(Arrays.toString(image.getImage()));
+            outputDto.setImage(image.getImage());
             outputDto.setImageId(image.getId());
             outputDto.setQuestionId(image.getEssentialQuestionId());
             outputDtoList.add(outputDto);
@@ -322,7 +320,7 @@ public class EssentialQuestionService {
             throw new UserException(ErrorCodeAndMessage.ANSWER_IMAGE_NOT_FOUND_CODE, ErrorCodeAndMessage.ANSWER_IMAGE_NOT_FOUND_MESSAGE);
         }
         ImageAnswerOutputDto outputDto = new ImageAnswerOutputDto();
-        outputDto.setImage(Arrays.toString(entity.get().getImage()));
+        outputDto.setImage(entity.get().getImage());
         return outputDto;
     }
 
@@ -345,6 +343,7 @@ public class EssentialQuestionService {
         userImageQuestionAnswerRepository.delete(imageQuestionAnswerEntityOptional.get());
     }
 
+    @Transactional
     public void deleteAllImageAnswers() {
         userImageQuestionAnswerRepository.deleteAllByUserId(generalService.getCurrentUserId());
     }
