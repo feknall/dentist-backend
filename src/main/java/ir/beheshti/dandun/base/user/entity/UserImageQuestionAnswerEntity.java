@@ -15,7 +15,7 @@ public class UserImageQuestionAnswerEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "Image")
+    @Column(name = "Image", columnDefinition="TEXT")
     private String image;
 
     @Column(name = "EssentialQuestionId")
