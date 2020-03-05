@@ -46,8 +46,8 @@ public class UserEntity implements UserDetails {
     @Column
     private String verificationCode;
 
-    @Column
-    private Byte[] profilePhoto;
+    @Column(columnDefinition = "TEXT")
+    private String profilePhoto;
 
     @Column
     private Timestamp registerTime;
