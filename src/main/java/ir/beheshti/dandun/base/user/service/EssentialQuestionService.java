@@ -187,7 +187,8 @@ public class EssentialQuestionService {
             if (ownerType.isEmpty()) {
                 throw new UserException(ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_CODE, ErrorCodeAndMessage.INTERNAL_SERVER_ERROR_MESSAGE);
             }
-            if (!ownerType.get().equals(questionEntityOptional.get().getQuestionOwnerType())) {
+            if (!questionEntityOptional.get().getQuestionOwnerType().equals(QuestionOwnerType.Public) &&
+                    !ownerType.get().equals(questionEntityOptional.get().getQuestionOwnerType())) {
                 throw new UserException(ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_CODE, ErrorCodeAndMessage.QUESTION_TYPE_DOESNT_MATCH_MESSAGE);
             }
         }
