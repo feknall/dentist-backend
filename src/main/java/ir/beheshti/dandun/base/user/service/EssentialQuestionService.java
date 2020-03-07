@@ -300,9 +300,9 @@ public class EssentialQuestionService {
         }
     }
 
-    public List<ImageAnswerOutputDto> getUserImageAnswer(ImageAnswerInputDto imageAnswerInputDto) {
+    public List<ImageAnswerOutputDto> getUserImageAnswerByQuestionId(int questionId) {
         int currentUserId = generalService.getCurrentUserId();
-        List<UserImageQuestionAnswerEntity> imageList = userImageQuestionAnswerRepository.findAllByUserIdAndEssentialQuestionId(currentUserId, imageAnswerInputDto.getQuestionId());
+        List<UserImageQuestionAnswerEntity> imageList = userImageQuestionAnswerRepository.findAllByUserIdAndEssentialQuestionId(currentUserId, questionId);
         List<ImageAnswerOutputDto> outputDtoList = new ArrayList<>();
         imageList.forEach(image -> {
             ImageAnswerOutputDto outputDto = new ImageAnswerOutputDto();
