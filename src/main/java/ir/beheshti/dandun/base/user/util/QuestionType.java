@@ -2,7 +2,7 @@ package ir.beheshti.dandun.base.user.util;
 
 public enum QuestionType {
     Open("Open"), SingleChoice("SingleChoice"), MultipleChoice("MultipleChoice"),
-    Range("Range"), Image("Image");
+    Range("Range"), Image("Image"), OpenNumber("OpenNumber");
 
     String value;
 

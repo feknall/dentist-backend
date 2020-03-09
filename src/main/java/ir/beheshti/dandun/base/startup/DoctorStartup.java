@@ -40,7 +40,7 @@ public class DoctorStartup implements Insert {
     private void insertTelephone() {
         EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setDescription("لطفا تلفن مطب را وارد کنید:");
-        entity.setQuestionType(QuestionType.Open);
+        entity.setQuestionType(QuestionType.OpenNumber);
         entity.setQuestionOwnerType(QuestionOwnerType.Doctor);
         essentialQuestionRepository.save(entity);
     }
