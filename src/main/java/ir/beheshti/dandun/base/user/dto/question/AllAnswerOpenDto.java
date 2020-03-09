@@ -15,4 +15,6 @@ public class AllAnswerOpenDto {
     private List<RangeAnswerInputDto> rangeAnswerInputDtoList;
     @NotNull
     private List<MultipleChoiceAnswerInputDto> multipleChoiceAnswerInputDtoList;
+    @NotNull
+    private List<OpenNumberAnswerInputDto> openNumberAnswerInputDtoList;
 }

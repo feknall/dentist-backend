@@ -1,9 +1,6 @@
 package ir.beheshti.dandun.base.user.dto.question;
 
-import ir.beheshti.dandun.base.user.entity.UserMultipleChoiceQuestionAnswerEntity;
-import ir.beheshti.dandun.base.user.entity.UserOpenQuestionAnswerEntity;
-import ir.beheshti.dandun.base.user.entity.UserRangeQuestionAnswerEntity;
-import ir.beheshti.dandun.base.user.entity.UserSingleQuestionAnswerEntity;
+import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import lombok.Data;
 
@@ -44,6 +41,15 @@ public class UserQuestionAnswerOutputDto {
         dto.value = entity.getValue();
         return dto;
     }
+
+    public static UserQuestionAnswerOutputDto ofOpenNumber(UserOpenNumberQuestionAnswerEntity entity) {
+        UserQuestionAnswerOutputDto dto = new UserQuestionAnswerOutputDto();
+        dto.questionId = entity.getEssentialQuestionEntity().getId();
+        dto.questionType = QuestionType.OpenNumber;
+        dto.value = entity.getValue();
+        return dto;
+    }
+
 
     public static UserQuestionAnswerOutputDto ofMultipleChoice(List<UserMultipleChoiceQuestionAnswerEntity> entityList) {
         UserQuestionAnswerOutputDto dto = new UserQuestionAnswerOutputDto();

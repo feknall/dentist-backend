@@ -27,9 +27,8 @@ public class EssentialQuestionService {
     private final UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository;
     private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
     private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
-    private final OperatorService operatorService;
     private final UserImageQuestionAnswerRepository userImageQuestionAnswerRepository;
-    private final UtilityService utilityService;
+    private final UserOpenNumberQuestionAnswerRepository userOpenNumberQuestionAnswerRepository;
 
     public EssentialQuestionService(PatientRepository patientRepository, DoctorRepository doctorRepository, UserRepository userRepository,
                                     EssentialQuestionRepository essentialQuestionRepository,
@@ -37,8 +36,8 @@ public class EssentialQuestionService {
                                     UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository,
                                     UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository,
                                     UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository,
-                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, OperatorService operatorService,
-                                    UserImageQuestionAnswerRepository userImageQuestionAnswerRepository, UtilityService utilityService) {
+                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository,
+                                    UserImageQuestionAnswerRepository userImageQuestionAnswerRepository, UserOpenNumberQuestionAnswerRepository userOpenNumberQuestionAnswerRepository) {
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
@@ -49,9 +48,9 @@ public class EssentialQuestionService {
         this.userRangeQuestionAnswerRepository = userRangeQuestionAnswerRepository;
         this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
         this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
-        this.operatorService = operatorService;
+        this.userOpenNumberQuestionAnswerRepository = userOpenNumberQuestionAnswerRepository;
         this.userImageQuestionAnswerRepository = userImageQuestionAnswerRepository;
-        this.utilityService = utilityService;
+
     }
 
     public List<QuestionOutputDto> getAll() {
@@ -140,6 +139,23 @@ public class EssentialQuestionService {
         userRangeQuestionAnswerRepository.save(userRangeQuestionAnswerEntity);
     }
 
+    @Transactional
+    public void fillOpenNumberAnswer(OpenNumberAnswerInputDto inputDto) {
+        validateQuestionExistence(inputDto.getQuestionId(), QuestionType.OpenNumber);
+
+        int currentUserId = generalService.getCurrentUserId();
+        if (userSingleQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
+            throw new UserException(ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_CODE,
+                    ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_MESSAGE);
+        }
+
+        UserOpenNumberQuestionAnswerEntity userOpenNumberQuestionAnswerEntity = new UserOpenNumberQuestionAnswerEntity();
+        userOpenNumberQuestionAnswerEntity.setUserId(currentUserId);
+        userOpenNumberQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
+        userOpenNumberQuestionAnswerEntity.setValue(inputDto.getValue());
+        userOpenNumberQuestionAnswerRepository.save(userOpenNumberQuestionAnswerEntity);
+    }
+
     public void fillImageAnswer(ImageAnswerInputDto inputDto) {
         validateQuestionExistence(inputDto.getQuestionId(), QuestionType.Image);
 
@@ -208,6 +224,7 @@ public class EssentialQuestionService {
         if (userEntity.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
+
         List<UserQuestionAnswerOutputDto> outputDtoList = new ArrayList<>();
 
         // Open Answers
@@ -231,6 +248,11 @@ public class EssentialQuestionService {
                 .stream()
                 .map(UserQuestionAnswerOutputDto::ofRange).forEach(outputDtoList::add);
 
+        userEntity.get()
+                .getUserOpenNumberQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto::ofOpenNumber).forEach(outputDtoList::add);
+
         // Multiple-Choice Answers
         if (!userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().isEmpty()) {
             outputDtoList.add(UserQuestionAnswerOutputDto
@@ -238,6 +260,7 @@ public class EssentialQuestionService {
                             .get()
                             .getUserMultipleChoiceQuestionAnswerEntityList()));
         }
+
         return outputDtoList;
     }
 
@@ -275,6 +298,9 @@ public class EssentialQuestionService {
 
         userSingleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         allAnswerOpenDto.getSingleAnswerInputDtoList().forEach(this::fillSingleAnswer);
+
+        userOpenNumberQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        allAnswerOpenDto.getOpenNumberAnswerInputDtoList().forEach(this::fillOpenNumberAnswer);
 
         updateUserStateAfterAnsweringQuestions(currentUserId);
     }

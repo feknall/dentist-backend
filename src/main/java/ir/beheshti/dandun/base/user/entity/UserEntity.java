@@ -101,6 +101,9 @@ public class UserEntity implements UserDetails {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
     private List<UserRangeQuestionAnswerEntity> userRangeQuestionAnswerEntityList;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<UserOpenNumberQuestionAnswerEntity> userOpenNumberQuestionAnswerEntityList;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
