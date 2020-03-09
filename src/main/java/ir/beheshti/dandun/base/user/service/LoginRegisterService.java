@@ -102,7 +102,7 @@ public class LoginRegisterService {
 
             DoctorUserEntity doctorUserEntity = new DoctorUserEntity();
             doctorUserEntity.setDoctorId(userEntityOptional.get().getId());
-            doctorUserEntity.setDoctorStateType(DoctorStateType.PENDING);
+            doctorUserEntity.setDoctorStateType(DoctorStateType.NOT_ANSWERED);
             doctorRepository.save(doctorUserEntity);
         } else if (signUpInputDto.getUserType().equals(UserType.Operator)) {
             userEntityOptional.get().setUserType(UserType.Operator);
