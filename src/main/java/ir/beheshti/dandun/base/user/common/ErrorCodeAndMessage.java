@@ -37,6 +37,9 @@ public abstract class ErrorCodeAndMessage {
     public static final int USER_DOES_NOT_HAVE_PHOTO_CODE = 7005;
     public static final String USER_DOES_NOT_HAVE_PHOTO_MESSAGE = "user doesn't have photo";
 
+    public static final int INFORMATION_NOT_FOUND_CODE = 7007;
+    public static final String INFORMATION_NOT_FOUND_MESSAGE = "information not found";
+
     public static final int INTERNAL_SERVER_ERROR_CODE = 1000;
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal server error";
 }
