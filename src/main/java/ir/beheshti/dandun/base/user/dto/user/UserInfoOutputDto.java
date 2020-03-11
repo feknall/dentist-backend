@@ -15,7 +15,7 @@ public class UserInfoOutputDto {
     private String lastName;
     private String nationalCode;
     private String phoneNumber;
-    private Timestamp registerTime;
+    private Timestamp registrationTime;
     private String birthPlace;
     private String job;
     private String address;

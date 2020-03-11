@@ -28,6 +28,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Optional;
 
@@ -89,6 +90,7 @@ public class LoginRegisterService {
         userEntityOptional.get().setSignedUp(true);
         userEntityOptional.get().setFirstName(signUpInputDto.getFirstName());
         userEntityOptional.get().setLastName(signUpInputDto.getLastName());
+        userEntityOptional.get().setRegistrationTime(new Timestamp(System.currentTimeMillis()));
 
         if (signUpInputDto.getUserType().equals(UserType.Patient)) {
             userEntityOptional.get().setUserType(UserType.Patient);

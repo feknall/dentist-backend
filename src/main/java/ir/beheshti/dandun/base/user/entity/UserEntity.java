@@ -50,7 +50,7 @@ public class UserEntity implements UserDetails {
     private String profilePhoto;
 
     @Column
-    private Timestamp registerTime;
+    private Timestamp registrationTime;
 
     @Column
     private String birthPlace;

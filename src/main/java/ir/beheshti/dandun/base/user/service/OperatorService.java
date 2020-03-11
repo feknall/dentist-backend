@@ -6,14 +6,19 @@ import ir.beheshti.dandun.base.user.dto.operator.DoctorOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.DoctorStateInputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateInputDto;
+import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto2;
 import ir.beheshti.dandun.base.user.entity.DoctorUserEntity;
 import ir.beheshti.dandun.base.user.entity.PatientUserEntity;
+import ir.beheshti.dandun.base.user.entity.UserEntity;
+import ir.beheshti.dandun.base.user.entity.UserMultipleChoiceQuestionAnswerEntity;
 import ir.beheshti.dandun.base.user.repository.DoctorRepository;
 import ir.beheshti.dandun.base.user.repository.PatientRepository;
+import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.DoctorStateType;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,11 +29,13 @@ public class OperatorService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final GeneralService generalService;
+    private final UserRepository userRepository;
 
-    public OperatorService(DoctorRepository doctorRepository, PatientRepository patientRepository, GeneralService generalService) {
+    public OperatorService(DoctorRepository doctorRepository, PatientRepository patientRepository, GeneralService generalService, UserRepository userRepository) {
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.generalService = generalService;
+        this.userRepository = userRepository;
     }
 
     public void fillPatientState(PatientStateInputDto patientStateInputDto) {
@@ -82,7 +89,7 @@ public class OperatorService {
 
         return patientUserEntityList
                 .stream()
-                .map(PatientOutputDto::fromEntity)
+                .map(PatientOutputDto::fromEntityMinimum)
                 .collect(Collectors.toList());
     }
 
@@ -96,7 +103,7 @@ public class OperatorService {
 
         return doctorUserEntityList
                 .stream()
-                .map(DoctorOutputDto::fromEntity)
+                .map(DoctorOutputDto::fromEntityMinimum)
                 .collect(Collectors.toList());
     }
 
@@ -108,4 +115,58 @@ public class OperatorService {
         doctorUserEntityOptional.get().setDoctorStateType(doctorStateInputDto.getDoctorStateType());
         doctorRepository.save(doctorUserEntityOptional.get());
     }
+
+    public List<UserQuestionAnswerOutputDto2> getUserAnswers(int userId) {
+        Optional<UserEntity> userEntity = userRepository.findById(userId);
+        if (userEntity.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
+
+        List<UserQuestionAnswerOutputDto2> outputDtoList = new ArrayList<>();
+
+        // Open Answers
+        userEntity
+                .get()
+                .getUserOpenQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto2::ofOpenAnswer).forEach(outputDtoList::add);
+
+        // Single-Choice Answers
+        userEntity
+                .get()
+                .getUserSingleQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto2::ofSingle).forEach(outputDtoList::add);
+
+        // Range Answers
+        userEntity
+                .get()
+                .getUserRangeQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto2::ofRange).forEach(outputDtoList::add);
+
+        userEntity.get()
+                .getUserOpenNumberQuestionAnswerEntityList()
+                .stream()
+                .map(UserQuestionAnswerOutputDto2::ofOpenNumber).forEach(outputDtoList::add);
+
+        // Multiple-Choice Answers
+        List<UserMultipleChoiceQuestionAnswerEntity> answersForSameQuestion;
+        for (int i = 0; i < userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().size(); i++) {
+            answersForSameQuestion = new ArrayList<>();
+            for (int j = i; j < userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().size(); j++) {
+                int answer1 = userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(i).getMultipleChoiceQuestionAnswerId();
+                int answer2 = userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(j).getMultipleChoiceQuestionAnswerId();
+                if (answer1 == answer2) {
+                    answersForSameQuestion.add(userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(j));
+                }
+            }
+            outputDtoList
+                    .add(UserQuestionAnswerOutputDto2
+                            .ofMultipleChoice(answersForSameQuestion));
+        }
+
+        return outputDtoList;
+    }
+
 }

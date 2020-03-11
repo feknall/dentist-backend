@@ -3,7 +3,6 @@ package ir.beheshti.dandun.base.user.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.user.dto.information.InformationOutputDto;
 import ir.beheshti.dandun.base.user.service.InformationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +16,11 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/information")
 public class InformationController {
 
-    @Autowired
-    private InformationService informationService;
+    private final InformationService informationService;
+
+    public InformationController(InformationService informationService) {
+        this.informationService = informationService;
+    }
 
     @GetMapping
     public ResponseEntity<List<InformationOutputDto>> getAllInformation() {

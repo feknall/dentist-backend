@@ -50,7 +50,6 @@ public class UserQuestionAnswerOutputDto {
         return dto;
     }
 
-
     public static UserQuestionAnswerOutputDto ofMultipleChoice(List<UserMultipleChoiceQuestionAnswerEntity> entityList) {
         UserQuestionAnswerOutputDto dto = new UserQuestionAnswerOutputDto();
         dto.questionType = QuestionType.MultipleChoice;

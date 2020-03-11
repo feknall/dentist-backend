@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateInputDto;
+import ir.beheshti.dandun.base.user.dto.question.ImageAnswerOutputDto;
 import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto;
+import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto2;
 import ir.beheshti.dandun.base.user.service.EssentialQuestionService;
 import ir.beheshti.dandun.base.user.service.OperatorService;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
@@ -34,8 +36,14 @@ public class OperatorPatientController {
     }
 
     @GetMapping(path = "/{patientId}/answer")
-    public ResponseEntity<List<UserQuestionAnswerOutputDto>> getUserAnswers(@Valid @PathVariable int patientId) {
-        return ResponseEntity.ok(essentialQuestionService.getUserAnswersByOperator(patientId));
+    public ResponseEntity<List<UserQuestionAnswerOutputDto2>> getUserAnswers(@PathVariable int patientId) {
+        return ResponseEntity.ok(operatorService.getUserAnswers(patientId));
+    }
+
+    @GetMapping(path = "/{patientId}/answer/image/question/{questionId}")
+    public ResponseEntity<List<ImageAnswerOutputDto>> getUserImageAnswer(@PathVariable int patientId,
+                                                                         @PathVariable int questionId) {
+        return ResponseEntity.ok(essentialQuestionService.getUserImageAnswerByOperator(patientId, questionId));
     }
 
     @GetMapping(path = "/{patientId}")

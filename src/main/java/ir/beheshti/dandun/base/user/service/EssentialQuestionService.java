@@ -215,10 +215,6 @@ public class EssentialQuestionService {
         return getUserAnswers(generalService.getCurrentUserId());
     }
 
-    public List<UserQuestionAnswerOutputDto> getUserAnswersByOperator(int userId) {
-        return getUserAnswers(userId);
-    }
-
     private List<UserQuestionAnswerOutputDto> getUserAnswers(int userId) {
         Optional<UserEntity> userEntity = userRepository.findById(userId);
         if (userEntity.isEmpty()) {
@@ -326,9 +322,16 @@ public class EssentialQuestionService {
         }
     }
 
-    public List<ImageAnswerOutputDto> getUserImageAnswerByQuestionId(int questionId) {
-        int currentUserId = generalService.getCurrentUserId();
-        List<UserImageQuestionAnswerEntity> imageList = userImageQuestionAnswerRepository.findAllByUserIdAndEssentialQuestionId(currentUserId, questionId);
+    public List<ImageAnswerOutputDto> getUserImageAnswerByUser(int questionId) {
+        return getUserImageAnswerByQuestionId(generalService.getCurrentUserId(), questionId);
+    }
+
+    public List<ImageAnswerOutputDto> getUserImageAnswerByOperator(int userId, int questionId) {
+        return getUserImageAnswerByQuestionId(userId, questionId);
+    }
+
+    private List<ImageAnswerOutputDto> getUserImageAnswerByQuestionId(int userId, int questionId) {
+        List<UserImageQuestionAnswerEntity> imageList = userImageQuestionAnswerRepository.findAllByUserIdAndEssentialQuestionId(userId, questionId);
         List<ImageAnswerOutputDto> outputDtoList = new ArrayList<>();
         imageList.forEach(image -> {
             ImageAnswerOutputDto outputDto = new ImageAnswerOutputDto();
@@ -357,6 +360,7 @@ public class EssentialQuestionService {
         userImageQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         userMultipleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         userRangeQuestionAnswerRepository.deleteAllByUserId(currentUserId);
+        userOpenNumberQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         userOpenQuestionAnswerRepository.deleteAllByUserId(currentUserId);
         userSingleQuestionAnswerRepository.deleteAllByUserId(currentUserId);
     }

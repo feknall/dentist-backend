@@ -63,7 +63,7 @@ public class EssentialQuestionController {
 
     @GetMapping(path = "/answer/image/question/{questionId}")
     public ResponseEntity<List<ImageAnswerOutputDto>> getUserImageAnswer(@PathVariable Integer questionId) {
-        return ResponseEntity.ok(essentialQuestionService.getUserImageAnswerByQuestionId(questionId));
+        return ResponseEntity.ok(essentialQuestionService.getUserImageAnswerByUser(questionId));
     }
 
     @GetMapping(path = "/answer/image/{imageId}")
