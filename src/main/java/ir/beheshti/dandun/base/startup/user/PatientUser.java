@@ -7,10 +7,12 @@ import ir.beheshti.dandun.base.user.util.PatientStateType;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class PatientUser implements Insert {
 
     @Autowired
@@ -69,6 +71,6 @@ public class PatientUser implements Insert {
 
     @Override
     public void insert() {
-
+        insertTestPatient();
     }
 }
