@@ -1,5 +1,6 @@
-package ir.beheshti.dandun.base.startup;
+package ir.beheshti.dandun.base.startup.question;
 
+import ir.beheshti.dandun.base.startup.Insert;
 import ir.beheshti.dandun.base.user.entity.EssentialQuestionEntity;
 import ir.beheshti.dandun.base.user.entity.MultipleChoiceQuestionAnswerEntity;
 import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;

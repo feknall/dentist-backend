@@ -25,6 +25,15 @@ public abstract class ErrorCodeAndMessage {
     public static final int QUESTION_OWNER_NOT_ALLOWED_CODE = 7007;
     public static final String QUESTION_OWNER_NOT_ALLOWED_MESSAGE = "owner type not found";
 
+    public static final int USER_DOES_NOT_HAVE_PHOTO_CODE = 7008;
+    public static final String USER_DOES_NOT_HAVE_PHOTO_MESSAGE = "user doesn't have photo";
+
+    public static final int INFORMATION_NOT_FOUND_CODE = 7009;
+    public static final String INFORMATION_NOT_FOUND_MESSAGE = "information not found";
+
+    public static final int ANSWER_NOT_FOUND_CODE = 7010;
+    public static final String ANSWER_NOT_FOUND_MESSAGE = "answer not found";
+
     public static final int PHONE_NUMBER_NOT_FOUND_CODE = 1007;
     public static final String PHONE_NUMBER_NOT_FOUND_MESSAGE = "phone number not found";
 
@@ -33,12 +42,6 @@ public abstract class ErrorCodeAndMessage {
 
     public static final int PHONE_NUMBER_ALREADY_SINGED_UP_CODE = 1008;
     public static final String PHONE_NUMBER_ALREADY_SINGED_UP_MESSAGE = "phone number already signed up";
-
-    public static final int USER_DOES_NOT_HAVE_PHOTO_CODE = 7005;
-    public static final String USER_DOES_NOT_HAVE_PHOTO_MESSAGE = "user doesn't have photo";
-
-    public static final int INFORMATION_NOT_FOUND_CODE = 7007;
-    public static final String INFORMATION_NOT_FOUND_MESSAGE = "information not found";
 
     public static final int INTERNAL_SERVER_ERROR_CODE = 1000;
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal server error";

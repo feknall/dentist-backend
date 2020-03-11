@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserSingleQuestionAnswerRepository extends JpaRepository<UserSingleQuestionAnswerEntity, Integer> {
 
-    boolean existsByUserIdAndEssentialQuestionId(int userId, int questionId);
+    boolean existsByUserIdAndMultipleChoiceQuestionAnswerId(int userId, int answerId);
 
     void deleteAllByUserId(int userId);
 }

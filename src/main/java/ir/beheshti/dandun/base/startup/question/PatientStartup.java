@@ -1,16 +1,16 @@
-package ir.beheshti.dandun.base.startup;
+package ir.beheshti.dandun.base.startup.question;
 
-import ir.beheshti.dandun.base.user.entity.EssentialQuestionEntity;
-import ir.beheshti.dandun.base.user.entity.MultipleChoiceQuestionAnswerEntity;
-import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;
-import ir.beheshti.dandun.base.user.repository.MultipleChoiceQuestionAnswerRepository;
-import ir.beheshti.dandun.base.user.repository.UserRepository;
+import ir.beheshti.dandun.base.startup.Insert;
+import ir.beheshti.dandun.base.user.entity.*;
+import ir.beheshti.dandun.base.user.repository.*;
+import ir.beheshti.dandun.base.user.util.PatientStateType;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class PatientStartup implements Insert {
@@ -18,14 +18,20 @@ public class PatientStartup implements Insert {
     private final EssentialQuestionRepository essentialQuestionRepository;
     private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
     private final UserRepository userRepository;
+    private final UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
+    private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
+    private final PatientRepository patientRepository;
 
     @Value("${dandun.questions.insert}")
     private Boolean insertQuestions;
 
-    public PatientStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, UserRepository userRepository) {
+    public PatientStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, UserRepository userRepository, UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository, PatientRepository patientRepository) {
         this.essentialQuestionRepository = essentialQuestionRepository;
         this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
         this.userRepository = userRepository;
+        this.userSingleQuestionAnswerRepository = userSingleQuestionAnswerRepository;
+        this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
+        this.patientRepository = patientRepository;
     }
 
     private void insertPatientQuestions() {

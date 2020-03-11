@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface UserRangeQuestionAnswerRepository extends JpaRepository<UserRangeQuestionAnswerEntity, Integer> {
 
     void deleteAllByUserId(int userId);
+
+    boolean existsByUserIdAndEssentialQuestionId(int userId, int questionId);
 }

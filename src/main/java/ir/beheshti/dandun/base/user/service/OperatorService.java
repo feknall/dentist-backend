@@ -129,26 +129,30 @@ public class OperatorService {
                 .get()
                 .getUserOpenQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofOpenAnswer).forEach(outputDtoList::add);
+                .map(UserQuestionAnswerOutputDto2::ofOpenAnswer)
+                .findAny().ifPresent(outputDtoList::add);
 
         // Single-Choice Answers
         userEntity
                 .get()
                 .getUserSingleQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofSingle).forEach(outputDtoList::add);
+                .map(UserQuestionAnswerOutputDto2::ofSingle)
+                .findAny().ifPresent(outputDtoList::add);
 
         // Range Answers
         userEntity
                 .get()
                 .getUserRangeQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofRange).forEach(outputDtoList::add);
+                .map(UserQuestionAnswerOutputDto2::ofRange)
+                .findAny().ifPresent(outputDtoList::add);
 
         userEntity.get()
                 .getUserOpenNumberQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofOpenNumber).forEach(outputDtoList::add);
+                .map(UserQuestionAnswerOutputDto2::ofOpenNumber)
+                .findAny().ifPresent(outputDtoList::add);
 
         // Multiple-Choice Answers
         List<UserMultipleChoiceQuestionAnswerEntity> answersForSameQuestion;

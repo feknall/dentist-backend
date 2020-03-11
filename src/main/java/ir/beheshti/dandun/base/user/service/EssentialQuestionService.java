@@ -109,15 +109,14 @@ public class EssentialQuestionService {
     public void fillSingleAnswer(SingleAnswerInputDto inputDto) {
         validateQuestionExistence(inputDto.getQuestionId(), QuestionType.SingleChoice);
 
-        int currentUserId = generalService.getCurrentUserId();
-        if (userSingleQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
-            throw new UserException(ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_CODE,
-                    ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_MESSAGE);
+        if (!multipleChoiceQuestionAnswerRepository.existsById(inputDto.getAnswerId())) {
+            throw new UserException(ErrorCodeAndMessage.ANSWER_NOT_FOUND_CODE, ErrorCodeAndMessage.ANSWER_IMAGE_NOT_FOUND_MESSAGE);
         }
+
+        int currentUserId = generalService.getCurrentUserId();
 
         UserSingleQuestionAnswerEntity userSingleQuestionAnswerEntity = new UserSingleQuestionAnswerEntity();
         userSingleQuestionAnswerEntity.setUserId(currentUserId);
-        userSingleQuestionAnswerEntity.setEssentialQuestionId(inputDto.getQuestionId());
         userSingleQuestionAnswerEntity.setMultipleChoiceQuestionAnswerId(inputDto.getAnswerId());
         userSingleQuestionAnswerRepository.save(userSingleQuestionAnswerEntity);
     }
@@ -127,7 +126,7 @@ public class EssentialQuestionService {
         validateQuestionExistence(inputDto.getQuestionId(), QuestionType.Range);
 
         int currentUserId = generalService.getCurrentUserId();
-        if (userSingleQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
+        if (userRangeQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
             throw new UserException(ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_CODE,
                     ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_MESSAGE);
         }
@@ -144,7 +143,7 @@ public class EssentialQuestionService {
         validateQuestionExistence(inputDto.getQuestionId(), QuestionType.OpenNumber);
 
         int currentUserId = generalService.getCurrentUserId();
-        if (userSingleQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
+        if (userOpenNumberQuestionAnswerRepository.existsByUserIdAndEssentialQuestionId(currentUserId, inputDto.getQuestionId())) {
             throw new UserException(ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_CODE,
                     ErrorCodeAndMessage.USER_ALREADY_ANSWERED_TO_THIS_QUESTION_MESSAGE);
         }

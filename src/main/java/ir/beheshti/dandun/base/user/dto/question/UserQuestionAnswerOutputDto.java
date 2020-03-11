@@ -28,7 +28,7 @@ public class UserQuestionAnswerOutputDto {
 
     public static UserQuestionAnswerOutputDto ofSingle(UserSingleQuestionAnswerEntity entity) {
         UserQuestionAnswerOutputDto dto = new UserQuestionAnswerOutputDto();
-        dto.questionId = entity.getEssentialQuestionEntity().getId();
+        dto.questionId = entity.getMultipleChoiceQuestionAnswerEntity() != null ? entity.getMultipleChoiceQuestionAnswerEntity().getEssentialQuestionId() : null;
         dto.questionType = QuestionType.SingleChoice;
         dto.multipleChoiceQuestionAnswerId = entity.getMultipleChoiceQuestionAnswerId();
         return dto;

@@ -5,7 +5,6 @@ import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateInputDto;
 import ir.beheshti.dandun.base.user.dto.question.ImageAnswerOutputDto;
-import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto;
 import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto2;
 import ir.beheshti.dandun.base.user.service.EssentialQuestionService;
 import ir.beheshti.dandun.base.user.service.OperatorService;

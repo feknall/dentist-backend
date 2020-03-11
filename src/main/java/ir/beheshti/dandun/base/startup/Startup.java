@@ -1,5 +1,8 @@
 package ir.beheshti.dandun.base.startup;
 
+import ir.beheshti.dandun.base.startup.question.DefaultStartup;
+import ir.beheshti.dandun.base.startup.question.DoctorStartup;
+import ir.beheshti.dandun.base.startup.question.PatientStartup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -20,6 +23,9 @@ public class Startup {
     @Value("${dandun.information.insert}")
     private Boolean insertInformation;
 
+    @Value("${dandun.user.insert}")
+    private Boolean insertUser;
+
     public Startup(DefaultStartup defaultStartup, DoctorStartup doctorStartup,
                    OperatorStartup operatorStartup, PatientStartup patientStartup, InformationStartup informationStartup) {
         this.defaultStartup = defaultStartup;
@@ -33,6 +39,7 @@ public class Startup {
     public void appReady(ApplicationReadyEvent event) {
         if (insertInformation)
             informationStartup.insert();
+        if (insertUser)
         if (!insertQuestions)
             return;
         defaultStartup.insert();

@@ -1,9 +1,9 @@
-package ir.beheshti.dandun.base.startup;
+package ir.beheshti.dandun.base.startup.question;
 
+import ir.beheshti.dandun.base.startup.Insert;
 import ir.beheshti.dandun.base.user.entity.EssentialQuestionEntity;
 import ir.beheshti.dandun.base.user.entity.MultipleChoiceQuestionAnswerEntity;
-import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;
-import ir.beheshti.dandun.base.user.repository.MultipleChoiceQuestionAnswerRepository;
+import ir.beheshti.dandun.base.user.repository.*;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import org.springframework.stereotype.Component;
@@ -15,10 +15,18 @@ public class DoctorStartup implements Insert {
 
     private final EssentialQuestionRepository essentialQuestionRepository;
     private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
+    private final UserRepository userRepository;
+    private final DoctorRepository doctorRepository;
+    private final UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
+    private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
 
-    public DoctorStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository) {
+    public DoctorStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, UserRepository userRepository, DoctorRepository doctorRepository, UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository) {
         this.essentialQuestionRepository = essentialQuestionRepository;
         this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
+        this.userRepository = userRepository;
+        this.doctorRepository = doctorRepository;
+        this.userSingleQuestionAnswerRepository = userSingleQuestionAnswerRepository;
+        this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
     }
 
     private void insertModateFaaliat() {
