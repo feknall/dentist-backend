@@ -4,7 +4,8 @@ import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.util.QuestionType;
 import lombok.Data;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
@@ -14,7 +15,7 @@ public class UserQuestionAnswerOutputDto2 {
     private QuestionType questionType;
     private String open;
     private Integer value;
-    private List<Integer> answerIds;
+    private List<MultipleChoiceAnswerOutputDto2> answers;
 
     public static UserQuestionAnswerOutputDto2 ofOpenAnswer(UserOpenQuestionAnswerEntity entity) {
         UserQuestionAnswerOutputDto2 dto = new UserQuestionAnswerOutputDto2();
@@ -30,7 +31,12 @@ public class UserQuestionAnswerOutputDto2 {
         dto.questionId = entity.getEssentialQuestionEntity().getId();
         dto.questionDescription = entity.getEssentialQuestionEntity().getDescription();
         dto.questionType = QuestionType.SingleChoice;
-        dto.answerIds = Collections.singletonList(entity.getMultipleChoiceQuestionAnswerId());
+
+        MultipleChoiceAnswerOutputDto2 answer = new MultipleChoiceAnswerOutputDto2();
+        answer.setAnswerId(entity.getMultipleChoiceQuestionAnswerId());
+        answer.setDescription(entity.getMultipleChoiceQuestionAnswerEntity().getDescription());
+        dto.answers = Collections.singletonList(answer);
+
         return dto;
     }
 
@@ -59,9 +65,14 @@ public class UserQuestionAnswerOutputDto2 {
             dto.setQuestionId(entityList.get(0).getMultipleChoiceQuestionAnswerEntity().getEssentialQuestionId());
             dto.setQuestionDescription(entityList.get(0).getMultipleChoiceQuestionAnswerEntity().getEssentialQuestionEntity().getDescription());
         }
-        dto.answerIds = entityList
+        dto.answers = entityList
                 .stream()
-                .map(UserMultipleChoiceQuestionAnswerEntity::getId)
+                .map(e -> {
+                    MultipleChoiceAnswerOutputDto2 dto2 = new MultipleChoiceAnswerOutputDto2();
+                    dto2.setAnswerId(e.getMultipleChoiceQuestionAnswerId());
+                    dto2.setDescription(e.getMultipleChoiceQuestionAnswerEntity().getDescription());
+                    return dto2;
+                })
                 .collect(Collectors.toList());
         return dto;
     }
