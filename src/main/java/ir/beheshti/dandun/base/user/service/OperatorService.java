@@ -152,18 +152,22 @@ public class OperatorService {
 
         // Multiple-Choice Answers
         List<UserMultipleChoiceQuestionAnswerEntity> answersForSameQuestion;
-        for (int i = 0; i < userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().size(); i++) {
+        int size = userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().size();
+        List<Integer> visitedQuestions = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
             answersForSameQuestion = new ArrayList<>();
-            for (int j = i; j < userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().size(); j++) {
-                int answer1 = userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(i).getMultipleChoiceQuestionAnswerId();
-                int answer2 = userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(j).getMultipleChoiceQuestionAnswerId();
+            int answer1 = userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(i).getMultipleChoiceQuestionAnswerEntity().getEssentialQuestionId();
+            if (visitedQuestions.contains(answer1))
+                continue;
+            for (int j = i; j < size; j++) {
+                int answer2 = userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(j).getMultipleChoiceQuestionAnswerEntity().getEssentialQuestionId();
                 if (answer1 == answer2) {
                     answersForSameQuestion.add(userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().get(j));
+                    visitedQuestions.add(answer1);
                 }
             }
             outputDtoList
-                    .add(UserQuestionAnswerOutputDto2
-                            .ofMultipleChoice(answersForSameQuestion));
+                    .add(UserQuestionAnswerOutputDto2.ofMultipleChoice(answersForSameQuestion));
         }
 
         return outputDtoList;
