@@ -29,7 +29,7 @@ public class UserQuestionAnswerOutputDto2 {
     public static UserQuestionAnswerOutputDto2 ofSingle(UserSingleQuestionAnswerEntity entity) {
         UserQuestionAnswerOutputDto2 dto = new UserQuestionAnswerOutputDto2();
         dto.questionId = entity.getMultipleChoiceQuestionAnswerEntity() != null ? entity.getMultipleChoiceQuestionAnswerEntity().getEssentialQuestionId() : null;
-        dto.questionDescription = entity.getMultipleChoiceQuestionAnswerEntity() != null ? entity.getMultipleChoiceQuestionAnswerEntity().getDescription() : null;
+        dto.questionDescription = entity.getMultipleChoiceQuestionAnswerEntity() != null ? entity.getMultipleChoiceQuestionAnswerEntity().getEssentialQuestionEntity().getDescription() : null;
         dto.questionType = QuestionType.SingleChoice;
 
         MultipleChoiceAnswerOutputDto2 answer = new MultipleChoiceAnswerOutputDto2();
