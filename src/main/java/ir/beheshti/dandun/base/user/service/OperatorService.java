@@ -125,34 +125,35 @@ public class OperatorService {
         List<UserQuestionAnswerOutputDto2> outputDtoList = new ArrayList<>();
 
         // Open Answers
-        userEntity
+
+        outputDtoList.addAll(userEntity
                 .get()
                 .getUserOpenQuestionAnswerEntityList()
                 .stream()
                 .map(UserQuestionAnswerOutputDto2::ofOpenAnswer)
-                .findAny().ifPresent(outputDtoList::add);
+                .collect(Collectors.toList()));
 
         // Single-Choice Answers
-        userEntity
+        outputDtoList.addAll(userEntity
                 .get()
                 .getUserSingleQuestionAnswerEntityList()
                 .stream()
                 .map(UserQuestionAnswerOutputDto2::ofSingle)
-                .findAny().ifPresent(outputDtoList::add);
+                .collect(Collectors.toList()));
 
         // Range Answers
-        userEntity
+        outputDtoList.addAll(userEntity
                 .get()
                 .getUserRangeQuestionAnswerEntityList()
                 .stream()
                 .map(UserQuestionAnswerOutputDto2::ofRange)
-                .findAny().ifPresent(outputDtoList::add);
+                .collect(Collectors.toList()));
 
-        userEntity.get()
+        outputDtoList.addAll(userEntity.get()
                 .getUserOpenNumberQuestionAnswerEntityList()
                 .stream()
                 .map(UserQuestionAnswerOutputDto2::ofOpenNumber)
-                .findAny().ifPresent(outputDtoList::add);
+                .collect(Collectors.toList()));
 
         // Multiple-Choice Answers
         List<UserMultipleChoiceQuestionAnswerEntity> answersForSameQuestion;
