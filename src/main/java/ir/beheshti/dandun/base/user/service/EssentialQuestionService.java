@@ -6,6 +6,7 @@ import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.repository.*;
 import ir.beheshti.dandun.base.user.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,41 +18,30 @@ import java.util.stream.Collectors;
 @Service
 public class EssentialQuestionService {
 
-    private final PatientRepository patientRepository;
-    private final DoctorRepository doctorRepository;
-    private final UserRepository userRepository;
-    private final EssentialQuestionRepository essentialQuestionRepository;
-    private final GeneralService generalService;
-    private final UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository;
-    private final UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
-    private final UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository;
-    private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
-    private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
-    private final UserImageQuestionAnswerRepository userImageQuestionAnswerRepository;
-    private final UserOpenNumberQuestionAnswerRepository userOpenNumberQuestionAnswerRepository;
-
-    public EssentialQuestionService(PatientRepository patientRepository, DoctorRepository doctorRepository, UserRepository userRepository,
-                                    EssentialQuestionRepository essentialQuestionRepository,
-                                    GeneralService generalService,
-                                    UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository,
-                                    UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository,
-                                    UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository,
-                                    MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository,
-                                    UserImageQuestionAnswerRepository userImageQuestionAnswerRepository, UserOpenNumberQuestionAnswerRepository userOpenNumberQuestionAnswerRepository) {
-        this.patientRepository = patientRepository;
-        this.doctorRepository = doctorRepository;
-        this.userRepository = userRepository;
-        this.essentialQuestionRepository = essentialQuestionRepository;
-        this.generalService = generalService;
-        this.userOpenQuestionAnswerRepository = userOpenQuestionAnswerRepository;
-        this.userSingleQuestionAnswerRepository = userSingleQuestionAnswerRepository;
-        this.userRangeQuestionAnswerRepository = userRangeQuestionAnswerRepository;
-        this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
-        this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
-        this.userOpenNumberQuestionAnswerRepository = userOpenNumberQuestionAnswerRepository;
-        this.userImageQuestionAnswerRepository = userImageQuestionAnswerRepository;
-
-    }
+    @Autowired
+    private PatientRepository patientRepository;
+    @Autowired
+    private DoctorRepository doctorRepository;
+    @Autowired
+    private EssentialQuestionRepository essentialQuestionRepository;
+    @Autowired
+    private GeneralService generalService;
+    @Autowired
+    private UserOpenQuestionAnswerRepository userOpenQuestionAnswerRepository;
+    @Autowired
+    private UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
+    @Autowired
+    private UserRangeQuestionAnswerRepository userRangeQuestionAnswerRepository;
+    @Autowired
+    private UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
+    @Autowired
+    private MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
+    @Autowired
+    private UserImageQuestionAnswerRepository userImageQuestionAnswerRepository;
+    @Autowired
+    private UserOpenNumberQuestionAnswerRepository userOpenNumberQuestionAnswerRepository;
+    @Autowired
+    private OperatorService operatorService;
 
     public List<QuestionOutputDto> getAll() {
         Optional<QuestionOwnerType> ownerType = generalService.getQuestionOwnerTypeFromCurrentUser();
@@ -211,52 +201,7 @@ public class EssentialQuestionService {
     }
 
     public List<UserQuestionAnswerOutputDto> getUserAnswersByUser() {
-        return getUserAnswers(generalService.getCurrentUserId());
-    }
-
-    private List<UserQuestionAnswerOutputDto> getUserAnswers(int userId) {
-        Optional<UserEntity> userEntity = userRepository.findById(userId);
-        if (userEntity.isEmpty()) {
-            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
-        }
-
-        List<UserQuestionAnswerOutputDto> outputDtoList = new ArrayList<>();
-
-        // Open Answers
-        userEntity
-                .get()
-                .getUserOpenQuestionAnswerEntityList()
-                .stream()
-                .map(UserQuestionAnswerOutputDto::ofOpenAnswer).forEach(outputDtoList::add);
-
-        // Single-Choice Answers
-        userEntity
-                .get()
-                .getUserSingleQuestionAnswerEntityList()
-                .stream()
-                .map(UserQuestionAnswerOutputDto::ofSingle).forEach(outputDtoList::add);
-
-        // Range Answers
-        userEntity
-                .get()
-                .getUserRangeQuestionAnswerEntityList()
-                .stream()
-                .map(UserQuestionAnswerOutputDto::ofRange).forEach(outputDtoList::add);
-
-        userEntity.get()
-                .getUserOpenNumberQuestionAnswerEntityList()
-                .stream()
-                .map(UserQuestionAnswerOutputDto::ofOpenNumber).forEach(outputDtoList::add);
-
-        // Multiple-Choice Answers
-        if (!userEntity.get().getUserMultipleChoiceQuestionAnswerEntityList().isEmpty()) {
-            outputDtoList.add(UserQuestionAnswerOutputDto
-                    .ofMultipleChoice(userEntity
-                            .get()
-                            .getUserMultipleChoiceQuestionAnswerEntityList()));
-        }
-
-        return outputDtoList;
+        return operatorService.getUserAnswers(generalService.getCurrentUserId());
     }
 
     public IsCompleteAnswerOutputDto isUserAnswersComplete() {

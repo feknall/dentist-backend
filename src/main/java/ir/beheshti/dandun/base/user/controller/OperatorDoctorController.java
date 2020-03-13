@@ -6,7 +6,7 @@ import ir.beheshti.dandun.base.user.dto.operator.DoctorOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.DoctorStateInputDto;
 import ir.beheshti.dandun.base.user.dto.question.ImageAnswerOutputDto;
 import ir.beheshti.dandun.base.user.dto.question.QuestionOutputDto;
-import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto2;
+import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto;
 import ir.beheshti.dandun.base.user.service.EssentialQuestionService;
 import ir.beheshti.dandun.base.user.service.OperatorService;
 import ir.beheshti.dandun.base.user.util.DoctorStateType;
@@ -36,7 +36,7 @@ public class OperatorDoctorController {
     }
 
     @GetMapping(path = "/{doctorId}/answer")
-    public ResponseEntity<List<UserQuestionAnswerOutputDto2>> getUserAnswers(@Valid @PathVariable int doctorId) {
+    public ResponseEntity<List<UserQuestionAnswerOutputDto>> getUserAnswers(@Valid @PathVariable int doctorId) {
         return ResponseEntity.ok(operatorService.getUserAnswers(doctorId));
     }
 

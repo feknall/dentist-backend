@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.dto.question.*;
 import ir.beheshti.dandun.base.user.service.EssentialQuestionService;
+import ir.beheshti.dandun.base.user.service.OperatorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +17,10 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/question")
 public class EssentialQuestionController {
 
-    private final EssentialQuestionService essentialQuestionService;
-
-    public EssentialQuestionController(EssentialQuestionService essentialQuestionService) {
-        this.essentialQuestionService = essentialQuestionService;
-    }
+    @Autowired
+    private EssentialQuestionService essentialQuestionService;
+    @Autowired
+    private OperatorService operatorService;
 
     @GetMapping
     public ResponseEntity<List<QuestionOutputDto>> getAll() {

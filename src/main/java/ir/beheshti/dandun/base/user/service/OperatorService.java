@@ -6,7 +6,7 @@ import ir.beheshti.dandun.base.user.dto.operator.DoctorOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.DoctorStateInputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateInputDto;
-import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto2;
+import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto;
 import ir.beheshti.dandun.base.user.entity.DoctorUserEntity;
 import ir.beheshti.dandun.base.user.entity.PatientUserEntity;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
@@ -116,13 +116,13 @@ public class OperatorService {
         doctorRepository.save(doctorUserEntityOptional.get());
     }
 
-    public List<UserQuestionAnswerOutputDto2> getUserAnswers(int userId) {
+    public List<UserQuestionAnswerOutputDto> getUserAnswers(int userId) {
         Optional<UserEntity> userEntity = userRepository.findById(userId);
         if (userEntity.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
 
-        List<UserQuestionAnswerOutputDto2> outputDtoList = new ArrayList<>();
+        List<UserQuestionAnswerOutputDto> outputDtoList = new ArrayList<>();
 
         // Open Answers
 
@@ -130,7 +130,7 @@ public class OperatorService {
                 .get()
                 .getUserOpenQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofOpenAnswer)
+                .map(UserQuestionAnswerOutputDto::ofOpenAnswer)
                 .collect(Collectors.toList()));
 
         // Single-Choice Answers
@@ -138,7 +138,7 @@ public class OperatorService {
                 .get()
                 .getUserSingleQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofSingle)
+                .map(UserQuestionAnswerOutputDto::ofSingle)
                 .collect(Collectors.toList()));
 
         // Range Answers
@@ -146,13 +146,13 @@ public class OperatorService {
                 .get()
                 .getUserRangeQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofRange)
+                .map(UserQuestionAnswerOutputDto::ofRange)
                 .collect(Collectors.toList()));
 
         outputDtoList.addAll(userEntity.get()
                 .getUserOpenNumberQuestionAnswerEntityList()
                 .stream()
-                .map(UserQuestionAnswerOutputDto2::ofOpenNumber)
+                .map(UserQuestionAnswerOutputDto::ofOpenNumber)
                 .collect(Collectors.toList()));
 
         // Multiple-Choice Answers
@@ -172,7 +172,7 @@ public class OperatorService {
                 }
             }
             outputDtoList
-                    .add(UserQuestionAnswerOutputDto2.ofMultipleChoice(answersForSameQuestion));
+                    .add(UserQuestionAnswerOutputDto.ofMultipleChoice(answersForSameQuestion));
         }
 
         return outputDtoList;
