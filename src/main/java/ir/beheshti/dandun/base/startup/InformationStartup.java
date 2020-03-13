@@ -16,84 +16,30 @@ public class InformationStartup implements Insert {
     @Override
     public void insert() {
         InformationEntity entity1 = new InformationEntity();
-        entity1.setTitle("title1");
-        entity1.setDescription("description description description description " +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description");
+        entity1.setTitle("ایمپلنت دندانی چیست؟");
+        entity1.setDescription("ایمپلنت دندانی یک پیچ ساده معمولاً از جنس تینانیوم است که برای جایگزینی  دندان های از دست رفته بکار می رود. بدنه ایمپلنت داخل استخوان فک قرار می گیرد تا با ساخت روکشی روی آن دندان از دست رفته جایگزین شود.و روکش دندان را حمایت می کند.");
 
         InformationEntity entity2 = new InformationEntity();
-        entity2.setTitle("title2");
-        entity2.setDescription("description description description description " +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description");
+        entity2.setTitle("استئواینتگریشن چیست؟");
+        entity2.setDescription("پس از قرار گیری ایمپلنت در استخوان فک ، استخوان برروی آن رشد کرده و به ایمپلنت متصل می شود. به فرایند اتصال استخوان به ایمپلنت، استئواینتگریشن می گویند. در صورتی که ارتباط استخوان با ایمپلنت به شکل مستقیم و کامل برقرار نشود، ایمپلنت در داخل استخوان لق می شود و کل درمان با شکست مواجه می گردد.");
 
         InformationEntity entity3 = new InformationEntity();
-        entity3.setTitle("title3");
-        entity3.setDescription("description description description description " +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description");
+        entity3.setTitle("چرا ایمپلنت؟");
+        entity3.setDescription("ایمپلنت های دندانی برای جایگزینی یک یا چند دندان از دست رفته می باشد که بصورت روکش تک دندان و یا چند دندان و یا حتی پایه ای برای دست دندان متحرک (دنچر کامل یا پارسیل) عمل می کند.. هدف از کاربرد ایمپلنت های دندانی پیشگیری از تحلیل پیشرونده فک ، ارتقاء سلامت، جویدن مناسب تر، تکلم بهتر و ارتقاء زیبایی است.");
 
         InformationEntity entity4 = new InformationEntity();
-        entity4.setTitle("title4");
-        entity4.setDescription("description description description description " +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description");
+        entity4.setTitle("چه گزینه های درمانی برای جایگزینی یک دندان از دست رفته وجود دارد؟");
+        entity4.setDescription("گزینه های متعددی برای این منظور در دسترس است:\n" +
+                "الف) 1 – ایمپلنت در فضای بی دندان قرار داده شده، سپس یک روکش روی آن نصب می گردد.\n" +
+                "ب) با توجه به شرایط دندان های مچاور ناحیه بی دندان، می توان آنها را تراش داد و با ساخت یک بریج فصای بی دندانی را پر نمود. طبیعی است که در این حالت ریشه دندان از دست رفته جایگزین نمی شود و روکش ساخته شده بر روی دندان های مجاور فشار می آورد.  \n" +
+                "این بریج به دندان های پایه با استفاده از سمان مخصوص چسبانده می شود. در صورت عدم بهداشت منسب خطر بروز پوسیدگی در دندان های پایه و از دست رفتن آن ها در درازمدت وجود دارد.\n" +
+                "ج) یک تک دندان از دست رفته را می توان با یک پروتز متحرک نیز جایگزین گردد. هرچند به دلیل فشار کنترل نشده ای که پروتز متحرک روی دندان های مجاور و بافت نرم و استخوان زیرین وارد می سازد بسیار مخرب بوده و در عمل تنها به عنوان یک درمان موقتی محسوب می گردد. این روش گاهی برای یک دوره زمانی کوتاه در حین ترمیم استخوان اطراف ایمپلنت پیشنهاد می شود.");
 
         InformationEntity entity5 = new InformationEntity();
-        entity5.setTitle("title1");
-        entity5.setDescription("description description description description " +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description" +
-                "" +
-                "description description description description");
+        entity5.setTitle(" چه گزینه ی درمانی برای جایگزین کردن دو یا چند دندان ازدست رفته مجاور هم وجود دارد؟");
+        entity5.setDescription("الف) دندان های از دست رفته می توانند با ایمپلنت دندانی جایگزین شده روکش های روی آن می تواند بصورت تک دندان و یا بریج باشد.\n" +
+                "ب) با توجه به شرایط دندان های باقی مانده  و توزیع آنها در دهان، می توان با یک بریج دندانهای از دست رفته را جایگزین نمود. که این بریچ برروی دندانهای پایه چسبانده شده و ثابت می شوند.\n" +
+                "ج) یک پروتز متحرک متکی بر استخوان و بافت نرم نیز می تواند جایگزین دندان های از دست رفته شود. بدیهی است این پروتز ثابت نبوده و می تواند آسیب های زیادی  به بافت های اطراف وارد نماید. البته ایمپلنت می تواند پایه ای برای بریج ثابت و یا پروتز متحرک نیز باشد.");
 
         informationRepository.saveAll(Arrays.asList(entity1, entity2, entity3, entity4, entity5));
     }
