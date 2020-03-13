@@ -61,7 +61,7 @@ public class EssentialQuestionService {
         return getAllQuestionsByQuestionOwner(ownerType.get());
     }
 
-    private List<QuestionOutputDto> getAllQuestionsByQuestionOwner(QuestionOwnerType ownerType) {
+    public List<QuestionOutputDto> getAllQuestionsByQuestionOwner(QuestionOwnerType ownerType) {
         List<EssentialQuestionEntity> questions = essentialQuestionRepository.findAllByQuestionOwnerTypeEqualsOrQuestionOwnerTypeEquals(ownerType, QuestionOwnerType.Public);
         return questions
                 .stream()
