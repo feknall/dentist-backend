@@ -79,8 +79,12 @@ public class UserEntity implements UserDetails {
     @Column
     private Timestamp birthDate;
 
+    @Column
+    private String notificationToken;
+
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))

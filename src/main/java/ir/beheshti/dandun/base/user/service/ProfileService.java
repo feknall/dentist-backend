@@ -2,6 +2,7 @@ package ir.beheshti.dandun.base.user.service;
 
 import ir.beheshti.dandun.base.user.dto.user.UserImageInputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserImageOutputDto;
+import ir.beheshti.dandun.base.user.dto.user.UserNotificationInputDto;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,11 @@ public class ProfileService {
         UserImageOutputDto outputDto = new UserImageOutputDto();
         outputDto.setImage(userEntity.getProfilePhoto());
         return outputDto;
+    }
+
+    public void setSetUserNotificationToken(UserNotificationInputDto userNotificationInputDto) {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        userEntity.setNotificationToken(userNotificationInputDto.getNotificationToken());
+        userRepository.save(userEntity);
     }
 }

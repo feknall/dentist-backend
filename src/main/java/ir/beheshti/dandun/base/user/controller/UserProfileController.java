@@ -2,10 +2,7 @@ package ir.beheshti.dandun.base.user.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
-import ir.beheshti.dandun.base.user.dto.user.UserImageInputDto;
-import ir.beheshti.dandun.base.user.dto.user.UserImageOutputDto;
-import ir.beheshti.dandun.base.user.dto.user.UserInfoInputDto;
-import ir.beheshti.dandun.base.user.dto.user.UserInfoOutputDto;
+import ir.beheshti.dandun.base.user.dto.user.*;
 import ir.beheshti.dandun.base.user.service.LoginRegisterService;
 import ir.beheshti.dandun.base.user.service.ProfileService;
 import org.springframework.http.ResponseEntity;
@@ -52,5 +49,11 @@ public class UserProfileController {
     @GetMapping(path = "/photo")
     public ResponseEntity<UserImageOutputDto> getUserInfoImage() {
         return ResponseEntity.ok(profileService.getUserInfoImage());
+    }
+
+    @PostMapping(path = "/notification-token")
+    public ResponseEntity<BaseOutputDto> setUserNotificationToken(@Valid @RequestBody UserNotificationInputDto userNotificationInputDto) {
+        profileService.setSetUserNotificationToken(userNotificationInputDto);
+        return ResponseEntity.ok(new BaseOutputDto("notification token set successfully"));
     }
 }

@@ -47,14 +47,18 @@ dependencies {
     
     compile 'org.springdoc:springdoc-openapi-ui:1.1.44'
     compile 'org.springdoc:springdoc-openapi-core:1.1.44'
-    compile 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'com.jayway.jsonpath:json-path'
-
-    compile 'com.google.firebase:firebase-admin:6.8.1'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
+
+    compile 'org.springframework.boot:spring-boot-starter-log4j2'
+
     compileOnly 'org.projectlombok:lombok'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    compile 'com.google.firebase:firebase-admin:6.8.1'
+
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
