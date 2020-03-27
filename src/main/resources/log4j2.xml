@@ -31,7 +31,8 @@
         </Root>
 
         <!-- LOG "com.baeldung*" at TRACE level -->
-        <Logger name="com.baeldung" level="trace"></Logger>
+        <Logger name="ir.beheshti.dandun" level="trace"></Logger>
+        <Logger name="org.springframework.web.servlet.DispatcherServlet" level="trace"></Logger>
     </Loggers>
 
 </Configuration>
