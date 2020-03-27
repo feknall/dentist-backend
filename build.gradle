@@ -26,9 +26,12 @@ ext {
     set('springBootAdminVersion', "2.2.1")
 }
 
+configurations.all {
+    exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+}
 dependencies {
-//    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 //    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -43,11 +46,11 @@ dependencies {
     
     compile 'org.springdoc:springdoc-openapi-ui:1.1.44'
     compile 'org.springdoc:springdoc-openapi-core:1.1.44'
-    
+    compile 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'com.jayway.jsonpath:json-path'
 
     compile 'com.google.firebase:firebase-admin:6.8.1'
-
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
@@ -56,6 +59,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+
 //    testImplementation 'org.springframework.security:spring-security-test'
 }
 
