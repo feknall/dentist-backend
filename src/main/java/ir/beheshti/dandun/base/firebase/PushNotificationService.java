@@ -5,14 +5,10 @@ import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,7 +26,7 @@ public class PushNotificationService {
     @Autowired
     private UserRepository userRepository;
 
-//    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
+    //    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
     public void sendPushNotificationToTopic(PushNotificationRequest request) {
         try {
             fcmService.sendMessageToTopic(getPayloadData(), request);
