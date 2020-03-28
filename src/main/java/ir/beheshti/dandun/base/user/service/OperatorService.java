@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.service;
 
+import ir.beheshti.dandun.base.firebase.PushNotificationService;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.operator.DoctorOutputDto;
@@ -16,6 +17,7 @@ import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.DoctorStateType;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,17 +28,16 @@ import java.util.stream.Collectors;
 @Service
 public class OperatorService {
 
-    private final DoctorRepository doctorRepository;
-    private final PatientRepository patientRepository;
-    private final GeneralService generalService;
-    private final UserRepository userRepository;
-
-    public OperatorService(DoctorRepository doctorRepository, PatientRepository patientRepository, GeneralService generalService, UserRepository userRepository) {
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.generalService = generalService;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private DoctorRepository doctorRepository;
+    @Autowired
+    private PatientRepository patientRepository;
+    @Autowired
+    private GeneralService generalService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PushNotificationService pushNotificationService;
 
     public void fillPatientState(PatientStateInputDto patientStateInputDto) {
         Optional<PatientUserEntity> patientUserEntityOptional = patientRepository.findById(patientStateInputDto.getPatientId());
@@ -45,6 +46,7 @@ public class OperatorService {
         }
         patientUserEntityOptional.get().setPatientStateType(patientStateInputDto.getPatientStateType());
         patientRepository.save(patientUserEntityOptional.get());
+        pushNotificationService.sendChangePatientStateNotification(patientUserEntityOptional.get().getPatientId());
     }
 
     public PatientOutputDto getPatientStateByUser() {
@@ -114,6 +116,7 @@ public class OperatorService {
         }
         doctorUserEntityOptional.get().setDoctorStateType(doctorStateInputDto.getDoctorStateType());
         doctorRepository.save(doctorUserEntityOptional.get());
+        pushNotificationService.sendChangePatientStateNotification(doctorUserEntityOptional.get().getDoctorId());
     }
 
     public List<UserQuestionAnswerOutputDto> getUserAnswers(int userId) {

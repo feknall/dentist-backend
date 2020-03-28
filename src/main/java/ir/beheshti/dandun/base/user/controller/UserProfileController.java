@@ -1,27 +1,29 @@
 package ir.beheshti.dandun.base.user.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import ir.beheshti.dandun.base.firebase.PushNotificationService;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
+import ir.beheshti.dandun.base.user.dto.notification.NotificationOutputDto;
 import ir.beheshti.dandun.base.user.dto.user.*;
 import ir.beheshti.dandun.base.user.service.LoginRegisterService;
+import ir.beheshti.dandun.base.user.service.NotificationService;
 import ir.beheshti.dandun.base.user.service.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "User requests for profile", description = "managing user profile such as basic information or personal photo and ...")
 @RestController
 @RequestMapping(path = "/api/v1/user/profile")
 public class UserProfileController {
 
-    private final LoginRegisterService loginRegisterService;
-    private final ProfileService profileService;
-
-    public UserProfileController(LoginRegisterService loginRegisterService, ProfileService profileService) {
-        this.loginRegisterService = loginRegisterService;
-        this.profileService = profileService;
-    }
+    @Autowired
+    private LoginRegisterService loginRegisterService;
+    @Autowired
+    private ProfileService profileService;
 
     @GetMapping(path = "/info")
     public ResponseEntity<UserInfoOutputDto> getUserInfo() {
@@ -56,4 +58,10 @@ public class UserProfileController {
         profileService.setSetUserNotificationToken(userNotificationInputDto);
         return ResponseEntity.ok(new BaseOutputDto("notification token set successfully"));
     }
+
+    @GetMapping(path = "/notification")
+    public ResponseEntity<List<NotificationOutputDto>> getUserNotificationList() {
+        return ResponseEntity.ok(profileService.getUserNotificationList());
+    }
+
 }

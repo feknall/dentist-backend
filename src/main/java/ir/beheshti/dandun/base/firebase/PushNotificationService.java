@@ -1,7 +1,13 @@
 package ir.beheshti.dandun.base.firebase;
 
+import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
+import ir.beheshti.dandun.base.user.common.UserException;
+import ir.beheshti.dandun.base.user.entity.UserEntity;
+import ir.beheshti.dandun.base.user.repository.UserRepository;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -9,71 +15,73 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+
+@Log4j2
 @Service
 public class PushNotificationService {
 
     @Value("#{${app.notifications.defaults}}")
     private Map<String, String> defaults;
 
-    private Logger logger = LoggerFactory.getLogger(PushNotificationService.class);
+    @Autowired
     private FCMService fcmService;
+    @Autowired
+    private UserRepository userRepository;
 
-    public PushNotificationService(FCMService fcmService) {
-        this.fcmService = fcmService;
-    }
-
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
-    public void sendSamplePushNotification() {
+//    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
+    public void sendPushNotificationToTopic(PushNotificationRequest request) {
         try {
-            fcmService.sendMessageWithoutData(getSamplePushNotificationRequest());
+            fcmService.sendMessageToTopic(getPayloadData(), request);
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
-
-    public void sendPushNotification(PushNotificationRequest request) {
-        try {
-            fcmService.sendMessage(getSamplePayloadData(), request);
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    public void sendPushNotificationWithoutData(PushNotificationRequest request) {
-        try {
-            fcmService.sendMessageWithoutData(request);
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
 
     public void sendPushNotificationToToken(PushNotificationRequest request) {
         try {
-            fcmService.sendMessageToToken(getSamplePayloadData(), request);
+            fcmService.sendMessageToToken(getPayloadData(), request);
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
+    public void sendChangePatientDoctorNotification(int userId) {
+        Optional<UserEntity> userEntity = userRepository.findById(userId);
+        if (userEntity.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
+                    ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
+        sendPushNotificationToToken(buildChangeDoctorStateNotification(userEntity.get().getNotificationToken()));
+    }
 
-    private Map<String, String> getSamplePayloadData() {
+
+    public void sendChangePatientStateNotification(int userId) {
+        Optional<UserEntity> userEntity = userRepository.findById(userId);
+        if (userEntity.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
+                    ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
+        sendPushNotificationToToken(buildChangePatientStateNotification(userEntity.get().getNotificationToken()));
+    }
+
+    private PushNotificationRequest buildChangePatientStateNotification(String token) {
+        String title = "یه تیتر خیلی خفن برای بیمار";
+        String description = "من توضیحات خفن‌ترین نوتفیکیشن جهانم. برای اطلاعات بیشتر، کلیک کن!";
+        return PushNotificationRequest.toToken(title, description, token);
+    }
+
+    private PushNotificationRequest buildChangeDoctorStateNotification(String token) {
+        String title = "یه تیتر خیلی خفن برای دکتر";
+        String description = "من توضیحات خفن‌ترین نوتفیکیشن جهانم. برای اطلاعات بیشتر، کلیک کن!";
+        return PushNotificationRequest.toToken(title, description, token);
+    }
+
+    private Map<String, String> getPayloadData() {
         Map<String, String> pushData = new HashMap<>();
-//        pushData.put("messageId", defaults.get("payloadMessageId"));
-//        pushData.put("text", defaults.get("payloadData") + " " + LocalDateTime.now());
         pushData.put("title", "new title");
         pushData.put("click_action", "FLUTTER_NOTIFICATION_CLICK");
         return pushData;
     }
-
-
-    private PushNotificationRequest getSamplePushNotificationRequest() {
-        PushNotificationRequest request = new PushNotificationRequest(defaults.get("title"),
-                defaults.get("message"),
-                defaults.get("topic"));
-        return request;
-    }
-
-
 }

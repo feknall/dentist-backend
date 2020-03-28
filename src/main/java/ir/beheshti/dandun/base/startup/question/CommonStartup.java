@@ -7,20 +7,18 @@ import ir.beheshti.dandun.base.user.repository.EssentialQuestionRepository;
 import ir.beheshti.dandun.base.user.repository.MultipleChoiceQuestionAnswerRepository;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 @Component
-public class DefaultStartup implements Insert {
+public class CommonStartup implements Insert {
 
-    private final EssentialQuestionRepository essentialQuestionRepository;
-    private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
-
-    public DefaultStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository) {
-        this.essentialQuestionRepository = essentialQuestionRepository;
-        this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
-    }
+    @Autowired
+    private EssentialQuestionRepository essentialQuestionRepository;
+    @Autowired
+    private MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
 
     private void insertPublicQuestions() {
         insertSen();

@@ -6,6 +6,7 @@ import ir.beheshti.dandun.base.user.repository.*;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,24 +16,13 @@ import java.util.List;
 @Component
 public class PatientStartup implements Insert {
 
-    private final EssentialQuestionRepository essentialQuestionRepository;
-    private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
-    private final UserRepository userRepository;
-    private final UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
-    private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
-    private final PatientRepository patientRepository;
+    @Autowired
+    private EssentialQuestionRepository essentialQuestionRepository;
+    @Autowired
+    private MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
 
     @Value("${dandun.questions.insert}")
     private Boolean insertQuestions;
-
-    public PatientStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, UserRepository userRepository, UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository, PatientRepository patientRepository) {
-        this.essentialQuestionRepository = essentialQuestionRepository;
-        this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
-        this.userRepository = userRepository;
-        this.userSingleQuestionAnswerRepository = userSingleQuestionAnswerRepository;
-        this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
-        this.patientRepository = patientRepository;
-    }
 
     private void insertPatientQuestions() {
         insertSalamati();
@@ -47,7 +37,7 @@ public class PatientStartup implements Insert {
     private void insertAks() {
         EssentialQuestionEntity entity = new EssentialQuestionEntity();
         entity.setQuestionOwnerType(QuestionOwnerType.Patient);
-        entity.setDescription("لطفا تصاویر مرتبط را بارگذاری کنید:");
+        entity.setDescription("آیا تمایل به بارگذاری فتوگرافی یا رادیوگرافی دارید؟");
         entity.setQuestionType(QuestionType.Image);
         essentialQuestionRepository.save(entity);
     }

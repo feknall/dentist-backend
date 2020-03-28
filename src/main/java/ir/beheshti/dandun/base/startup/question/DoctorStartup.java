@@ -6,6 +6,7 @@ import ir.beheshti.dandun.base.user.entity.MultipleChoiceQuestionAnswerEntity;
 import ir.beheshti.dandun.base.user.repository.*;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -13,21 +14,10 @@ import java.util.Arrays;
 @Component
 public class DoctorStartup implements Insert {
 
-    private final EssentialQuestionRepository essentialQuestionRepository;
-    private final MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
-    private final UserRepository userRepository;
-    private final DoctorRepository doctorRepository;
-    private final UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
-    private final UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
-
-    public DoctorStartup(EssentialQuestionRepository essentialQuestionRepository, MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository, UserRepository userRepository, DoctorRepository doctorRepository, UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository, UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository) {
-        this.essentialQuestionRepository = essentialQuestionRepository;
-        this.multipleChoiceQuestionAnswerRepository = multipleChoiceQuestionAnswerRepository;
-        this.userRepository = userRepository;
-        this.doctorRepository = doctorRepository;
-        this.userSingleQuestionAnswerRepository = userSingleQuestionAnswerRepository;
-        this.userMultipleQuestionAnswerRepository = userMultipleQuestionAnswerRepository;
-    }
+    @Autowired
+    private EssentialQuestionRepository essentialQuestionRepository;
+    @Autowired
+    private MultipleChoiceQuestionAnswerRepository multipleChoiceQuestionAnswerRepository;
 
     private void insertModateFaaliat() {
         EssentialQuestionEntity entity = new EssentialQuestionEntity();

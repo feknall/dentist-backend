@@ -27,6 +27,7 @@ public class PatientUser implements Insert {
     private UserSingleQuestionAnswerRepository userSingleQuestionAnswerRepository;
     @Autowired
     private UserMultipleQuestionAnswerRepository userMultipleQuestionAnswerRepository;
+
     private void insertTestPatient() {
         UserEntity userEntity = new UserEntity();
         userEntity.setSignedUp(false);
