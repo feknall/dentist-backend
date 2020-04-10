@@ -2,7 +2,7 @@ package ir.beheshti.dandun.base.user.dto.notification;
 
 import ir.beheshti.dandun.base.user.entity.NotificationEntity;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
+
 
 @Data
 public class NotificationOutputDto {
@@ -12,7 +12,9 @@ public class NotificationOutputDto {
 
     public static NotificationOutputDto fromEntity(NotificationEntity notificationEntity) {
         NotificationOutputDto outputDto = new NotificationOutputDto();
-        BeanUtils.copyProperties(notificationEntity, outputDto);
+        outputDto.setTitle(notificationEntity.getTitle());
+        outputDto.setDescription(notificationEntity.getDescription());
+        outputDto.setImage(notificationEntity.getImage());
         return outputDto;
     }
 }
