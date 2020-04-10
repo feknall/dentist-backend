@@ -27,17 +27,17 @@ public class PushNotificationService {
     private UserRepository userRepository;
 
     //    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
-    public void sendPushNotificationToTopic(PushNotificationRequest request) {
-        try {
-            fcmService.sendMessageToTopic(getPayloadData(), request);
-        } catch (InterruptedException | ExecutionException e) {
-            log.error(e.getMessage());
-        }
-    }
+//    public void sendPushNotificationToTopic(PushNotificationRequest request) {
+//        try {
+//            fcmService.sendMessageToTopic(getPayloadData(), request);
+//        } catch (InterruptedException | ExecutionException e) {
+//            log.error(e.getMessage());
+//        }
+//    }
 
     public void sendPushNotificationToToken(PushNotificationRequest request) {
         try {
-            fcmService.sendMessageToToken(getPayloadData(), request);
+            fcmService.sendMessageToToken(getPayloadData(request.getTitle(), request.getDescription()), request);
         } catch (InterruptedException | ExecutionException e) {
             log.error(e.getMessage());
         }
@@ -74,10 +74,12 @@ public class PushNotificationService {
         return PushNotificationRequest.toToken(title, description, token);
     }
 
-    private Map<String, String> getPayloadData() {
+    private Map<String, String> getPayloadData(String title, String description) {
         Map<String, String> pushData = new HashMap<>();
         pushData.put("title", "new title");
         pushData.put("click_action", "FLUTTER_NOTIFICATION_CLICK");
+        pushData.put("notification_title", title);
+        pushData.put("notification_description", description);
         return pushData;
     }
 }
