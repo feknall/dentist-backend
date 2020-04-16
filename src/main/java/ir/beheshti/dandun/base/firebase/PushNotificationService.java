@@ -1,5 +1,8 @@
 package ir.beheshti.dandun.base.firebase;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ir.beheshti.dandun.base.socket.ChatMessage;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
@@ -35,21 +38,24 @@ public class PushNotificationService {
 //        }
 //    }
 
-    public void sendPushNotificationToToken(PushNotificationRequest request) {
-        try {
-            fcmService.sendMessageToToken(getPayloadData(request.getTitle(), request.getDescription()), request);
-        } catch (InterruptedException | ExecutionException e) {
-            log.error(e.getMessage());
-        }
+    public void doChat(ChatMessage chatMessage, String token) throws JsonProcessingException {
+        String data = new ObjectMapper().writeValueAsString(chatMessage);
+        PushNotificationRequest request = PushNotificationRequest.sendChatToToken(data, token);
     }
 
-    public void sendChangePatientDoctorNotification(int userId) {
+    public void sendQuestionToAllDoctors(ChatMessage chatMessage) throws JsonProcessingException {
+        String data = new ObjectMapper().writeValueAsString(chatMessage);
+        PushNotificationRequest request = PushNotificationRequest.sendChatToTopic(data, TopicType.DOCTOR.getValue());
+        fcmService.sendPushNotification(request);
+    }
+
+    public void sendChangeDoctorStateNotification(int userId) {
         Optional<UserEntity> userEntity = userRepository.findById(userId);
         if (userEntity.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
                     ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
-        sendPushNotificationToToken(buildChangeDoctorStateNotification(userEntity.get().getNotificationToken()));
+        fcmService.sendPushNotification(buildChangeDoctorStateNotification(userEntity.get().getNotificationToken()));
     }
 
 
@@ -59,27 +65,20 @@ public class PushNotificationService {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
                     ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
-        sendPushNotificationToToken(buildChangePatientStateNotification(userEntity.get().getNotificationToken()));
+        fcmService.sendPushNotification(buildChangePatientStateNotification(userEntity.get().getNotificationToken()));
     }
 
     private PushNotificationRequest buildChangePatientStateNotification(String token) {
-        String title = "یه تیتر خیلی خفن برای بیمار";
-        String description = "من توضیحات خفن‌ترین نوتفیکیشن جهانم. برای اطلاعات بیشتر، کلیک کن!";
-        return PushNotificationRequest.toToken(title, description, token);
+        String title = "تغییر وضعیت حساب‌کاربری";
+        String description = "بیمار گرامی، وضعیت حساب‌کاربری شما تغییر کرد.";
+        return PushNotificationRequest.sendNotificationToToken(title, description, token);
     }
 
     private PushNotificationRequest buildChangeDoctorStateNotification(String token) {
-        String title = "یه تیتر خیلی خفن برای دکتر";
-        String description = "من توضیحات خفن‌ترین نوتفیکیشن جهانم. برای اطلاعات بیشتر، کلیک کن!";
-        return PushNotificationRequest.toToken(title, description, token);
+        String title = "تغییر وضعیت حساب‌کاربری";
+        String description = "دندانپزشک گرامی، وضعیت حساب‌کاربری شما تغییر کرد.";
+        return PushNotificationRequest.sendNotificationToToken(title, description, token);
     }
 
-    private Map<String, String> getPayloadData(String title, String description) {
-        Map<String, String> pushData = new HashMap<>();
-        pushData.put("title", "new title");
-        pushData.put("click_action", "FLUTTER_NOTIFICATION_CLICK");
-        pushData.put("notification_title", title);
-        pushData.put("notification_description", description);
-        return pushData;
-    }
+
 }

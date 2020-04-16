@@ -116,7 +116,7 @@ public class OperatorService {
         }
         doctorUserEntityOptional.get().setDoctorStateType(doctorStateInputDto.getDoctorStateType());
         doctorRepository.save(doctorUserEntityOptional.get());
-        pushNotificationService.sendChangePatientStateNotification(doctorUserEntityOptional.get().getDoctorId());
+        pushNotificationService.sendChangeDoctorStateNotification(doctorUserEntityOptional.get().getDoctorId());
     }
 
     public List<UserQuestionAnswerOutputDto> getUserAnswers(int userId) {

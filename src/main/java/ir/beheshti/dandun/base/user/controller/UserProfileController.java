@@ -2,8 +2,10 @@ package ir.beheshti.dandun.base.user.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.firebase.PushNotificationService;
+import ir.beheshti.dandun.base.socket.ChatService;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.dto.notification.NotificationOutputDto;
+import ir.beheshti.dandun.base.user.dto.socket.MessageOutputDto;
 import ir.beheshti.dandun.base.user.dto.user.*;
 import ir.beheshti.dandun.base.user.service.LoginRegisterService;
 import ir.beheshti.dandun.base.user.service.NotificationService;
@@ -24,6 +26,8 @@ public class UserProfileController {
     private LoginRegisterService loginRegisterService;
     @Autowired
     private ProfileService profileService;
+    @Autowired
+    private ChatService chatService;
 
     @GetMapping(path = "/info")
     public ResponseEntity<UserInfoOutputDto> getUserInfo() {
@@ -62,6 +66,11 @@ public class UserProfileController {
     @GetMapping(path = "/notification")
     public ResponseEntity<List<NotificationOutputDto>> getUserNotificationList() {
         return ResponseEntity.ok(profileService.getUserNotificationList());
+    }
+
+    @GetMapping(path = "/chat-message/{userId}")
+    public ResponseEntity<List<MessageOutputDto>> getUserMessageList(@PathVariable(required = false) Integer userId) {
+        return ResponseEntity.ok(chatService.getUserMessageList(userId));
     }
 
 }

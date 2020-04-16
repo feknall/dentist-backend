@@ -70,6 +70,21 @@ public class GeneralService {
         return getCurrentUserEntity().getId();
     }
 
+    public UserEntity getUserEntityById(int userId) {
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
+        return userEntityOptional.get();
+    }
+
+    public void checkUserExistence(int userId) {
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
+        }
+    }
+
     public Optional<QuestionOwnerType> getQuestionOwnerTypeFromCurrentUser() {
         UserEntity entity = getCurrentUserEntity();
         if (entity.getUserType().equals(UserType.Doctor)) {

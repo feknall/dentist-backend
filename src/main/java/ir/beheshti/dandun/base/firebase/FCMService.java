@@ -1,11 +1,11 @@
 package ir.beheshti.dandun.base.firebase;
 
-import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -13,18 +13,26 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class FCMService {
 
-    public void sendMessageToTopic(Map<String, String> data, PushNotificationRequest request)
-            throws InterruptedException, ExecutionException {
-        Message message = getPreconfiguredMessageToTopicWithData(data, request);
-        String response = sendAndGetResponse(message);
-        log.info("Sent message to token. Device token: " + request.getToken() + ", " + response);
+    public void sendPushNotification(PushNotificationRequest request) {
+        try {
+            sendMessage(getPayloadData(request.getTitle(), request.getDescription()), request);
+        } catch (InterruptedException | ExecutionException e) {
+            log.error(e.getMessage());
+        }
     }
 
-    public void sendMessageToToken(Map<String, String> data, PushNotificationRequest request)
+    private void sendMessage(Map<String, String> data, PushNotificationRequest request)
             throws InterruptedException, ExecutionException {
-        Message message = getPreconfiguredMessageToTokenWithData(data, request);
+        Message message;
+        if (request.getTopic() != null) {
+            message = getPreconfiguredMessageToTopicWithData(data, request);
+            log.info("Sent message to topic. topic: {}", request.getTopic());
+        } else {
+            message = getPreconfiguredMessageToTokenWithData(data, request);
+            log.info("Sent message to token. token: {}", request.getToken());
+        }
         String response = sendAndGetResponse(message);
-        log.info("Sent message to token. Device token: " + request.getToken() + ", " + response);
+        log.info("Sent message. response: {}", response);
     }
 
     private String sendAndGetResponse(Message message) throws InterruptedException, ExecutionException {
@@ -66,5 +74,13 @@ public class FCMService {
                         new Notification(request.getTitle(), request.getDescription()));
     }
 
+    private Map<String, String> getPayloadData(String title, String description) {
+        Map<String, String> pushData = new HashMap<>();
+        pushData.put("title", "new title");
+        pushData.put("click_action", "FLUTTER_NOTIFICATION_CLICK");
+        pushData.put("notification_title", title);
+        pushData.put("notification_description", description);
+        return pushData;
+    }
 
 }

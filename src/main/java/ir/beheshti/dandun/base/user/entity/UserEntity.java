@@ -108,6 +108,12 @@ public class UserEntity implements UserDetails {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
     private List<UserOpenNumberQuestionAnswerEntity> userOpenNumberQuestionAnswerEntityList;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "fromUserEntity")
+    private List<MessageEntity> sentMessageEntityList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "toUserEntity")
+    private List<MessageEntity> receivedMessageEntityList;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

@@ -1,10 +1,10 @@
 package ir.beheshti.dandun.base.firebase;
 
-public enum UserTopic {
-    PATIENT("Patient"), GREEN("Green"), YELLOW("Yellow"), RED("Red");
+public enum TopicType {
+    PATIENT("Patient"), GREEN("Green"), YELLOW("Yellow"), RED("Red"), DOCTOR("Doctor");
 
     private String value;
-    UserTopic(String value) {
+    TopicType(String value) {
         this.value = value;
     }
 
