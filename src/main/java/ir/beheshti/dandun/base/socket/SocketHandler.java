@@ -11,7 +11,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 
 @Log4j2
-@Component
 public class SocketHandler extends TextWebSocketHandler {
 
     @Autowired
