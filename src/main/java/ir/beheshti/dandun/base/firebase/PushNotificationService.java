@@ -38,9 +38,9 @@ public class PushNotificationService {
 //        }
 //    }
 
-    public void doChat(ChatMessage chatMessage, String token) throws JsonProcessingException {
-        String data = new ObjectMapper().writeValueAsString(chatMessage);
+    public void doChat(String data, String token) throws JsonProcessingException {
         PushNotificationRequest request = PushNotificationRequest.sendChatToToken(data, token);
+        fcmService.sendPushNotification(request);
     }
 
     public void sendQuestionToAllDoctors(ChatMessage chatMessage) throws JsonProcessingException {

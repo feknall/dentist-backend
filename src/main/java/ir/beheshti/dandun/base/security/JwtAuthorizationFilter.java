@@ -3,6 +3,7 @@ package ir.beheshti.dandun.base.security;
 import io.jsonwebtoken.Jwts;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
+import ir.beheshti.dandun.base.user.service.GeneralService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,10 +20,12 @@ import java.util.Optional;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UserRepository userRepository;
+    private GeneralService generalService;
 
-    JwtAuthorizationFilter(AuthenticationManager authManager, UserRepository userRepository) {
+    JwtAuthorizationFilter(AuthenticationManager authManager, UserRepository userRepository, GeneralService generalService) {
         super(authManager);
         this.userRepository = userRepository;
+        this.generalService = generalService;
     }
 
     @Override
@@ -38,26 +41,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
-
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(SecurityConstants.HEADER_STRING);
         if (token != null) {
-            // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SecurityConstants.SECRET)
-                    .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
-
-            if (user == null)
-                return null;
-
-            Optional<UserEntity> userEntity = userRepository.findByPhoneNumber(user);
-            return userEntity.map(entity -> new UsernamePasswordAuthenticationToken(user, null, entity.getAuthorities())).orElse(null);
+            Optional<UserEntity> userEntity = generalService.parseToken(token);
+            return userEntity
+                    .map(entity -> new UsernamePasswordAuthenticationToken(userEntity.get().getPhoneNumber(), null, entity.getAuthorities())).orElse(null);
         }
-
         return null;
     }
 }

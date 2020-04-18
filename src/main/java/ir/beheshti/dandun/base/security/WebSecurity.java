@@ -1,6 +1,7 @@
 package ir.beheshti.dandun.base.security;
 
 import ir.beheshti.dandun.base.user.repository.UserRepository;
+import ir.beheshti.dandun.base.user.service.GeneralService;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,10 +16,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private UserDetailsServiceImpl userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     private UserRepository userRepository;
+    private GeneralService generalService;
 
-    public WebSecurity(UserDetailsServiceImpl userDetailsService, UserRepository userRepository) {
+    public WebSecurity(UserDetailsServiceImpl userDetailsService, UserRepository userRepository, GeneralService generalService) {
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
+        this.generalService = generalService;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository, generalService))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

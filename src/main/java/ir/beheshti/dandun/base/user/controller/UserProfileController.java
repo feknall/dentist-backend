@@ -1,14 +1,13 @@
 package ir.beheshti.dandun.base.user.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import ir.beheshti.dandun.base.firebase.PushNotificationService;
+import ir.beheshti.dandun.base.socket.ChatOutputDto;
 import ir.beheshti.dandun.base.socket.ChatService;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.dto.notification.NotificationOutputDto;
 import ir.beheshti.dandun.base.user.dto.socket.MessageOutputDto;
 import ir.beheshti.dandun.base.user.dto.user.*;
 import ir.beheshti.dandun.base.user.service.LoginRegisterService;
-import ir.beheshti.dandun.base.user.service.NotificationService;
 import ir.beheshti.dandun.base.user.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -68,9 +67,18 @@ public class UserProfileController {
         return ResponseEntity.ok(profileService.getUserNotificationList());
     }
 
-    @GetMapping(path = "/chat-message/{userId}")
-    public ResponseEntity<List<MessageOutputDto>> getUserMessageList(@PathVariable(required = false) Integer userId) {
-        return ResponseEntity.ok(chatService.getUserMessageList(userId));
+    @GetMapping(path = "/chat/{chatId}")
+    public ResponseEntity<List<MessageOutputDto>> getUserMessageList(@PathVariable int chatId) {
+        return ResponseEntity.ok(chatService.getChatMessages(chatId));
     }
 
+    @GetMapping(path = "/chat/patient")
+    public ResponseEntity<List<ChatOutputDto>> getChatPatient() {
+        return ResponseEntity.ok(chatService.getPatientChat());
+    }
+
+    @GetMapping(path = "/chat/doctor")
+    public ResponseEntity<List<ChatOutputDto>> getChatDoctor() {
+        return ResponseEntity.ok(chatService.getDoctorChat());
+    }
 }

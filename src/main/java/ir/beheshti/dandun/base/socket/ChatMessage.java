@@ -8,13 +8,6 @@ public class ChatMessage {
     private long timestamp;
     private String message;
     private ChatMessageType chatMessageType;
-    private Integer fromUserId;
+    private String token;
     private Integer toUserId;
-
-    public MessageEntity toEntity() {
-        MessageEntity messageEntity = new MessageEntity();
-        messageEntity.setTimestamp(this.getTimestamp());
-        messageEntity.setChatMessageType(this.getChatMessageType());
-        return messageEntity;
-    }
 }

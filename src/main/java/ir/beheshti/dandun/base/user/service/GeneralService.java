@@ -1,5 +1,7 @@
 package ir.beheshti.dandun.base.user.service;
 
+import io.jsonwebtoken.Jwts;
+import ir.beheshti.dandun.base.security.SecurityConstants;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.entity.DoctorUserEntity;
@@ -93,5 +95,16 @@ public class GeneralService {
             return Optional.of(QuestionOwnerType.Patient);
         } else
             return Optional.empty();
+    }
+
+    public Optional<UserEntity> parseToken(String token) {
+        String user = Jwts.parser()
+                .setSigningKey(SecurityConstants.SECRET)
+                .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
+                .getBody()
+                .getSubject();
+        if (user == null)
+            return Optional.empty();
+        return userRepository.findByPhoneNumber(user);
     }
 }

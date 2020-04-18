@@ -1,7 +1,7 @@
 package ir.beheshti.dandun.base.socket;
 
 public enum ChatMessageType {
-    TEXT("test"), IMAGE("image");
+    TEXT("text"), IMAGE("image");
 
     String value;
     ChatMessageType(String value) {
