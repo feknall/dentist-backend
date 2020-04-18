@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "DoctorUser")
 public class DoctorUserEntity {
-
     @Id
     @Column(name = "DoctorId")
     private int doctorId;

@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "PatientUser")
 public class PatientUserEntity {
-
     @Id
     @Column(name = "PatientId")
     private int patientId;

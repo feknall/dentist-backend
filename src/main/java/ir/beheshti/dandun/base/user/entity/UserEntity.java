@@ -16,7 +16,6 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "UserTable")
 public class UserEntity implements UserDetails {
-
     @Id
     @Column(name = "UserId")
     @GeneratedValue(strategy = GenerationType.AUTO)

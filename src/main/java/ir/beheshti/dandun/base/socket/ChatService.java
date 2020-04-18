@@ -96,13 +96,8 @@ public class ChatService {
         });
         return outputList
                 .stream()
-                .map(e -> {
-                    ChatOutputDto dto = new ChatOutputDto();
-                    dto.setDoctorId(e.getDoctorId());
-                    dto.setPatientId(e.getPatientId());
-                    dto.setMessageId(e.getMessageId());
-                    return dto;
-                }).collect(Collectors.toList());
+                .map(ChatOutputDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public List<ChatOutputDto> getDoctorChat() {
@@ -110,12 +105,6 @@ public class ChatService {
                 chatRepository.findAllByDoctorId(generalService.getCurrentUserId());
         return chatEntityList
                 .stream()
-                .map(e -> {
-                    ChatOutputDto dto = new ChatOutputDto();
-                    dto.setDoctorId(e.getDoctorId());
-                    dto.setPatientId(e.getPatientId());
-                    dto.setMessageId(e.getMessageId());
-                    return dto;
-                }).collect(Collectors.toList());
+                .map(ChatOutputDto::fromEntity).collect(Collectors.toList());
     }
 }
