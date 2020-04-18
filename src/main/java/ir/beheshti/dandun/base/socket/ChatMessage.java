@@ -14,8 +14,6 @@ public class ChatMessage {
     public MessageEntity toEntity() {
         MessageEntity messageEntity = new MessageEntity();
         messageEntity.setTimestamp(this.getTimestamp());
-        messageEntity.setFromUserId(this.getFromUserId());
-        messageEntity.setToUserId(this.getToUserId());
         messageEntity.setChatMessageType(this.getChatMessageType());
         return messageEntity;
     }
