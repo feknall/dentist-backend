@@ -3,6 +3,7 @@ package ir.beheshti.dandun.base.socket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.beheshti.dandun.base.firebase.PushNotificationService;
+import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.socket.MessageOutputDto;
 import ir.beheshti.dandun.base.user.entity.ChatEntity;
 import ir.beheshti.dandun.base.user.entity.MessageEntity;
@@ -42,10 +43,14 @@ public class ChatService {
             sentTo = doctorRepository
                     .findAllByDoctorStateType(DoctorStateType.ACTIVE)
                     .stream()
+                    .filter(e -> e.getUserEntity().getNotificationToken() != null)
                     .map(e -> Pair.of(e.getDoctorId(), e.getUserEntity().getNotificationToken()))
                     .collect(Collectors.toList());
         } else {
             UserEntity userEntity = generalService.getUserEntityById(chatMessage.getToUserId());
+            if (userEntity.getNotificationToken() == null) {
+                throw new UserException(10000, "user doesn't have token.");
+            }
             sentTo = Collections.singletonList(Pair.of(userEntity.getId(), userEntity.getNotificationToken()));
         }
         sentTo.forEach(e -> {
