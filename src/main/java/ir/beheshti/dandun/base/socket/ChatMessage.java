@@ -1,6 +1,5 @@
 package ir.beheshti.dandun.base.socket;
 
-import ir.beheshti.dandun.base.user.entity.MessageEntity;
 import lombok.Data;
 
 @Data

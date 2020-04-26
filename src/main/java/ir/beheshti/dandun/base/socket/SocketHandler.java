@@ -1,7 +1,6 @@
 package ir.beheshti.dandun.base.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.beheshti.dandun.base.user.common.UserException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -24,17 +23,17 @@ public class SocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         log.debug("attribute: {}", session.getAttributes());
         log.debug("principal: {}", session.getPrincipal());
-        String payload = message.getPayload();
-        ChatMessage chatMessage = new ObjectMapper().readValue(payload, ChatMessage.class);
-
         SocketResponseDto response = new SocketResponseDto();
         response.setMessage("OK");
         try {
+            String payload = message.getPayload();
+            ChatMessage chatMessage = new ObjectMapper().readValue(payload, ChatMessage.class);
+            response.setTimestamp(chatMessage.getTimestamp());
             chatService.sendChatMessage(chatMessage);
-        } catch (UserException e) {
+        } catch (Exception e) {
             response.setMessage(e.getMessage());
         }
-        response.setTimestamp(chatMessage.getTimestamp());
+
         session.sendMessage(new TextMessage(response.toString()));
     }
 
