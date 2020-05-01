@@ -1,11 +1,7 @@
-package ir.beheshti.dandun.base.user.service;
+package ir.beheshti.dandun.base.information;
 
-import ir.beheshti.dandun.base.information.InformationInputDto;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
-import ir.beheshti.dandun.base.information.InformationOutputDto;
-import ir.beheshti.dandun.base.information.InformationEntity;
-import ir.beheshti.dandun.base.information.InformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

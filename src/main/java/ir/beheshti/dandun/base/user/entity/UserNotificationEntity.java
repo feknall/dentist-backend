@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.entity;
 
+import ir.beheshti.dandun.base.notification.NotificationEntity;
 import lombok.Data;
 
 import javax.persistence.*;

@@ -1,10 +1,11 @@
 package ir.beheshti.dandun.base.user.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import ir.beheshti.dandun.base.notification.NotificationOutputDto;
+import ir.beheshti.dandun.base.notification.NotificationService;
 import ir.beheshti.dandun.base.socket.ChatOutputDto;
 import ir.beheshti.dandun.base.socket.ChatService;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
-import ir.beheshti.dandun.base.user.dto.notification.NotificationOutputDto;
 import ir.beheshti.dandun.base.user.dto.socket.MessageOutputDto;
 import ir.beheshti.dandun.base.user.dto.user.*;
 import ir.beheshti.dandun.base.user.service.LoginRegisterService;
@@ -27,6 +28,8 @@ public class UserProfileController {
     private ProfileService profileService;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping(path = "/info")
     public ResponseEntity<UserInfoOutputDto> getUserInfo() {
@@ -64,7 +67,7 @@ public class UserProfileController {
 
     @GetMapping(path = "/notification")
     public ResponseEntity<List<NotificationOutputDto>> getUserNotificationList() {
-        return ResponseEntity.ok(profileService.getUserNotificationList());
+        return ResponseEntity.ok(notificationService.getUserNotificationList());
     }
 
     @GetMapping(path = "/chat/{chatId}")

@@ -1,7 +1,6 @@
 package ir.beheshti.dandun.base.startup.notification;
 
 import ir.beheshti.dandun.base.startup.Insert;
-import ir.beheshti.dandun.base.user.entity.NotificationEntity;
 import ir.beheshti.dandun.base.user.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

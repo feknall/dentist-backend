@@ -1,4 +1,5 @@
-package ir.beheshti.dandun.base.user.entity;
+package ir.beheshti.dandun.base.notification;
+
 
 import lombok.Data;
 
@@ -6,16 +7,18 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "Notification")
+@Table(name = "NotificatoinTable")
 public class NotificationEntity {
     @Id
-    @Column(name = "NotificationId")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int notificationId;
+
     @Column
     private String title;
-    @Column
+
+    @Column(columnDefinition = "TEXT")
     private String description;
-    @Column
+
+    @Column(columnDefinition = "TEXT")
     private String image;
 }

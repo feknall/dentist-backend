@@ -34,6 +34,12 @@ public abstract class ErrorCodeAndMessage {
     public static final int ANSWER_NOT_FOUND_CODE = 7010;
     public static final String ANSWER_NOT_FOUND_MESSAGE = "answer not found";
 
+    public static final int FAQ_NOT_FOUND_CODE = 7010;
+    public static final String FAQ_NOT_FOUND_MESSAGE = "faq not found";
+
+    public static final int NOTIFICATION_NOT_FOUND_CODE = 7011;
+    public static final String NOTIFICATION_NOT_FOUND_MESSAGE = "notification not found";
+
     public static final int PHONE_NUMBER_NOT_FOUND_CODE = 1007;
     public static final String PHONE_NUMBER_NOT_FOUND_MESSAGE = "phone number not found";
 

@@ -2,7 +2,6 @@ package ir.beheshti.dandun.base.information;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
-import ir.beheshti.dandun.base.user.service.InformationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
