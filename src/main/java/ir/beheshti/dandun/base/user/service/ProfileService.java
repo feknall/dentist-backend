@@ -1,10 +1,10 @@
 package ir.beheshti.dandun.base.user.service;
 
+import ir.beheshti.dandun.base.notification.NotificationRepository;
 import ir.beheshti.dandun.base.user.dto.user.UserImageInputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserImageOutputDto;
 import ir.beheshti.dandun.base.user.dto.user.UserNotificationInputDto;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
-import ir.beheshti.dandun.base.user.repository.NotificationRepository;
 import ir.beheshti.dandun.base.user.repository.UserNotificationRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

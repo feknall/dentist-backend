@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class FaqInputDto {
+    private int faqId;
     private String title;
     private String description;
     private String image;

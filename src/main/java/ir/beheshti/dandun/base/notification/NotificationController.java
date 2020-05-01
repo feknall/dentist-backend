@@ -1,6 +1,7 @@
 package ir.beheshti.dandun.base.notification;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import ir.beheshti.dandun.base.faq.FaqInputDto;
 import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,20 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseOutputDto> addFaq(@RequestBody NotificationInputDto notificationInputDto) {
+    public ResponseEntity<BaseOutputDto> addNotification(@RequestBody NotificationInputDto notificationInputDto) {
         notificationService.addNotification(notificationInputDto);
         return ResponseEntity.ok(new BaseOutputDto("notification added successfully"));
+    }
+
+    @PutMapping
+    public ResponseEntity<BaseOutputDto> updateNotification(@RequestBody NotificationInputDto notificationInputDto) {
+        notificationService.updateNotification(notificationInputDto);
+        return ResponseEntity.ok(new BaseOutputDto("faq updated successfully"));
+    }
+
+    @DeleteMapping(path = "/{notificationId}")
+    public ResponseEntity<BaseOutputDto> deleteInformation(@PathVariable int notificationId) {
+        notificationService.deleteNotification(notificationId);
+        return ResponseEntity.ok(new BaseOutputDto("notification deleted successfully"));
     }
 }

@@ -31,4 +31,17 @@ public class FaqController {
         faqService.addFaq(faqInputDto);
         return ResponseEntity.ok(new BaseOutputDto("faq added successfully"));
     }
+
+    @PutMapping
+    public ResponseEntity<BaseOutputDto> updateFaq(@RequestBody FaqInputDto faqInputDto) {
+        faqService.updateFaq(faqInputDto);
+        return ResponseEntity.ok(new BaseOutputDto("faq updated successfully"));
+    }
+
+    @DeleteMapping(path = "/{faqId}")
+    public ResponseEntity<BaseOutputDto> deleteInformation(@PathVariable int faqId) {
+        faqService.deleteFaq(faqId);
+        return ResponseEntity.ok(new BaseOutputDto("faq deleted successfully"));
+    }
+
 }

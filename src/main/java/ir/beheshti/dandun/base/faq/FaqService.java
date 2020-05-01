@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.faq;
 
+import ir.beheshti.dandun.base.information.InformationEntity;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,25 @@ public class FaqService {
 
     public void addFaq(FaqInputDto faqInputDto) {
         faqRepository.save(faqInputDto.toEntity());
+    }
+
+    public void updateFaq(FaqInputDto faqInputDto) {
+        Optional<FaqEntity> entity = faqRepository.findById(faqInputDto.getFaqId());
+        if (entity.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.FAQ_NOT_FOUND_CODE,
+                    ErrorCodeAndMessage.FAQ_NOT_FOUND_MESSAGE);
+        }
+        FaqEntity faqEntity = faqInputDto.toEntity();
+        faqEntity.setFaqId(faqInputDto.getFaqId());
+        faqRepository.save(faqEntity);
+    }
+
+    public void deleteFaq(int faqId) {
+        Optional<FaqEntity> entity = faqRepository.findById(faqId);
+        if (entity.isEmpty()) {
+            throw new UserException(ErrorCodeAndMessage.FAQ_NOT_FOUND_CODE,
+                    ErrorCodeAndMessage.FAQ_NOT_FOUND_MESSAGE);
+        }
+        faqRepository.deleteById(faqId);
     }
 }
