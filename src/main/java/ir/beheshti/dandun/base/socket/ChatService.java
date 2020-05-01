@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -36,6 +34,19 @@ public class ChatService {
     private DoctorRepository doctorRepository;
     @Autowired
     private ChatRepository chatRepository;
+
+    Map<String, List<ChatMessage>> messages = new HashMap<>();
+
+
+
+    public void addMessage(ChatMessage chatMessage) {
+        String key = new ChatKey(chatMessage.getChatId(), chatMessage.getToken(), chatMessage.getToUserId()).getKey();
+        if (messages.containsKey(key)) {
+            messages.get(key).add(chatMessage);
+        } else {
+            messages.put(key, Collections.singletonList(chatMessage));
+        }
+    }
 
     public void sendChatMessage(ChatMessage chatMessage) {
         List<Pair<Integer, String>> sentTo;

@@ -5,8 +5,10 @@ import lombok.Data;
 @Data
 public class ChatMessage {
     private long timestamp;
+    private Integer chatId;
     private String message;
     private ChatMessageType chatMessageType;
     private String token;
     private Integer toUserId;
+    private byte[] binary;
 }
