@@ -1,10 +1,11 @@
 package ir.beheshti.dandun.base.user.service;
 
+import ir.beheshti.dandun.base.information.InformationInputDto;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
-import ir.beheshti.dandun.base.user.dto.information.InformationOutputDto;
-import ir.beheshti.dandun.base.user.entity.InformationEntity;
-import ir.beheshti.dandun.base.user.repository.InformationRepository;
+import ir.beheshti.dandun.base.information.InformationOutputDto;
+import ir.beheshti.dandun.base.information.InformationEntity;
+import ir.beheshti.dandun.base.information.InformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,4 +36,7 @@ public class InformationService {
         return InformationOutputDto.fromEntity(entity.get());
     }
 
+    public void addInformation(InformationInputDto informationInputDto) {
+        informationRepository.save(informationInputDto.toEntity());
+    }
 }

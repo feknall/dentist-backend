@@ -1,17 +1,14 @@
-package ir.beheshti.dandun.base.user.controller;
+package ir.beheshti.dandun.base.information;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import ir.beheshti.dandun.base.user.dto.information.InformationOutputDto;
+import ir.beheshti.dandun.base.user.common.BaseOutputDto;
 import ir.beheshti.dandun.base.user.service.InformationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Information", description = "Basic information to show to user")
+@Tag(name = "Information")
 @RestController
 @RequestMapping(path = "/api/v1/information")
 public class InformationController {
@@ -30,5 +27,11 @@ public class InformationController {
     @GetMapping(path = "/{informationId}")
     public ResponseEntity<InformationOutputDto> getInformationById(@PathVariable Integer informationId) {
         return ResponseEntity.ok(informationService.getInformationById(informationId));
+    }
+
+    @PostMapping
+    public ResponseEntity<BaseOutputDto> addInformation(@RequestBody InformationInputDto informationInputDto) {
+        informationService.addInformation(informationInputDto);
+        return ResponseEntity.ok(new BaseOutputDto("information added successfully"));
     }
 }

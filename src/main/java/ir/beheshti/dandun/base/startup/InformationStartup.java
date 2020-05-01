@@ -1,7 +1,7 @@
 package ir.beheshti.dandun.base.startup;
 
-import ir.beheshti.dandun.base.user.entity.InformationEntity;
-import ir.beheshti.dandun.base.user.repository.InformationRepository;
+import ir.beheshti.dandun.base.information.InformationEntity;
+import ir.beheshti.dandun.base.information.InformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

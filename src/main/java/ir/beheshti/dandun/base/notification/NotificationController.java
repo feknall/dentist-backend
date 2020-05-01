@@ -1,4 +1,4 @@
-package ir.beheshti.dandun.base.user.controller;
+package ir.beheshti.dandun.base.notification;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,6 +1,5 @@
-package ir.beheshti.dandun.base.user.dto.information;
+package ir.beheshti.dandun.base.information;
 
-import ir.beheshti.dandun.base.user.entity.InformationEntity;
 import lombok.Data;
 
 @Data
