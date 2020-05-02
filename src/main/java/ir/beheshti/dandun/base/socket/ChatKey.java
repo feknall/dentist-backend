@@ -7,10 +7,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class ChatKey {
     private Integer chatId;
-    private String token;
+    private Integer fromUserId;
     private Integer toUserId;
 
-    public String getKey() {
-        return chatId + "---" + token + "---" + toUserId;
+    public static String getKey(ChatMessage chatMessage) {
+        return chatMessage.getChatId() + "---" + chatMessage.getFromUserId() + "---" + chatMessage.getToUserId();
     }
+
+
 }

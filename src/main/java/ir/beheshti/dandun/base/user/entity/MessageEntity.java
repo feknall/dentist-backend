@@ -17,6 +17,8 @@ public class MessageEntity {
     private int chatId;
     @Column(name = "MessageText", columnDefinition = "TEXT")
     private String message;
+    @Column(name = "BinaryFile")
+    private byte[] binary;
     @Column(name = "UserId")
     private int userId;
     @Enumerated(value = EnumType.STRING)

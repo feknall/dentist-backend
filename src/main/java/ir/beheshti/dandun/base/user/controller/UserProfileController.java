@@ -72,16 +72,16 @@ public class UserProfileController {
 
     @GetMapping(path = "/chat/{chatId}")
     public ResponseEntity<List<MessageOutputDto>> getUserMessageList(@PathVariable int chatId) {
-        return ResponseEntity.ok(chatService.getChatMessages(chatId));
+        return ResponseEntity.ok(chatService.getChatMessagesHistory(chatId));
     }
 
     @GetMapping(path = "/chat/patient")
     public ResponseEntity<List<ChatOutputDto>> getChatPatient() {
-        return ResponseEntity.ok(chatService.getPatientChat());
+        return ResponseEntity.ok(chatService.getPatientChatHistory());
     }
 
     @GetMapping(path = "/chat/doctor")
     public ResponseEntity<List<ChatOutputDto>> getChatDoctor() {
-        return ResponseEntity.ok(chatService.getDoctorChat());
+        return ResponseEntity.ok(chatService.getDoctorChatHistory());
     }
 }

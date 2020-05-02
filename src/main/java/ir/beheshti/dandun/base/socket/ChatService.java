@@ -13,6 +13,7 @@ import ir.beheshti.dandun.base.user.repository.DoctorRepository;
 import ir.beheshti.dandun.base.user.repository.MessageRepository;
 import ir.beheshti.dandun.base.user.service.GeneralService;
 import ir.beheshti.dandun.base.user.util.DoctorStateType;
+import ir.beheshti.dandun.base.user.util.UserType;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -35,63 +36,109 @@ public class ChatService {
     @Autowired
     private ChatRepository chatRepository;
 
-    Map<String, List<ChatMessage>> messages = new HashMap<>();
+//    Map<ChatKey, ArrayList<ChatMessage>> messages = new HashMap<>();
 
-
-
-    public void addMessage(ChatMessage chatMessage) {
-        String key = new ChatKey(chatMessage.getChatId(), chatMessage.getToken(), chatMessage.getToUserId()).getKey();
-        if (messages.containsKey(key)) {
-            messages.get(key).add(chatMessage);
+    public void addMessage(ChatMessageInputDto chatMessageInputDto) {
+        Optional<UserEntity> fromUserEntity = generalService.parseToken(chatMessageInputDto.getToken());
+        int chatId;
+        Optional<UserEntity> toUserEntity = Optional.empty();
+        if (chatMessageInputDto.getChatId() != null) {
+            Optional<ChatEntity> chatEntity = chatRepository.findById(chatMessageInputDto.getChatId());
+            if (chatEntity.isEmpty()) {
+                throw new UserException(10000, "chat entity not found.");
+            } else if (fromUserEntity.isEmpty()) {
+                throw new UserException(10000, "invalid token");
+            } else if (fromUserEntity.get().getUserType() == UserType.Patient) {
+                if (chatEntity.get().getPatientId() != fromUserEntity.get().getId()) {
+                    throw new UserException(10000, "this patient is not allowed to send message in this chat.");
+                }
+                toUserEntity = Optional.of(chatEntity.get().getDoctorEntity());
+            } else if (fromUserEntity.get().getUserType() == UserType.Doctor) {
+                if (chatEntity.get().getDoctorId() != fromUserEntity.get().getId()) {
+                    throw new UserException(10000, "this doctor is not allowed to send message in this chat.");
+                }
+                toUserEntity = Optional.of(chatEntity.get().getPatientEntity());
+            }
+            chatId = chatEntity.get().getChatId();
         } else {
-            messages.put(key, Collections.singletonList(chatMessage));
+            ChatEntity chatEntity = new ChatEntity();
+            if (fromUserEntity.isEmpty()) {
+                throw new UserException(10000, "invalid token");
+            } else if (fromUserEntity.get().getUserType() == UserType.Patient) {
+                chatEntity.setPatientId(fromUserEntity.get().getId());
+            } else if (fromUserEntity.get().getUserType() == UserType.Doctor) {
+                throw new UserException(10000, "doctor can't start conversation");
+            } else {
+                throw new UserException(10000, "unauthorized user");
+            }
+            chatRepository.save(chatEntity);
+            chatId = chatEntity.getChatId();
         }
+
+        MessageEntity messageEntity = new MessageEntity();
+        messageEntity.setChatId(chatId);
+        messageEntity.setChatMessageType(chatMessageInputDto.getChatMessageType());
+        messageEntity.setMessage(chatMessageInputDto.getMessage());
+        messageEntity.setBinary(chatMessageInputDto.getBinary());
+        messageEntity.setTimestamp(chatMessageInputDto.getTimestamp());
+        messageEntity.setUserId(fromUserEntity.get().getId());
+        messageRepository.save(messageEntity);
+
+//        Integer toUserId = toUserEntity.isPresent() ? toUserEntity.get().getId() : null;
+//        ChatMessage chatMessage = ChatMessage.fromChatMessageInputDto(chatMessageInputDto,
+//                fromUserEntity.get().getId(), toUserId);
+//        ChatKey chatKey = new ChatKey(chatId, fromUserEntity.get().getId(), toUserId);
+//        if (messages.containsKey(chatKey)) {
+//            messages.get(chatKey).add(chatMessage);
+//        } else {
+//            messages.put(chatKey, new ArrayList<>(Collections.singletonList(chatMessage)));
+//        }
+
+        pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
     }
 
-    public void sendChatMessage(ChatMessage chatMessage) {
-        List<Pair<Integer, String>> sentTo;
-        if (chatMessage.getToUserId() == null) {
-            sentTo = doctorRepository
+    public List<ChatMessage> getMessages(ChatMessageInputDto chatMessageInputDto) {
+        ChatKey chatKey = new ChatKey(chatMessageInputDto.getChatId(), chatMessageInputDto.get)
+        if (messages.containsKey(key)) {
+            return messages.get(key);
+        }
+        return Collections.emptyList();
+    }
+
+    public List<ChatOutputDto> getDoctorChats(int doctorId) {
+        List<ChatMessage> doctorsChat =
+    }
+
+    public List<ChatMessage> getPatientChats() {
+
+    }
+
+    public void pushNotification(ChatMessageInputDto chatMessageInputDto, UserEntity toUserEntity) {
+        List<Pair<Integer, String>> idAndTokenPairSendToList;
+        if (toUserEntity == null) {
+            idAndTokenPairSendToList = doctorRepository
                     .findAllByDoctorStateType(DoctorStateType.ACTIVE)
                     .stream()
                     .filter(e -> e.getUserEntity().getNotificationToken() != null)
                     .map(e -> Pair.of(e.getDoctorId(), e.getUserEntity().getNotificationToken()))
                     .collect(Collectors.toList());
         } else {
-            UserEntity userEntity = generalService.getUserEntityById(chatMessage.getToUserId());
-            if (userEntity.getNotificationToken() == null) {
+            if (toUserEntity.getNotificationToken() == null) {
                 throw new UserException(10000, "user doesn't have token.");
             }
-            sentTo = Collections.singletonList(Pair.of(userEntity.getId(), userEntity.getNotificationToken()));
+            idAndTokenPairSendToList = Collections.singletonList(Pair.of(toUserEntity.getId(), toUserEntity.getNotificationToken()));
         }
-        sentTo.forEach(e -> {
+        idAndTokenPairSendToList.forEach(e -> {
             try {
-                String data = new ObjectMapper().writeValueAsString(chatMessage);
+                String data = new ObjectMapper().writeValueAsString(chatMessageInputDto);
                 pushNotificationService.doChat(data, e.getSecond());
             } catch (JsonProcessingException jsonProcessingException) {
                 log.info(jsonProcessingException);
             }
-
-            ChatEntity chatEntity = new ChatEntity();
-            UserEntity userEntity = generalService.parseToken(chatMessage.getToken()).get();
-            chatEntity.setPatientId(userEntity.getId());
-            chatEntity.setDoctorId(e.getFirst());
-            chatRepository.save(chatEntity);
-
-            MessageEntity messageEntity = new MessageEntity();
-            messageEntity.setChatId(chatEntity.getChatId());
-            messageEntity.setMessage(chatMessage.getMessage());
-            messageEntity.setChatMessageType(chatMessage.getChatMessageType());
-            messageEntity.setTimestamp(chatMessage.getTimestamp());
-            messageEntity.setUserId(userEntity.getId());
-            messageRepository.save(messageEntity);
-
-            chatEntity.setMessageId(messageEntity.getMessageId());
-            chatRepository.save(chatEntity);
         });
     }
 
-    public List<MessageOutputDto> getChatMessages(int chatId) {
+    public List<MessageOutputDto> getChatMessagesHistory(int chatId) {
         List<MessageEntity> messageEntityList = messageRepository.findAllByChatIdOrderByTimestamp(chatId);
         return messageEntityList
                 .stream()
@@ -99,24 +146,16 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    public List<ChatOutputDto> getPatientChat() {
-        List<ChatEntity> outputList = new ArrayList<>();
+    public List<ChatOutputDto> getPatientChatHistory() {
         List<ChatEntity> chatEntityList =
                 chatRepository.findAllByPatientId(generalService.getCurrentUserId());
-        chatEntityList.forEach(chatEntity -> {
-            outputList.forEach(output -> {
-                if (!chatEntity.getMessageId().equals(output.getMessageId())) {
-                    outputList.add(chatEntity);
-                }
-            });
-        });
-        return outputList
+        return chatEntityList
                 .stream()
                 .map(ChatOutputDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<ChatOutputDto> getDoctorChat() {
+    public List<ChatOutputDto> getDoctorChatHistory() {
         List<ChatEntity> chatEntityList =
                 chatRepository.findAllByDoctorId(generalService.getCurrentUserId());
         return chatEntityList

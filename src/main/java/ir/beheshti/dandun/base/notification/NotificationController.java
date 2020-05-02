@@ -22,9 +22,9 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.getAllNotifications());
     }
 
-    @GetMapping(path = "/{faqId}")
-    public ResponseEntity<NotificationOutputDto> getNotificationById(@PathVariable Integer faqId) {
-        return ResponseEntity.ok(notificationService.getNotificationById(faqId));
+    @GetMapping(path = "/{notificationId}")
+    public ResponseEntity<NotificationOutputDto> getNotificationById(@PathVariable Integer notificationId) {
+        return ResponseEntity.ok(notificationService.getNotificationById(notificationId));
     }
 
     @PostMapping
@@ -36,7 +36,7 @@ public class NotificationController {
     @PutMapping
     public ResponseEntity<BaseOutputDto> updateNotification(@RequestBody NotificationInputDto notificationInputDto) {
         notificationService.updateNotification(notificationInputDto);
-        return ResponseEntity.ok(new BaseOutputDto("faq updated successfully"));
+        return ResponseEntity.ok(new BaseOutputDto("notification updated successfully"));
     }
 
     @DeleteMapping(path = "/{notificationId}")

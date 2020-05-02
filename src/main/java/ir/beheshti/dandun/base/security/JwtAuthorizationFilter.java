@@ -1,7 +1,5 @@
 package ir.beheshti.dandun.base.security;
 
-import io.jsonwebtoken.Jwts;
-import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.service.GeneralService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -45,11 +42,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(SecurityConstants.HEADER_STRING);
-        if (token != null) {
-            Optional<UserEntity> userEntity = generalService.parseToken(token);
-            return userEntity
-                    .map(entity -> new UsernamePasswordAuthenticationToken(userEntity.get().getPhoneNumber(), null, entity.getAuthorities())).orElse(null);
-        }
-        return null;
+        return generalService.getAuthentication(token);
     }
 }

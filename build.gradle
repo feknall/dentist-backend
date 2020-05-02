@@ -60,6 +60,8 @@ dependencies {
     compile 'org.springdoc:springdoc-openapi-core:1.1.44'
     implementation 'com.jayway.jsonpath:json-path'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.security:spring-security-messaging'
+
 //    compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
 
     compile 'org.springframework.boot:spring-boot-starter-log4j2'

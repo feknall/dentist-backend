@@ -1,7 +1,9 @@
 package ir.beheshti.dandun.base.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ir.beheshti.dandun.base.user.service.GeneralService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
@@ -14,6 +16,9 @@ import java.io.IOException;
 @Log4j2
 public class SocketHandler extends AbstractWebSocketHandler {
 
+    @Autowired
+    private GeneralService generalService;
+
     private final ChatService chatService;
 
     public SocketHandler(ChatService chatService) {
@@ -22,18 +27,24 @@ public class SocketHandler extends AbstractWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        session.sendMessage(new TextMessage("huraaaaaaaai! connection estabilished"));
+//        try {
+//            if (generalService.getAuthentication(session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0)) != null)
+//                return;
+//        } catch (Exception e) {
+//            session.sendMessage(new TextMessage("closing session..."));
+//            session.close(CloseStatus.POLICY_VIOLATION);
+//        }
     }
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         SocketResponseDto response = new SocketResponseDto();
-        response.setMessage("OK");
+        response.setMessage("OK Text");
         try {
             String payload = message.getPayload();
-            ChatMessage chatMessage = new ObjectMapper().readValue(payload, ChatMessage.class);
-            response.setTimestamp(chatMessage.getTimestamp());
-            chatService.addMessage(chatMessage);
+            ChatMessageInputDto chatMessageInputDto = new ObjectMapper().readValue(payload, ChatMessageInputDto.class);
+            response.setTimestamp(chatMessageInputDto.getTimestamp());
+            chatService.addMessage(chatMessageInputDto);
 //            chatService.sendChatMessage(chatMessage);
         } catch (Exception e) {
             response.setMessage(e.getMessage());
@@ -45,10 +56,10 @@ public class SocketHandler extends AbstractWebSocketHandler {
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
         try {
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setBinary(message.getPayload().array());
-            chatService.addMessage(chatMessage);
-            session.sendMessage(new TextMessage("OK"));
+            ChatMessageInputDto chatMessageInputDto = new ChatMessageInputDto();
+            chatMessageInputDto.setBinary(message.getPayload().array());
+            chatService.addMessage(chatMessageInputDto);
+            session.sendMessage(new TextMessage("OK ‌Binary"));
         } catch (IOException e) {
             e.printStackTrace();
         }

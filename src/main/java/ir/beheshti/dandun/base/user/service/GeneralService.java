@@ -12,6 +12,7 @@ import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.UserType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -106,5 +107,14 @@ public class GeneralService {
         if (user == null)
             return Optional.empty();
         return userRepository.findByPhoneNumber(user);
+    }
+
+    public UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        if (token != null) {
+            Optional<UserEntity> userEntity = parseToken(token);
+            return userEntity
+                    .map(entity -> new UsernamePasswordAuthenticationToken(userEntity.get().getPhoneNumber(), null, entity.getAuthorities())).orElse(null);
+        }
+        return null;
     }
 }

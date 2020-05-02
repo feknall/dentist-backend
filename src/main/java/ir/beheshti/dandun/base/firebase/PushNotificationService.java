@@ -2,7 +2,7 @@ package ir.beheshti.dandun.base.firebase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.beheshti.dandun.base.socket.ChatMessage;
+import ir.beheshti.dandun.base.socket.ChatMessageInputDto;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 @Log4j2
 @Service
@@ -43,8 +41,8 @@ public class PushNotificationService {
         fcmService.sendPushNotification(request);
     }
 
-    public void sendQuestionToAllDoctors(ChatMessage chatMessage) throws JsonProcessingException {
-        String data = new ObjectMapper().writeValueAsString(chatMessage);
+    public void sendQuestionToAllDoctors(ChatMessageInputDto chatMessageInputDto) throws JsonProcessingException {
+        String data = new ObjectMapper().writeValueAsString(chatMessageInputDto);
         PushNotificationRequest request = PushNotificationRequest.sendChatToTopic(data, TopicType.DOCTOR.getValue());
         fcmService.sendPushNotification(request);
     }
