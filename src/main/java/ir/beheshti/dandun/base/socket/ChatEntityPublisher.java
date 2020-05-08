@@ -3,23 +3,23 @@ package ir.beheshti.dandun.base.socket;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Log4j2
 public class ChatEntityPublisher {
-    private List<Subscriber> subscribers = new ArrayList<>();
+    private Map<Integer, Subscriber> userIdSubscriberMap = new HashMap<>();
 
-    public void addSubscriber(Subscriber subscriber) {
-        subscribers.add(subscriber);
+    public void addSubscriber(int userId, Subscriber subscriber) {
+        userIdSubscriberMap.put(userId, subscriber);
     }
 
-    public void removeSubscriber(Subscriber subscriber) {
-        subscribers.remove(subscriber);
+    public void removeSubscriber(int userId) {
+        userIdSubscriberMap.remove(userId);
     }
 
     public void notifySubscribers(ChatMessageInputDto chatMessageInputDto) {
-        for (Subscriber subscriber : subscribers) {
+        for (Subscriber subscriber : userIdSubscriberMap.values()) {
             try {
                 subscriber.update(chatMessageInputDto);
             } catch (IOException e) {

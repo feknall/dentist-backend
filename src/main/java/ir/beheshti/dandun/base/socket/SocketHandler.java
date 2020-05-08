@@ -29,14 +29,24 @@ public class SocketHandler extends AbstractWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         try {
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
-            if (generalService.getAuthentication(token) != null)
-                return;
-            UserEntity userEntity = generalService.getByToken(token).get();
-            List<Integer> userChatIds = chatService.getUserChatIds(userEntity);
-            userChatIds.forEach(id -> chatService.subscribeUser(session, userEntity, id));
+            if (generalService.getAuthentication(token) != null) {
+                UserEntity userEntity = generalService.getByToken(token).get();
+                List<Integer> userChatIds = chatService.getUserChatIds(userEntity);
+                userChatIds.forEach(id -> chatService.subscribeUser(session, userEntity, id));
+            }
         } catch (Exception e) {
             session.sendMessage(new TextMessage("closing session..."));
             session.close(CloseStatus.POLICY_VIOLATION);
+        }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
+        if (generalService.getAuthentication(token) != null) {
+            UserEntity userEntity = generalService.getByToken(token).get();
+            List<Integer> userChatIds = chatService.getUserChatIds(userEntity);
+            userChatIds.forEach(id -> chatService.unsubscribeUser(userEntity, id));
         }
     }
 
@@ -50,7 +60,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
             chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
             response.setTimestamp(chatMessageInputDto.getTimestamp());
-            chatService.addMessage(chatMessageInputDto);
+            chatService.addMessage(session, chatMessageInputDto);
         } catch (Exception e) {
             response.setMessage(e.getMessage());
         }
@@ -67,7 +77,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
             chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
             chatMessageInputDto.setBinary(message.getPayload().array());
-            chatService.addMessage(chatMessageInputDto);
+            chatService.addMessage(session, chatMessageInputDto);
         } catch (Exception e) {
             response.setMessage(e.getMessage());
         }

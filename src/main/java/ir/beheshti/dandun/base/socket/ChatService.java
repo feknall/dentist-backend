@@ -42,18 +42,24 @@ public class ChatService {
 
     private Map<Integer, ChatEntityPublisher> chatEntityPublisherMap = new HashMap<>();
 
+    public void unsubscribeUser(UserEntity userEntity, Integer chatId) {
+        if (chatEntityPublisherMap.containsKey(chatId)) {
+            chatEntityPublisherMap.get(chatId).removeSubscriber(userEntity.getId());
+        }
+    }
+
     public void subscribeUser(WebSocketSession session, UserEntity userEntity, Integer chatId) {
         userEntity.setSession(session);
         if (chatEntityPublisherMap.containsKey(chatId)) {
-            chatEntityPublisherMap.get(chatId).addSubscriber(userEntity);
+            chatEntityPublisherMap.get(chatId).addSubscriber(userEntity.getId(), userEntity);
         } else {
             ChatEntityPublisher chatEntityPublisher = new ChatEntityPublisher();
-            chatEntityPublisher.addSubscriber(userEntity);
+            chatEntityPublisher.addSubscriber(userEntity.getId(), userEntity);
             chatEntityPublisherMap.put(chatId, chatEntityPublisher);
         }
     }
 
-    public void addMessage(ChatMessageInputDto chatMessageInputDto) {
+    public void addMessage(WebSocketSession session, ChatMessageInputDto chatMessageInputDto) {
         if (chatMessageInputDto.getMessage() == null || chatMessageInputDto.getMessage().isBlank()) {
             throw new UserException(10000, "message is blank");
         }
@@ -76,6 +82,9 @@ public class ChatService {
                     throw new UserException(10000, "this doctor is not allowed to send message in this chat.");
                 }
                 toUserEntity = Optional.of(chatEntity.get().getPatientEntity());
+                chatEntity.get().setDoctorId(fromUserEntity.getId());
+                chatRepository.save(chatEntity.get());
+                subscribeUser(session, fromUserEntity, chatEntity.get().getChatId());
             }
             chatId = chatEntity.get().getChatId();
         } else {
@@ -100,7 +109,8 @@ public class ChatService {
         messageEntity.setUserId(fromUserEntity.getId());
         messageRepository.save(messageEntity);
 
-        chatEntityPublisherMap.get(chatId).notifySubscribers(chatMessageInputDto);
+        if (chatEntityPublisherMap.containsKey(chatId))
+            chatEntityPublisherMap.get(chatId).notifySubscribers(chatMessageInputDto);
 
         pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
     }
