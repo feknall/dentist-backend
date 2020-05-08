@@ -23,10 +23,10 @@ public class ChatEntity {
     private List<MessageEntity> messageEntityList;
 
     @ManyToOne
-    @JoinColumn(name = "PatientId", referencedColumnName = "UserId")
+    @JoinColumn(name = "PatientId", referencedColumnName = "UserId", insertable = false, updatable = false)
     private UserEntity patientEntity;
 
     @ManyToOne
-    @JoinColumn(name = "DoctorId", referencedColumnName = "UserId")
+    @JoinColumn(name = "DoctorId", referencedColumnName = "UserId", insertable = false, updatable = false)
     private UserEntity doctorEntity;
 }

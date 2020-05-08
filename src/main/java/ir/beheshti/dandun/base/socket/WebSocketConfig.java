@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.socket;
 
+import ir.beheshti.dandun.base.user.service.GeneralService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private GeneralService generalService;
 
     @Bean
     public ServletServerContainerFactoryBean createWebsocketContainer() {
@@ -23,6 +26,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     }
 
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new SocketHandler(chatService), "/ws").setAllowedOrigins("*");
+        registry.addHandler(new SocketHandler(chatService, generalService), "/ws").setAllowedOrigins("*");
     }
 }

@@ -36,9 +36,10 @@ public class ChatService {
     @Autowired
     private ChatRepository chatRepository;
 
-//    Map<ChatKey, ArrayList<ChatMessage>> messages = new HashMap<>();
-
     public void addMessage(ChatMessageInputDto chatMessageInputDto) {
+        if (chatMessageInputDto.getMessage() == null || chatMessageInputDto.getMessage().isBlank()) {
+            throw new UserException(10000, "message is blank");
+        }
         Optional<UserEntity> fromUserEntity = generalService.parseToken(chatMessageInputDto.getToken());
         int chatId;
         Optional<UserEntity> toUserEntity = Optional.empty();
@@ -54,7 +55,7 @@ public class ChatService {
                 }
                 toUserEntity = Optional.of(chatEntity.get().getDoctorEntity());
             } else if (fromUserEntity.get().getUserType() == UserType.Doctor) {
-                if (chatEntity.get().getDoctorId() != fromUserEntity.get().getId()) {
+                if (chatEntity.get().getDoctorId() != null && chatEntity.get().getDoctorId() != fromUserEntity.get().getId()) {
                     throw new UserException(10000, "this doctor is not allowed to send message in this chat.");
                 }
                 toUserEntity = Optional.of(chatEntity.get().getPatientEntity());
@@ -84,33 +85,7 @@ public class ChatService {
         messageEntity.setUserId(fromUserEntity.get().getId());
         messageRepository.save(messageEntity);
 
-//        Integer toUserId = toUserEntity.isPresent() ? toUserEntity.get().getId() : null;
-//        ChatMessage chatMessage = ChatMessage.fromChatMessageInputDto(chatMessageInputDto,
-//                fromUserEntity.get().getId(), toUserId);
-//        ChatKey chatKey = new ChatKey(chatId, fromUserEntity.get().getId(), toUserId);
-//        if (messages.containsKey(chatKey)) {
-//            messages.get(chatKey).add(chatMessage);
-//        } else {
-//            messages.put(chatKey, new ArrayList<>(Collections.singletonList(chatMessage)));
-//        }
-
         pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
-    }
-
-    public List<ChatMessage> getMessages(ChatMessageInputDto chatMessageInputDto) {
-        ChatKey chatKey = new ChatKey(chatMessageInputDto.getChatId(), chatMessageInputDto.get)
-        if (messages.containsKey(key)) {
-            return messages.get(key);
-        }
-        return Collections.emptyList();
-    }
-
-    public List<ChatOutputDto> getDoctorChats(int doctorId) {
-        List<ChatMessage> doctorsChat =
-    }
-
-    public List<ChatMessage> getPatientChats() {
-
     }
 
     public void pushNotification(ChatMessageInputDto chatMessageInputDto, UserEntity toUserEntity) {
