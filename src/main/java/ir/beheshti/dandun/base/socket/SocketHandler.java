@@ -2,10 +2,9 @@ package ir.beheshti.dandun.base.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.beheshti.dandun.base.security.SecurityConstants;
+import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.service.GeneralService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -13,6 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import java.io.IOException;
+import java.util.List;
 
 @Log4j2
 public class SocketHandler extends AbstractWebSocketHandler {
@@ -28,8 +28,12 @@ public class SocketHandler extends AbstractWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         try {
-            if (generalService.getAuthentication(session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0)) != null)
+            String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
+            if (generalService.getAuthentication(token) != null)
                 return;
+            UserEntity userEntity = generalService.getByToken(token).get();
+            List<Integer> userChatIds = chatService.getUserChatIds(userEntity);
+            userChatIds.forEach(id -> chatService.subscribeUser(session, userEntity, id));
         } catch (Exception e) {
             session.sendMessage(new TextMessage("closing session..."));
             session.close(CloseStatus.POLICY_VIOLATION);
@@ -44,7 +48,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
             String payload = message.getPayload();
             ChatMessageInputDto chatMessageInputDto = new ObjectMapper().readValue(payload, ChatMessageInputDto.class);
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
-            chatMessageInputDto.setToken(token);
+            chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
             response.setTimestamp(chatMessageInputDto.getTimestamp());
             chatService.addMessage(chatMessageInputDto);
         } catch (Exception e) {
@@ -55,14 +59,18 @@ public class SocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
+    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
+        SocketResponseDto response = new SocketResponseDto();
+        response.setMessage("OK Text");
         try {
             ChatMessageInputDto chatMessageInputDto = new ChatMessageInputDto();
+            String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
+            chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
             chatMessageInputDto.setBinary(message.getPayload().array());
             chatService.addMessage(chatMessageInputDto);
-            session.sendMessage(new TextMessage("OK ‌Binary"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
         }
+        session.sendMessage(new TextMessage(response.toString()));
     }
 }

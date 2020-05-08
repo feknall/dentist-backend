@@ -1,7 +1,11 @@
 package ir.beheshti.dandun.base.socket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Data
 public class ChatMessage {
     private long timestamp;
@@ -22,5 +26,14 @@ public class ChatMessage {
         chatMessage.chatMessageType = dto.getChatMessageType();
         chatMessage.binary = dto.getBinary();
         return chatMessage;
+    }
+
+    public String toJson() {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            log.error(e);
+            return null;
+        }
     }
 }

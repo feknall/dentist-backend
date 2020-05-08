@@ -1,10 +1,12 @@
 package ir.beheshti.dandun.base.user.entity;
 
+import ir.beheshti.dandun.base.socket.Subscriber;
 import ir.beheshti.dandun.base.user.util.SexType;
 import ir.beheshti.dandun.base.user.util.UserType;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.socket.WebSocketSession;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,7 +17,7 @@ import java.util.List;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "UserTable")
-public class UserEntity implements UserDetails {
+public class UserEntity implements UserDetails, Subscriber {
     @Id
     @Column(name = "UserId")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -84,7 +86,6 @@ public class UserEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))
     private List<RoleEntity> roleEntityList;
@@ -106,6 +107,9 @@ public class UserEntity implements UserDetails {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
     private List<UserOpenNumberQuestionAnswerEntity> userOpenNumberQuestionAnswerEntityList;
+
+    @Transient
+    private WebSocketSession session;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -135,5 +139,10 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+    @Override
+    public WebSocketSession getSession() {
+        return session;
     }
 }

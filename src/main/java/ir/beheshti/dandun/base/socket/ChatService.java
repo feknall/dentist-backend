@@ -11,6 +11,7 @@ import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.ChatRepository;
 import ir.beheshti.dandun.base.user.repository.DoctorRepository;
 import ir.beheshti.dandun.base.user.repository.MessageRepository;
+import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.service.GeneralService;
 import ir.beheshti.dandun.base.user.util.DoctorStateType;
 import ir.beheshti.dandun.base.user.util.UserType;
@@ -18,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,27 +37,42 @@ public class ChatService {
     private DoctorRepository doctorRepository;
     @Autowired
     private ChatRepository chatRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    private Map<Integer, ChatEntityPublisher> chatEntityPublisherMap = new HashMap<>();
+
+    public void subscribeUser(WebSocketSession session, UserEntity userEntity, Integer chatId) {
+        userEntity.setSession(session);
+        if (chatEntityPublisherMap.containsKey(chatId)) {
+            chatEntityPublisherMap.get(chatId).addSubscriber(userEntity);
+        } else {
+            ChatEntityPublisher chatEntityPublisher = new ChatEntityPublisher();
+            chatEntityPublisher.addSubscriber(userEntity);
+            chatEntityPublisherMap.put(chatId, chatEntityPublisher);
+        }
+    }
 
     public void addMessage(ChatMessageInputDto chatMessageInputDto) {
         if (chatMessageInputDto.getMessage() == null || chatMessageInputDto.getMessage().isBlank()) {
             throw new UserException(10000, "message is blank");
         }
-        Optional<UserEntity> fromUserEntity = generalService.parseToken(chatMessageInputDto.getToken());
+        UserEntity fromUserEntity = userRepository
+                .findById(chatMessageInputDto.getUserId())
+                .orElseThrow(() -> new UserException(10000, "user not found"));
         int chatId;
         Optional<UserEntity> toUserEntity = Optional.empty();
         if (chatMessageInputDto.getChatId() != null) {
             Optional<ChatEntity> chatEntity = chatRepository.findById(chatMessageInputDto.getChatId());
             if (chatEntity.isEmpty()) {
                 throw new UserException(10000, "chat entity not found.");
-            } else if (fromUserEntity.isEmpty()) {
-                throw new UserException(10000, "invalid token");
-            } else if (fromUserEntity.get().getUserType() == UserType.Patient) {
-                if (chatEntity.get().getPatientId() != fromUserEntity.get().getId()) {
+            } else if (fromUserEntity.getUserType() == UserType.Patient) {
+                if (chatEntity.get().getPatientId() != fromUserEntity.getId()) {
                     throw new UserException(10000, "this patient is not allowed to send message in this chat.");
                 }
                 toUserEntity = Optional.of(chatEntity.get().getDoctorEntity());
-            } else if (fromUserEntity.get().getUserType() == UserType.Doctor) {
-                if (chatEntity.get().getDoctorId() != null && chatEntity.get().getDoctorId() != fromUserEntity.get().getId()) {
+            } else if (fromUserEntity.getUserType() == UserType.Doctor) {
+                if (chatEntity.get().getDoctorId() != null && chatEntity.get().getDoctorId() != fromUserEntity.getId()) {
                     throw new UserException(10000, "this doctor is not allowed to send message in this chat.");
                 }
                 toUserEntity = Optional.of(chatEntity.get().getPatientEntity());
@@ -63,11 +80,9 @@ public class ChatService {
             chatId = chatEntity.get().getChatId();
         } else {
             ChatEntity chatEntity = new ChatEntity();
-            if (fromUserEntity.isEmpty()) {
-                throw new UserException(10000, "invalid token");
-            } else if (fromUserEntity.get().getUserType() == UserType.Patient) {
-                chatEntity.setPatientId(fromUserEntity.get().getId());
-            } else if (fromUserEntity.get().getUserType() == UserType.Doctor) {
+            if (fromUserEntity.getUserType() == UserType.Patient) {
+                chatEntity.setPatientId(fromUserEntity.getId());
+            } else if (fromUserEntity.getUserType() == UserType.Doctor) {
                 throw new UserException(10000, "doctor can't start conversation");
             } else {
                 throw new UserException(10000, "unauthorized user");
@@ -82,8 +97,10 @@ public class ChatService {
         messageEntity.setMessage(chatMessageInputDto.getMessage());
         messageEntity.setBinary(chatMessageInputDto.getBinary());
         messageEntity.setTimestamp(chatMessageInputDto.getTimestamp());
-        messageEntity.setUserId(fromUserEntity.get().getId());
+        messageEntity.setUserId(fromUserEntity.getId());
         messageRepository.save(messageEntity);
+
+        chatEntityPublisherMap.get(chatId).notifySubscribers(chatMessageInputDto);
 
         pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
     }
@@ -136,5 +153,22 @@ public class ChatService {
         return chatEntityList
                 .stream()
                 .map(ChatOutputDto::fromEntity).collect(Collectors.toList());
+    }
+
+    public List<Integer> getUserChatIds(UserEntity userEntity) {
+        if (userEntity.getUserType().equals(UserType.Doctor)) {
+            return chatRepository
+                    .findAllByDoctorId(userEntity.getId())
+                    .stream()
+                    .map(ChatEntity::getChatId)
+                    .collect(Collectors.toList());
+        } else if (userEntity.getUserType().equals(UserType.Patient)) {
+            return chatRepository
+                    .findAllByPatientId(userEntity.getId())
+                    .stream()
+                    .map(ChatEntity::getChatId)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

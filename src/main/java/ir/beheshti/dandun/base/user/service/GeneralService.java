@@ -98,7 +98,7 @@ public class GeneralService {
             return Optional.empty();
     }
 
-    public Optional<UserEntity> parseToken(String token) {
+    public Optional<UserEntity> getByToken(String token) {
         String user = Jwts.parser()
                 .setSigningKey(SecurityConstants.SECRET)
                 .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
@@ -111,7 +111,7 @@ public class GeneralService {
 
     public UsernamePasswordAuthenticationToken getAuthentication(String token) {
         if (token != null) {
-            Optional<UserEntity> userEntity = parseToken(token);
+            Optional<UserEntity> userEntity = getByToken(token);
             return userEntity
                     .map(entity -> new UsernamePasswordAuthenticationToken(userEntity.get().getPhoneNumber(), null, entity.getAuthorities())).orElse(null);
         }

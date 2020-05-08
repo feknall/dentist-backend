@@ -17,7 +17,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private ChatService chatService;
     @Autowired
     private GeneralService generalService;
-
     @Bean
     public ServletServerContainerFactoryBean createWebsocketContainer() {
         ServletServerContainerFactoryBean containerFactoryBean = new ServletServerContainerFactoryBean();
