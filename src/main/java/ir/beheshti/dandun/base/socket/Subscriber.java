@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public interface Subscriber {
     WebSocketSession getSession();
-    default void update(ChatMessageInputDto chatMessageInputDto) throws IOException {
-        if (chatMessageInputDto.getMessage() != null) {
-            getSession().sendMessage(new TextMessage(chatMessageInputDto.toJson()));
+    default void update(SocketResponseDto socketResponseDto) throws IOException {
+        if (socketResponseDto.getChatMessageDto().getMessage() != null) {
+            getSession().sendMessage(new TextMessage(socketResponseDto.toString()));
         } else {
-            getSession().sendMessage(new BinaryMessage(chatMessageInputDto.getBinary()));
+            getSession().sendMessage(new BinaryMessage(socketResponseDto.getChatMessageDto().getBinary()));
         }
     }
 }

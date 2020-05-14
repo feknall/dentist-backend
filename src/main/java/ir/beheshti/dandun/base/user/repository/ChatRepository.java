@@ -10,4 +10,5 @@ import java.util.List;
 public interface ChatRepository extends JpaRepository<ChatEntity, Integer> {
     List<ChatEntity> findAllByPatientId(Integer patientId);
     List<ChatEntity> findAllByDoctorId(Integer doctorId);
+    List<ChatEntity> findAllByDoctorIdIsNull();
 }

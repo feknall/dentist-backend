@@ -33,6 +33,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
                 UserEntity userEntity = generalService.getByToken(token).get();
                 List<Integer> userChatIds = chatService.getUserChatIds(userEntity);
                 userChatIds.forEach(id -> chatService.subscribeUser(session, userEntity, id));
+                chatService.addOnlineUser(userEntity, session);
             }
         } catch (Exception e) {
             session.sendMessage(new TextMessage("closing session..."));
@@ -47,22 +48,26 @@ public class SocketHandler extends AbstractWebSocketHandler {
             UserEntity userEntity = generalService.getByToken(token).get();
             List<Integer> userChatIds = chatService.getUserChatIds(userEntity);
             userChatIds.forEach(id -> chatService.unsubscribeUser(userEntity, id));
+            chatService.removeOnlineUser(userEntity);
         }
     }
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         SocketResponseDto response = new SocketResponseDto();
-        response.setMessage("OK Text");
+        response.setOk(true);
+        response.setShow(false);
         try {
             String payload = message.getPayload();
             ChatMessageInputDto chatMessageInputDto = new ObjectMapper().readValue(payload, ChatMessageInputDto.class);
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
             chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
+            chatMessageInputDto.setChatMessageType(ChatMessageType.TEXT);
             response.setTimestamp(chatMessageInputDto.getTimestamp());
             chatService.addMessage(session, chatMessageInputDto);
         } catch (Exception e) {
-            response.setMessage(e.getMessage());
+            response.setError(e.getMessage());
+            response.setOk(false);
         }
 
         session.sendMessage(new TextMessage(response.toString()));
@@ -71,15 +76,18 @@ public class SocketHandler extends AbstractWebSocketHandler {
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
         SocketResponseDto response = new SocketResponseDto();
-        response.setMessage("OK Text");
+        response.setOk(true);
+        response.setShow(false);
         try {
             ChatMessageInputDto chatMessageInputDto = new ChatMessageInputDto();
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
             chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
+            chatMessageInputDto.setChatMessageType(ChatMessageType.IMAGE);
             chatMessageInputDto.setBinary(message.getPayload().array());
             chatService.addMessage(session, chatMessageInputDto);
         } catch (Exception e) {
-            response.setMessage(e.getMessage());
+            response.setError(e.getMessage());
+            response.setOk(false);
         }
         session.sendMessage(new TextMessage(response.toString()));
     }

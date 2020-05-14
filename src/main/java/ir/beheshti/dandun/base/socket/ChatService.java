@@ -40,7 +40,27 @@ public class ChatService {
     @Autowired
     private UserRepository userRepository;
 
+    private Map<UserEntity, WebSocketSession> onlinePatients = new HashMap<>();
+    private Map<UserEntity, WebSocketSession> onlineDoctors = new HashMap<>();
+
+    // chatId - chatEntity
     private Map<Integer, ChatEntityPublisher> chatEntityPublisherMap = new HashMap<>();
+
+    public void addOnlineUser(UserEntity userEntity, WebSocketSession session) {
+        if (userEntity.getUserType() == UserType.Doctor) {
+            onlineDoctors.put(userEntity, session);
+        } else if (userEntity.getUserType() == UserType.Patient) {
+            onlinePatients.put(userEntity, session);
+        }
+    }
+
+    public void removeOnlineUser(UserEntity userEntity) {
+        if (userEntity.getUserType() == UserType.Doctor && onlineDoctors.containsKey(userEntity)) {
+            onlineDoctors.remove(userEntity);
+        } else if (userEntity.getUserType() == UserType.Patient && onlinePatients.containsKey(userEntity)) {
+            onlinePatients.remove(userEntity);
+        }
+    }
 
     public void unsubscribeUser(UserEntity userEntity, Integer chatId) {
         if (chatEntityPublisherMap.containsKey(chatId)) {
@@ -98,6 +118,10 @@ public class ChatService {
             }
             chatRepository.save(chatEntity);
             chatId = chatEntity.getChatId();
+            subscribeUser(session, fromUserEntity, chatId);
+            for (Map.Entry<UserEntity, WebSocketSession> map: onlineDoctors.entrySet()) {
+                subscribeUser(map.getValue(), map.getKey(), chatId);
+            }
         }
 
         MessageEntity messageEntity = new MessageEntity();
@@ -109,8 +133,14 @@ public class ChatService {
         messageEntity.setUserId(fromUserEntity.getId());
         messageRepository.save(messageEntity);
 
+        chatMessageInputDto.setChatId(chatId);
+
+        SocketResponseDto responseDto = new SocketResponseDto();
+        responseDto.setOk(true);
+        responseDto.setShow(true);
+        responseDto.setChatMessageDto(chatMessageInputDto);
         if (chatEntityPublisherMap.containsKey(chatId))
-            chatEntityPublisherMap.get(chatId).notifySubscribers(chatMessageInputDto);
+            chatEntityPublisherMap.get(chatId).notifySubscribers(fromUserEntity.getId(), responseDto);
 
         pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
     }
@@ -148,30 +178,38 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    public List<ChatOutputDto> getPatientChatHistory() {
-        List<ChatEntity> chatEntityList =
-                chatRepository.findAllByPatientId(generalService.getCurrentUserId());
+    public List<ChatOutputDto> getChatHistory() {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        List<ChatEntity> chatEntityList = new ArrayList<>();
+        if (userEntity.getUserType() == UserType.Doctor) {
+            chatEntityList = chatRepository.findAllByDoctorId(userEntity.getId());
+        } else if (userEntity.getUserType() == UserType.Patient) {
+            chatEntityList = chatRepository.findAllByPatientId(userEntity.getId());
+        }
         return chatEntityList
                 .stream()
                 .map(ChatOutputDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<ChatOutputDto> getDoctorChatHistory() {
-        List<ChatEntity> chatEntityList =
-                chatRepository.findAllByDoctorId(generalService.getCurrentUserId());
-        return chatEntityList
-                .stream()
-                .map(ChatOutputDto::fromEntity).collect(Collectors.toList());
+    public List<Integer> getUserChatIds() {
+        return getUserChatIds(generalService.getCurrentUserEntity());
     }
 
     public List<Integer> getUserChatIds(UserEntity userEntity) {
         if (userEntity.getUserType().equals(UserType.Doctor)) {
-            return chatRepository
+            List<Integer> doctorChatIds = chatRepository
                     .findAllByDoctorId(userEntity.getId())
                     .stream()
                     .map(ChatEntity::getChatId)
                     .collect(Collectors.toList());
+            List<Integer> unAnsweredChatIds = chatRepository
+                    .findAllByDoctorIdIsNull()
+                    .stream()
+                    .map(ChatEntity::getChatId)
+                    .collect(Collectors.toList());
+            doctorChatIds.addAll(unAnsweredChatIds);
+            return doctorChatIds;
         } else if (userEntity.getUserType().equals(UserType.Patient)) {
             return chatRepository
                     .findAllByPatientId(userEntity.getId())

@@ -18,10 +18,11 @@ public class ChatEntityPublisher {
         userIdSubscriberMap.remove(userId);
     }
 
-    public void notifySubscribers(ChatMessageInputDto chatMessageInputDto) {
-        for (Subscriber subscriber : userIdSubscriberMap.values()) {
+    public void notifySubscribers(int userId, SocketResponseDto socketResponseDto) {
+        for (Map.Entry<Integer, Subscriber> entry : userIdSubscriberMap.entrySet()) {
             try {
-                subscriber.update(chatMessageInputDto);
+                if (entry.getKey() != userId)
+                    entry.getValue().update(socketResponseDto);
             } catch (IOException e) {
                 log.error(e);
             }

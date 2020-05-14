@@ -7,7 +7,10 @@ import lombok.Data;
 @Data
 public class SocketResponseDto {
     private long timestamp;
-    private String message;
+    private boolean ok;
+    private boolean show;
+    private String error;
+    private ChatMessageInputDto chatMessageDto;
 
     public String toString() {
         ObjectMapper objectMapper = new ObjectMapper();
