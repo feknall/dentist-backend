@@ -12,7 +12,7 @@ public class ChatMessageInputDto {
     private Integer chatId;
     private String message;
     private ChatMessageType chatMessageType;
-    private byte[] binary;
+    private Byte[] binary;
     private Integer userId;
 
     public String toJson() {

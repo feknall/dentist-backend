@@ -21,6 +21,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.transaction.SystemException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -119,7 +120,7 @@ public class ChatService {
             chatRepository.save(chatEntity);
             chatId = chatEntity.getChatId();
             subscribeUser(session, fromUserEntity, chatId);
-            for (Map.Entry<UserEntity, WebSocketSession> map: onlineDoctors.entrySet()) {
+            for (Map.Entry<UserEntity, WebSocketSession> map : onlineDoctors.entrySet()) {
                 subscribeUser(map.getValue(), map.getKey(), chatId);
             }
         }
@@ -197,6 +198,9 @@ public class ChatService {
     }
 
     public List<Integer> getUserChatIds(UserEntity userEntity) {
+        if (userEntity.getUserType() == null) {
+            throw new UserException(10000, "User type is not specified");
+        }
         if (userEntity.getUserType().equals(UserType.Doctor)) {
             List<Integer> doctorChatIds = chatRepository
                     .findAllByDoctorId(userEntity.getId())

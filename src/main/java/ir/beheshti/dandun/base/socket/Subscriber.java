@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.socket;
 
+import ir.beheshti.dandun.base.user.service.UtilityService;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -12,7 +13,7 @@ public interface Subscriber {
         if (socketResponseDto.getChatMessageDto().getMessage() != null) {
             getSession().sendMessage(new TextMessage(socketResponseDto.toString()));
         } else {
-            getSession().sendMessage(new BinaryMessage(socketResponseDto.getChatMessageDto().getBinary()));
+            getSession().sendMessage(new BinaryMessage(UtilityService.fromByteWrapper(socketResponseDto.getChatMessageDto().getBinary())));
         }
     }
 }

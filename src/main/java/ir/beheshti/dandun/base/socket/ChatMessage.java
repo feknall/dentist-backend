@@ -14,7 +14,7 @@ public class ChatMessage {
     private Integer toUserId;
     private String message;
     private ChatMessageType chatMessageType;
-    private byte[] binary;
+    private Byte[] binary;
 
     public static ChatMessage fromChatMessageInputDto(ChatMessageInputDto dto, Integer fromUserId, Integer toUserId) {
         ChatMessage chatMessage = new ChatMessage();

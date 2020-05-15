@@ -18,7 +18,7 @@ public class MessageEntity {
     @Column(name = "MessageText", columnDefinition = "TEXT")
     private String message;
     @Column(name = "BinaryFile")
-    private byte[] binary;
+    private Byte[] binary;
     @Column(name = "UserId")
     private int userId;
     @Enumerated(value = EnumType.STRING)

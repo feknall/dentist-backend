@@ -13,7 +13,7 @@ public class UtilityService {
         return myBytes;
     }
 
-    public byte[] fromByteWrapper(Byte[] bytes) {
+    public static byte[] fromByteWrapper(Byte[] bytes) {
         byte[] myBytes = new byte[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
             myBytes[i] = bytes[i];

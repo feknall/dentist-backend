@@ -2,8 +2,10 @@ package ir.beheshti.dandun.base.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.beheshti.dandun.base.security.SecurityConstants;
+import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.service.GeneralService;
+import ir.beheshti.dandun.base.user.service.UtilityService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
@@ -19,10 +21,12 @@ public class SocketHandler extends AbstractWebSocketHandler {
 
     private final GeneralService generalService;
     private final ChatService chatService;
+    private final UtilityService utilityService;
 
-    public SocketHandler(ChatService chatService, GeneralService generalService) {
+    public SocketHandler(ChatService chatService, GeneralService generalService, UtilityService utilityService) {
         this.chatService = chatService;
         this.generalService = generalService;
+        this.utilityService = utilityService;
     }
 
     @Override
@@ -34,8 +38,12 @@ public class SocketHandler extends AbstractWebSocketHandler {
                 List<Integer> userChatIds = chatService.getUserChatIds(userEntity);
                 userChatIds.forEach(id -> chatService.subscribeUser(session, userEntity, id));
                 chatService.addOnlineUser(userEntity, session);
+            } else {
+                throw new UserException(1000, "token not found");
             }
         } catch (Exception e) {
+            log.error("Closing session", e);
+            session.sendMessage(new TextMessage(e.getMessage()));
             session.sendMessage(new TextMessage("closing session..."));
             session.close(CloseStatus.POLICY_VIOLATION);
         }
@@ -66,6 +74,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
             response.setTimestamp(chatMessageInputDto.getTimestamp());
             chatService.addMessage(session, chatMessageInputDto);
         } catch (Exception e) {
+            log.error("Socket exception", e);
             response.setError(e.getMessage());
             response.setOk(false);
         }
@@ -83,9 +92,10 @@ public class SocketHandler extends AbstractWebSocketHandler {
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
             chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
             chatMessageInputDto.setChatMessageType(ChatMessageType.IMAGE);
-            chatMessageInputDto.setBinary(message.getPayload().array());
+            chatMessageInputDto.setBinary(utilityService.toByteWrapper(message.getPayload().array()));
             chatService.addMessage(session, chatMessageInputDto);
         } catch (Exception e) {
+            log.error("Socket exception", e);
             response.setError(e.getMessage());
             response.setOk(false);
         }

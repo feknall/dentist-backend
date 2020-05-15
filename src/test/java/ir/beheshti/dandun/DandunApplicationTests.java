@@ -15,8 +15,8 @@ class DandunApplicationTests {
 
     @Test
     void contextLoads() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.delete("https://dandun.herokuapp.com/api/v1/information/11");
+//        RestTemplate restTemplate = new RestTemplate();
+//        restTemplate.delete("https://dandun.herokuapp.com/api/v1/information/11");
     }
 
 }
