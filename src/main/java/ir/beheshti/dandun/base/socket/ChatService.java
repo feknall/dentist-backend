@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 public class ChatService {
+    public static final int CHAT_IS_CLOSED_CODE = 19999;
     @Autowired
     private MessageRepository messageRepository;
     @Autowired
@@ -93,6 +94,8 @@ public class ChatService {
             Optional<ChatEntity> chatEntity = chatRepository.findById(chatMessageInputDto.getChatId());
             if (chatEntity.isEmpty()) {
                 throw new UserException(10000, "chat entity not found.");
+            } else if (chatEntity.get().getChatStateType() == ChatStateType.CLOSED) {
+                throw new UserException(CHAT_IS_CLOSED_CODE, "chat is closed");
             } else if (fromUserEntity.getUserType() == UserType.Patient) {
                 if (chatEntity.get().getPatientId() != fromUserEntity.getId()) {
                     throw new UserException(10000, "this patient is not allowed to send message in this chat.");
@@ -110,6 +113,7 @@ public class ChatService {
             chatId = chatEntity.get().getChatId();
         } else {
             ChatEntity chatEntity = new ChatEntity();
+            chatEntity.setChatStateType(ChatStateType.SEARCHING);
             if (fromUserEntity.getUserType() == UserType.Patient) {
                 chatEntity.setPatientId(fromUserEntity.getId());
             } else if (fromUserEntity.getUserType() == UserType.Doctor) {
@@ -184,6 +188,8 @@ public class ChatService {
         List<ChatEntity> chatEntityList = new ArrayList<>();
         if (userEntity.getUserType() == UserType.Doctor) {
             chatEntityList = chatRepository.findAllByDoctorId(userEntity.getId());
+            chatEntityList.addAll(chatRepository
+                    .findAllByDoctorIdIsNull());
         } else if (userEntity.getUserType() == UserType.Patient) {
             chatEntityList = chatRepository.findAllByPatientId(userEntity.getId());
         }
@@ -222,5 +228,18 @@ public class ChatService {
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
+    }
+
+    public void closeChat(int chatId) {
+        Optional<ChatEntity> chatEntityOptional = chatRepository.findById(chatId);
+        if (chatEntityOptional.isEmpty()) {
+            throw new UserException(10000, "chat not found");
+        } else if (chatEntityOptional.get().getChatStateType() != ChatStateType.OPEN) {
+            throw new UserException(10000, "chat state isn't open");
+        } else if (chatEntityOptional.get().getDoctorId() != generalService.getCurrentUserId()) {
+            throw new UserException(10000, "you doesn't have access to close this chat");
+        }
+        chatEntityOptional.get().setChatStateType(ChatStateType.CLOSED);
+        chatRepository.save(chatEntityOptional.get());
     }
 }

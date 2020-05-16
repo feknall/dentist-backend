@@ -23,6 +23,16 @@ public class ChatEntityPublisher {
             try {
                 if (entry.getKey() != userId)
                     entry.getValue().update(socketResponseDto);
+                else {
+                    SocketResponseDto dto = new SocketResponseDto();
+                    dto.setTimestamp(System.currentTimeMillis());
+                    dto.setShow(false);
+                    dto.setOk(true);
+                    ChatMessageInputDto messageInputDto = new ChatMessageInputDto();
+                    messageInputDto.setChatId(socketResponseDto.getChatMessageDto().getChatId());
+                    dto.setChatMessageDto(messageInputDto);
+                    entry.getValue().update(dto);
+                }
             } catch (IOException e) {
                 log.error(e);
             }

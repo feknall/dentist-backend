@@ -1,5 +1,6 @@
 package ir.beheshti.dandun.base.user.entity;
 
+import ir.beheshti.dandun.base.socket.ChatStateType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -18,6 +19,8 @@ public class ChatEntity {
     private Integer patientId;
     @Column(name = "DoctorId")
     private Integer doctorId;
+    @Enumerated(value = EnumType.STRING)
+    private ChatStateType chatStateType;
 
     @OneToMany(mappedBy = "chatEntity")
     private List<MessageEntity> messageEntityList;

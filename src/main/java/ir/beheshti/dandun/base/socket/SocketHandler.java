@@ -65,6 +65,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
         SocketResponseDto response = new SocketResponseDto();
         response.setOk(true);
         response.setShow(false);
+        response.setClose(false);
         try {
             String payload = message.getPayload();
             ChatMessageInputDto chatMessageInputDto = new ObjectMapper().readValue(payload, ChatMessageInputDto.class);
@@ -73,8 +74,15 @@ public class SocketHandler extends AbstractWebSocketHandler {
             chatMessageInputDto.setChatMessageType(ChatMessageType.TEXT);
             response.setTimestamp(chatMessageInputDto.getTimestamp());
             chatService.addMessage(session, chatMessageInputDto);
+        } catch (UserException e) {
+            log.error("User exception", e);
+            response.setError(e.getMessage());
+            response.setOk(false);
+            if (e.getCode() == ChatService.CHAT_IS_CLOSED_CODE) {
+                response.setClose(true);
+            }
         } catch (Exception e) {
-            log.error("Socket exception", e);
+            log.error("Unknown exception", e);
             response.setError(e.getMessage());
             response.setOk(false);
         }

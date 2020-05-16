@@ -9,6 +9,7 @@ public class SocketResponseDto {
     private long timestamp;
     private boolean ok;
     private boolean show;
+    private boolean close = false;
     private String error;
     private ChatMessageInputDto chatMessageDto;
 
