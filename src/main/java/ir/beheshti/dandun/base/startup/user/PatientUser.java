@@ -30,15 +30,15 @@ public class PatientUser implements Insert {
 
     private void insertTestPatient() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setSignedUp(false);
-        userEntity.setVerified(false);
+        userEntity.setSignedUp(true);
+        userEntity.setVerified(true);
         userEntity.setPassword("test");
         userEntity.setPhoneNumber("000000000000");
         userRepository.save(userEntity);
 
         PatientUserEntity patientUserEntity = new PatientUserEntity();
         patientUserEntity.setPatientId(userEntity.getId());
-        patientUserEntity.setPatientStateType(PatientStateType.PENDING);
+        patientUserEntity.setPatientStateType(PatientStateType.GREEN);
         patientRepository.save(patientUserEntity);
 
         List<EssentialQuestionEntity> questionEntityList = essentialQuestionRepository.findAllByQuestionOwnerTypeNot(QuestionOwnerType.Doctor);
