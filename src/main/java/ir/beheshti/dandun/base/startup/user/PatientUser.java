@@ -33,7 +33,7 @@ public class PatientUser implements Insert {
         userEntity.setSignedUp(true);
         userEntity.setVerified(true);
         userEntity.setPassword("test");
-        userEntity.setPhoneNumber("000000000000");
+        userEntity.setPhoneNumber("090000000000");
         userRepository.save(userEntity);
 
         PatientUserEntity patientUserEntity = new PatientUserEntity();
