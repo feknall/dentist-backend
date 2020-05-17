@@ -10,10 +10,10 @@ import java.io.IOException;
 public interface Subscriber {
     WebSocketSession getSession();
     default void update(SocketResponseDto socketResponseDto) throws IOException {
-        if (socketResponseDto.getChatMessageDto().getMessage() != null) {
+
             getSession().sendMessage(new TextMessage(socketResponseDto.toString()));
-        } else {
-            getSession().sendMessage(new BinaryMessage(UtilityService.fromByteWrapper(socketResponseDto.getChatMessageDto().getBinary())));
-        }
+//        } else {
+//            getSession().sendMessage(new BinaryMessage(UtilityService.fromByteWrapper(socketResponseDto.getChatMessageDto().getBinary())));
+//        }
     }
 }

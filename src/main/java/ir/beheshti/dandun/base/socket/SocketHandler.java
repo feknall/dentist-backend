@@ -66,6 +66,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
         response.setOk(true);
         response.setShow(false);
         response.setClose(false);
+        Integer chatId = null;
         try {
             String payload = message.getPayload();
             ChatMessageInputDto chatMessageInputDto = new ObjectMapper().readValue(payload, ChatMessageInputDto.class);
@@ -73,7 +74,7 @@ public class SocketHandler extends AbstractWebSocketHandler {
             chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
             chatMessageInputDto.setChatMessageType(ChatMessageType.TEXT);
             response.setTimestamp(chatMessageInputDto.getTimestamp());
-            chatService.addMessage(session, chatMessageInputDto);
+            chatId = chatService.addMessage(session, chatMessageInputDto);
         } catch (UserException e) {
             log.error("User exception", e);
             response.setError(e.getMessage());
@@ -87,6 +88,9 @@ public class SocketHandler extends AbstractWebSocketHandler {
             response.setOk(false);
         }
 
+        ChatMessageInputDto dto = new ChatMessageInputDto();
+        dto.setChatId(chatId);
+        response.setChatMessageDto(dto);
         session.sendMessage(new TextMessage(response.toString()));
     }
 

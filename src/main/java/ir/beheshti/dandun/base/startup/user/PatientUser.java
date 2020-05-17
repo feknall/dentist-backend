@@ -6,6 +6,7 @@ import ir.beheshti.dandun.base.user.repository.*;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
 import ir.beheshti.dandun.base.user.util.QuestionOwnerType;
 import ir.beheshti.dandun.base.user.util.QuestionType;
+import ir.beheshti.dandun.base.user.util.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,8 @@ public class PatientUser implements Insert {
         userEntity.setVerified(true);
         userEntity.setPassword("test");
         userEntity.setPhoneNumber("090000000000");
+        userEntity.setUserType(UserType.Patient);
+        userEntity.setNotificationToken("token");
         userRepository.save(userEntity);
 
         PatientUserEntity patientUserEntity = new PatientUserEntity();

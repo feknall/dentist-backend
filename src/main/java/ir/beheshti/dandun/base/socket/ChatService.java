@@ -81,7 +81,7 @@ public class ChatService {
         }
     }
 
-    public void addMessage(WebSocketSession session, ChatMessageInputDto chatMessageInputDto) {
+    public Integer addMessage(WebSocketSession session, ChatMessageInputDto chatMessageInputDto) {
         if (chatMessageInputDto.getMessage() == null || chatMessageInputDto.getMessage().isBlank()) {
             throw new UserException(10000, "message is blank");
         }
@@ -100,7 +100,6 @@ public class ChatService {
                 if (chatEntity.get().getPatientId() != fromUserEntity.getId()) {
                     throw new UserException(10000, "this patient is not allowed to send message in this chat.");
                 }
-                toUserEntity = Optional.of(chatEntity.get().getDoctorEntity());
             } else if (fromUserEntity.getUserType() == UserType.Doctor) {
                 if (chatEntity.get().getDoctorId() != null && chatEntity.get().getDoctorId() != fromUserEntity.getId()) {
                     throw new UserException(10000, "this doctor is not allowed to send message in this chat.");
@@ -148,6 +147,8 @@ public class ChatService {
             chatEntityPublisherMap.get(chatId).notifySubscribers(fromUserEntity.getId(), responseDto);
 
         pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
+
+        return chatId;
     }
 
     public void pushNotification(ChatMessageInputDto chatMessageInputDto, UserEntity toUserEntity) {
