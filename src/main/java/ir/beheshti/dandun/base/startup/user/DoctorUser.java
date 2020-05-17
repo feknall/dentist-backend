@@ -31,6 +31,8 @@ public class DoctorUser implements Insert {
 
     private void insertTestDoctor() {
         UserEntity userEntity = new UserEntity();
+        userEntity.setFirstName("علی");
+        userEntity.setLastName("دکیان");
         userEntity.setSignedUp(true);
         userEntity.setVerified(true);
         userEntity.setPassword("test");
