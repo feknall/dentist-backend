@@ -167,7 +167,7 @@ public class ChatService {
         }
         idAndTokenPairSendToList.forEach(e -> {
             try {
-                String data = new ObjectMapper().writeValueAsString(chatMessageInputDto);
+                String data = new ObjectMapper().writeValueAsString(chatMessageInputDto.getMessage());
                 pushNotificationService.doChat(data, e.getSecond());
             } catch (JsonProcessingException jsonProcessingException) {
                 log.info(jsonProcessingException);

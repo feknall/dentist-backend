@@ -1,7 +1,7 @@
 package ir.beheshti.dandun.base.user.util;
 
 public enum DoctorStateType {
-    NOT_ANSWERED("NotAnswered"), PENDING("Pending"), ACTIVE("Active"), Rejected("Rejected");
+    NOT_ANSWERED("NOT_ANSWERED"), PENDING("PENDING"), ACTIVE("ACTIVE"), Rejected("REJECTED");
 
     String value;
     DoctorStateType(String value) {
