@@ -7,12 +7,14 @@ import ir.beheshti.dandun.base.startup.question.DoctorStartup;
 import ir.beheshti.dandun.base.startup.question.PatientStartup;
 import ir.beheshti.dandun.base.startup.user.DoctorUser;
 import ir.beheshti.dandun.base.startup.user.PatientUser;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+@Log4j2
 @Component
 public class Startup {
 
@@ -54,16 +56,20 @@ public class Startup {
     public void appReady(ApplicationReadyEvent event) {
         if (insertChat) {
             chatStartup.insert();
+            log.info("Startup, Insert chat");
         }
         if (insertNotification) {
             notificationStartup.insert();
+            log.info("Startup, Insert notification");
         }
         if (insertInformation) {
             informationStartup.insert();
+            log.info("Startup, Insert information");
         }
         if (insertUser) {
             doctorUser.insert();
             patientUser.insert();
+            log.info("Startup, Insert patient and doctor");
         }
 
         if (insertQuestions) {
@@ -71,6 +77,7 @@ public class Startup {
             doctorStartup.insert();
             patientStartup.insert();
             operatorStartup.insert();
+            log.info("Startup, Insert questions");
         }
     }
 }
