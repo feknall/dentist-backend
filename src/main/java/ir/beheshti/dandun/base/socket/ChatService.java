@@ -83,7 +83,7 @@ public class ChatService {
 
     public Integer addMessage(WebSocketSession session, ChatMessageInputDto chatMessageInputDto) {
         if ((chatMessageInputDto.getMessage() == null || chatMessageInputDto.getMessage().isBlank()) &&
-                chatMessageInputDto.getBinary().length == 0) {
+                (chatMessageInputDto.getBinary() == null || chatMessageInputDto.getBinary().isBlank())) {
             throw new UserException(10000, "message and binary section are blank.");
         }
         UserEntity fromUserEntity = userRepository

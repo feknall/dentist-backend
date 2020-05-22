@@ -17,9 +17,6 @@ public class NotificationGroupEntity {
     @Column
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "NotificationNotificationGroup",
-            joinColumns = @JoinColumn(name = "notificationGroupId"),
-            inverseJoinColumns = @JoinColumn(name = "notificationId"))
+    @ManyToMany(mappedBy = "notificationGroupEntityList")
     List<NotificationEntity> notificationEntityList;
 }

@@ -32,6 +32,9 @@ public class NotificationEntity {
     @ManyToOne
     private NotificationTimingEntity notificationTimingEntity;
 
-    @ManyToMany(mappedBy = "notificationEntityList")
+    @ManyToMany
+    @JoinTable(name = "NotificationNotificationGroup",
+            joinColumns = @JoinColumn(name = "notificationGroupId"),
+            inverseJoinColumns = @JoinColumn(name = "notificationId"))
     private List<NotificationGroupEntity> notificationGroupEntityList;
 }
