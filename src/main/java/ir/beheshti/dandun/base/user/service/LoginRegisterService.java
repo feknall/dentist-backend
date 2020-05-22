@@ -156,9 +156,9 @@ public class LoginRegisterService {
     public OperatorLoginOutputDto loginOperator(OperatorLoginInputDto operatorLoginInputDto) {
         Optional<UserEntity> userEntity = userRepository.findByPhoneNumber(operatorLoginInputDto.getUsername());
         if (userEntity.isEmpty() || userEntity.get().getUserType() != UserType.Operator) {
-            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
-        } else if (!operatorLoginInputDto.getPassword().equals(userEntity.get().getPassword())) {
-            throw new UserException(1, "wrong password");
+            throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE, true);
+        } else if (operatorLoginInputDto.getPassword() == null || !operatorLoginInputDto.getPassword().equals(userEntity.get().getPassword())) {
+            throw new UserException(ErrorCodeAndMessage.PASSWORD_IS_WRONG_CODE, ErrorCodeAndMessage.PASSWORD_IS_WRONG_MESSAGE, true);
         }
         OperatorLoginOutputDto dto = new OperatorLoginOutputDto();
         dto.setToken(buildToken(operatorLoginInputDto.getUsername()));

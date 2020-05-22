@@ -36,14 +36,8 @@ public class PushNotificationService {
 //        }
 //    }
 
-    public void doChat(String data, String token) throws JsonProcessingException {
+    public void doChat(String data, String token) {
         PushNotificationRequest request = PushNotificationRequest.sendChatToToken(data, token);
-        fcmService.sendPushNotification(request);
-    }
-
-    public void sendQuestionToAllDoctors(ChatMessageInputDto chatMessageInputDto) throws JsonProcessingException {
-        String data = new ObjectMapper().writeValueAsString(chatMessageInputDto);
-        PushNotificationRequest request = PushNotificationRequest.sendChatToTopic(data, TopicType.DOCTOR.getValue());
         fcmService.sendPushNotification(request);
     }
 
@@ -55,7 +49,6 @@ public class PushNotificationService {
         }
         fcmService.sendPushNotification(buildChangeDoctorStateNotification(userEntity.get().getNotificationToken()));
     }
-
 
     public void sendChangePatientStateNotification(int userId) {
         Optional<UserEntity> userEntity = userRepository.findById(userId);

@@ -1,7 +1,5 @@
 package ir.beheshti.dandun.base.notification;
 
-import ir.beheshti.dandun.base.faq.FaqEntity;
-import ir.beheshti.dandun.base.information.InformationEntity;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.repository.UserNotificationRepository;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class NotificationService {
@@ -21,6 +18,10 @@ public class NotificationService {
     private NotificationRepository notificationRepository;
     @Autowired
     private UserNotificationRepository userNotificationRepository;
+    @Autowired
+    private NotificationTimingRepository notificationTimingRepository;
+    @Autowired
+    private NotificationGroupRepository notificationGroupRepository;
     @Autowired
     private GeneralService generalService;
 
@@ -46,9 +47,9 @@ public class NotificationService {
     }
 
     public List<NotificationOutputDto> getUserNotificationList() {
-       return userNotificationRepository
-               .findAllByUserId(generalService.getCurrentUserId())
-               .stream()
+        return userNotificationRepository
+                .findAllByUserId(generalService.getCurrentUserId())
+                .stream()
                 .map(e -> NotificationOutputDto.fromEntity(e.getNotificationEntity()))
                 .collect(Collectors.toList());
     }
@@ -71,5 +72,21 @@ public class NotificationService {
                     ErrorCodeAndMessage.NOTIFICATION_NOT_FOUND_MESSAGE);
         }
         notificationRepository.deleteById(notificationId);
+    }
+
+    public List<NotificationTimingOutputDto> getTimingList() {
+        return notificationTimingRepository
+                .findAll()
+                .stream()
+                .map(NotificationTimingOutputDto::from)
+                .collect(Collectors.toList());
+    }
+
+    public List<NotificationGroupOutputDto> getGroupList() {
+        return notificationGroupRepository
+                .findAll()
+                .stream()
+                .map(NotificationGroupOutputDto::from)
+                .collect(Collectors.toList());
     }
 }

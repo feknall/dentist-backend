@@ -3,6 +3,7 @@ package ir.beheshti.dandun.base.socket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.beheshti.dandun.base.firebase.PushNotificationService;
+import ir.beheshti.dandun.base.notification.NotificationEntity;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.socket.MessageOutputDto;
 import ir.beheshti.dandun.base.user.entity.ChatEntity;
@@ -21,7 +22,6 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.transaction.SystemException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,8 +82,9 @@ public class ChatService {
     }
 
     public Integer addMessage(WebSocketSession session, ChatMessageInputDto chatMessageInputDto) {
-        if (chatMessageInputDto.getMessage() == null || chatMessageInputDto.getMessage().isBlank()) {
-            throw new UserException(10000, "message is blank");
+        if ((chatMessageInputDto.getMessage() == null || chatMessageInputDto.getMessage().isBlank()) &&
+                chatMessageInputDto.getBinary().length == 0) {
+            throw new UserException(10000, "message and binary section are blank.");
         }
         UserEntity fromUserEntity = userRepository
                 .findById(chatMessageInputDto.getUserId())
@@ -106,6 +107,7 @@ public class ChatService {
                 }
                 toUserEntity = Optional.of(chatEntity.get().getPatientEntity());
                 chatEntity.get().setDoctorId(fromUserEntity.getId());
+                chatEntity.get().setChatStateType(ChatStateType.OPEN);
                 chatRepository.save(chatEntity.get());
                 subscribeUser(session, fromUserEntity, chatEntity.get().getChatId());
             }
@@ -168,7 +170,7 @@ public class ChatService {
         }
         idAndTokenPairSendToList.forEach(e -> {
             try {
-                String data = new ObjectMapper().writeValueAsString(chatMessageInputDto.getMessage());
+                String data = new ObjectMapper().writeValueAsString(chatMessageInputDto.getMessage() == null ? "یک عکس برای شما ارسال شده است" : chatMessageInputDto.getMessage());
                 pushNotificationService.doChat(data, e.getSecond());
             } catch (JsonProcessingException jsonProcessingException) {
                 log.info(jsonProcessingException);

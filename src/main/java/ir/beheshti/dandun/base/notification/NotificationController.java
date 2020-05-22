@@ -22,6 +22,16 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.getAllNotifications());
     }
 
+    @GetMapping(path = "/timing")
+    public ResponseEntity<List<NotificationTimingOutputDto>> getTimingList() {
+        return ResponseEntity.ok(notificationService.getTimingList());
+    }
+
+    @GetMapping(path = "/group")
+    public ResponseEntity<List<NotificationGroupOutputDto>> getGroupList() {
+        return ResponseEntity.ok(notificationService.getGroupList());
+    }
+
     @GetMapping(path = "/{notificationId}")
     public ResponseEntity<NotificationOutputDto> getNotificationById(@PathVariable Integer notificationId) {
         return ResponseEntity.ok(notificationService.getNotificationById(notificationId));

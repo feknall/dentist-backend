@@ -72,7 +72,6 @@ public class SocketHandler extends AbstractWebSocketHandler {
             ChatMessageInputDto chatMessageInputDto = new ObjectMapper().readValue(payload, ChatMessageInputDto.class);
             String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
             chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
-            chatMessageInputDto.setChatMessageType(ChatMessageType.TEXT);
             response.setTimestamp(chatMessageInputDto.getTimestamp());
             chatId = chatService.addMessage(session, chatMessageInputDto);
         } catch (UserException e) {
@@ -94,23 +93,23 @@ public class SocketHandler extends AbstractWebSocketHandler {
         session.sendMessage(new TextMessage(response.toString()));
     }
 
-    @Override
-    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
-        SocketResponseDto response = new SocketResponseDto();
-        response.setOk(true);
-        response.setShow(false);
-        try {
-            ChatMessageInputDto chatMessageInputDto = new ChatMessageInputDto();
-            String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
-            chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
-            chatMessageInputDto.setChatMessageType(ChatMessageType.IMAGE);
-            chatMessageInputDto.setBinary(utilityService.toByteWrapper(message.getPayload().array()));
-            chatService.addMessage(session, chatMessageInputDto);
-        } catch (Exception e) {
-            log.error("Socket exception", e);
-            response.setError(e.getMessage());
-            response.setOk(false);
-        }
-        session.sendMessage(new TextMessage(response.toString()));
-    }
+//    @Override
+//    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
+//        SocketResponseDto response = new SocketResponseDto();
+//        response.setOk(true);
+//        response.setShow(false);
+//        try {
+//            ChatMessageInputDto chatMessageInputDto = new ChatMessageInputDto();
+//            String token = session.getHandshakeHeaders().get(SecurityConstants.HEADER_STRING).get(0);
+//            chatMessageInputDto.setUserId(generalService.getByToken(token).get().getId());
+//            chatMessageInputDto.setChatMessageType(ChatMessageType.IMAGE);
+//            chatMessageInputDto.setBinary(utilityService.toByteWrapper(message.getPayload().array()));
+//            chatService.addMessage(session, chatMessageInputDto);
+//        } catch (Exception e) {
+//            log.error("Socket exception", e);
+//            response.setError(e.getMessage());
+//            response.setOk(false);
+//        }
+//        session.sendMessage(new TextMessage(response.toString()));
+//    }
 }
