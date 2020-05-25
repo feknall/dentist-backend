@@ -118,7 +118,7 @@ public class UserEntity implements UserDetails, Subscriber {
 
     @Override
     public String getUsername() {
-        return null;
+        return phoneNumber;
     }
 
     @Override
