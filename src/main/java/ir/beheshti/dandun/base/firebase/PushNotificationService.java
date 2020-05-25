@@ -1,8 +1,5 @@
 package ir.beheshti.dandun.base.firebase;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.beheshti.dandun.base.socket.ChatMessageInputDto;
 import ir.beheshti.dandun.base.user.common.ErrorCodeAndMessage;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
@@ -47,7 +44,11 @@ public class PushNotificationService {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
                     ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
-        fcmService.sendPushNotification(buildChangeDoctorStateNotification(userEntity.get().getNotificationToken()));
+        try {
+            fcmService.sendPushNotification(buildChangeDoctorStateNotification(userEntity.get().getNotificationToken()));
+        } catch (Exception e) {
+            log.debug("Change doctor state notification problem, Error during push notification", e);
+        }
     }
 
     public void sendChangePatientStateNotification(int userId) {
@@ -56,7 +57,11 @@ public class PushNotificationService {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE,
                     ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
-        fcmService.sendPushNotification(buildChangePatientStateNotification(userEntity.get().getNotificationToken()));
+        try {
+            fcmService.sendPushNotification(buildChangePatientStateNotification(userEntity.get().getNotificationToken()));
+        } catch (Exception e) {
+            log.debug("Change patient state notification problem, Error during push notification", e);
+        }
     }
 
     private PushNotificationRequest buildChangePatientStateNotification(String token) {
@@ -70,6 +75,4 @@ public class PushNotificationService {
         String description = "دندانپزشک گرامی، وضعیت حساب‌کاربری شما تغییر کرد.";
         return PushNotificationRequest.sendNotificationToToken(title, description, token);
     }
-
-
 }

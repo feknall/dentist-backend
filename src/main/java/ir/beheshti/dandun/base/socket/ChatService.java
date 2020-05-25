@@ -148,8 +148,11 @@ public class ChatService {
         if (chatEntityPublisherMap.containsKey(chatId))
             chatEntityPublisherMap.get(chatId).notifySubscribers(fromUserEntity.getId(), responseDto);
 
-        pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
-
+        try {
+            pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
+        } catch (Exception e) {
+            log.debug("Error during pushing notification", e);
+        }
         return chatId;
     }
 
