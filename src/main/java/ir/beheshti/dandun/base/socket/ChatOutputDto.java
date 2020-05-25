@@ -1,6 +1,7 @@
 package ir.beheshti.dandun.base.socket;
 
 import ir.beheshti.dandun.base.user.entity.ChatEntity;
+import ir.beheshti.dandun.base.user.entity.MessageEntity;
 import lombok.Data;
 
 @Data
@@ -18,6 +19,7 @@ public class ChatOutputDto {
     private String doctorPicture;
 
     private String lastMessage;
+    private boolean lastIsBinary = false;
     private ChatStateType chatStateType;
 
     public static ChatOutputDto fromEntity(ChatEntity entity) {
@@ -35,7 +37,12 @@ public class ChatOutputDto {
             dto.setPatientPicture(entity.getPatientEntity().getProfilePhoto());
         }
         dto.setPatientId(entity.getPatientId());
-        dto.setLastMessage(entity.getMessageEntityList().get(entity.getMessageEntityList().size() - 1).getMessage());
+        MessageEntity lastMessage = entity.getMessageEntityList().get(entity.getMessageEntityList().size() - 1);
+        if (lastMessage.getMessage() != null) {
+            dto.setLastMessage(lastMessage.getMessage());
+        } else {
+            dto.setLastIsBinary(true);
+        }
         dto.setChatStateType(entity.getChatStateType());
         return dto;
     }
