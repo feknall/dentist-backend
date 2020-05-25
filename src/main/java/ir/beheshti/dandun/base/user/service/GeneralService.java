@@ -34,12 +34,7 @@ public class GeneralService {
     }
 
     public String getCurrentUsername() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        } else {
-            return principal.toString();
-        }
+        return getCurrentUserEntity().getUsername();
     }
 
     public PatientUserEntity getCurrentPatient() {
