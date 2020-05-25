@@ -9,7 +9,7 @@ public class MessageOutputDto {
     private long timestamp;
     private String message;
     private ChatMessageType chatMessageType;
-    private boolean isBinary;
+    private String binary;
     private Integer userId;
 
     public static MessageOutputDto fromEntity(MessageEntity messageEntity) {
@@ -17,7 +17,7 @@ public class MessageOutputDto {
         dto.timestamp = messageEntity.getTimestamp();
         dto.message = messageEntity.getMessage();
         dto.chatMessageType = messageEntity.getChatMessageType();
-        dto.isBinary = messageEntity.getBinary() == null ? false : true;
+        dto.binary = messageEntity.getBinary();
         dto.userId = messageEntity.getUserId();
         return dto;
     }
