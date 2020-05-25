@@ -46,4 +46,10 @@ public class ProfileService {
         userEntity.setNotificationToken(userNotificationInputDto.getNotificationToken());
         userRepository.save(userEntity);
     }
+
+    public void logout() {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        userEntity.setNotificationToken("");
+        userRepository.save(userEntity);
+    }
 }

@@ -70,5 +70,11 @@ public class UserProfileController {
         return ResponseEntity.ok(notificationService.getUserNotificationList());
     }
 
+    @GetMapping(path = "/logout")
+    public ResponseEntity<BaseOutputDto> logoutFromAccount() {
+        profileService.logout();
+        return ResponseEntity.ok(new BaseOutputDto("logout successfully"));
+    }
+
 
 }

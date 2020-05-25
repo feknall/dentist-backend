@@ -35,6 +35,12 @@ ext {
     set('springCloudSleuthVersion', "2.2.1")
 }
 
+
+
+bootRun {
+    jvmArgs = ['-Xmx3g']
+}
+
 configurations.all {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
 }

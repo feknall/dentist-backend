@@ -3,10 +3,10 @@ package ir.beheshti.dandun.base.socket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.beheshti.dandun.base.firebase.PushNotificationService;
-import ir.beheshti.dandun.base.notification.NotificationEntity;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.socket.MessageOutputDto;
 import ir.beheshti.dandun.base.user.entity.ChatEntity;
+import ir.beheshti.dandun.base.user.entity.DoctorUserEntity;
 import ir.beheshti.dandun.base.user.entity.MessageEntity;
 import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.repository.ChatRepository;
@@ -179,6 +179,7 @@ public class ChatService {
     }
 
     public List<MessageOutputDto> getChatMessagesHistory(int chatId) {
+        mustBeActiveIfDoctor();
         List<MessageEntity> messageEntityList = messageRepository.findAllByChatIdOrderByTimestamp(chatId);
         return messageEntityList
                 .stream()
@@ -190,6 +191,7 @@ public class ChatService {
         UserEntity userEntity = generalService.getCurrentUserEntity();
         List<ChatEntity> chatEntityList = new ArrayList<>();
         if (userEntity.getUserType() == UserType.Doctor) {
+            mustBeActiveIfDoctor(userEntity);
             chatEntityList = chatRepository.findAllByDoctorId(userEntity.getId());
             chatEntityList.addAll(chatRepository
                     .findAllByDoctorIdIsNull());
@@ -203,13 +205,12 @@ public class ChatService {
     }
 
     public List<Integer> getUserChatIds() {
+        mustBeActiveIfDoctor();
         return getUserChatIds(generalService.getCurrentUserEntity());
     }
 
     public List<Integer> getUserChatIds(UserEntity userEntity) {
-        if (userEntity.getUserType() == null) {
-            throw new UserException(10000, "User type is not specified");
-        }
+        mustBeActiveIfDoctor(userEntity);
         if (userEntity.getUserType().equals(UserType.Doctor)) {
             List<Integer> doctorChatIds = chatRepository
                     .findAllByDoctorId(userEntity.getId())
@@ -244,5 +245,23 @@ public class ChatService {
         }
         chatEntityOptional.get().setChatStateType(ChatStateType.CLOSED);
         chatRepository.save(chatEntityOptional.get());
+    }
+
+    private void mustBeActiveIfDoctor() {
+        UserEntity userEntity = generalService.getCurrentUserEntity();
+        mustBeActiveIfDoctor(userEntity);
+    }
+
+    private void mustBeActiveIfDoctor(UserEntity userEntity) {
+        if (userEntity.getUserType() == UserType.Doctor) {
+            DoctorUserEntity doctorUserEntity = generalService.getCurrentDoctor();
+            mustBeActiveIfDoctor(doctorUserEntity);
+        }
+    }
+
+    private void mustBeActiveIfDoctor(DoctorUserEntity doctorUserEntity) {
+        if (doctorUserEntity.getDoctorStateType() != DoctorStateType.ACTIVE) {
+            throw new UserException(7013, "your status isn't active.", true);
+        }
     }
 }

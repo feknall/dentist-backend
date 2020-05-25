@@ -7,7 +7,6 @@ import ir.beheshti.dandun.base.user.entity.UserEntity;
 import ir.beheshti.dandun.base.user.service.GeneralService;
 import ir.beheshti.dandun.base.user.service.UtilityService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
