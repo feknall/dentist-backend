@@ -257,8 +257,8 @@ public class ChatService {
 
     private void mustBeActiveIfDoctor(UserEntity userEntity) {
         if (userEntity.getUserType() == UserType.Doctor) {
-            DoctorUserEntity doctorUserEntity = generalService.getCurrentDoctor();
-            mustBeActiveIfDoctor(doctorUserEntity);
+            Optional<DoctorUserEntity> doctorUserEntity = doctorRepository.findById(userEntity.getId());
+            mustBeActiveIfDoctor(doctorUserEntity.get());
         }
     }
 
