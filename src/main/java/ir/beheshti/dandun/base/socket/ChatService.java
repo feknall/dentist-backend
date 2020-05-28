@@ -42,25 +42,25 @@ public class ChatService {
     @Autowired
     private UserRepository userRepository;
 
-    private Map<UserEntity, WebSocketSession> onlinePatients = new HashMap<>();
-    private Map<UserEntity, WebSocketSession> onlineDoctors = new HashMap<>();
+    private Map<Integer, UserEntity> onlinePatients = new HashMap<>();
+    private Map<Integer, UserEntity> onlineDoctors = new HashMap<>();
 
     // chatId - chatEntity
     private Map<Integer, ChatEntityPublisher> chatEntityPublisherMap = new HashMap<>();
 
     public void addOnlineUser(UserEntity userEntity, WebSocketSession session) {
         if (userEntity.getUserType() == UserType.Doctor) {
-            onlineDoctors.put(userEntity, session);
+            onlineDoctors.put(userEntity.getId(), userEntity);
         } else if (userEntity.getUserType() == UserType.Patient) {
-            onlinePatients.put(userEntity, session);
+            onlinePatients.put(userEntity.getId(), userEntity);
         }
     }
 
     public void removeOnlineUser(UserEntity userEntity) {
-        if (userEntity.getUserType() == UserType.Doctor && onlineDoctors.containsKey(userEntity)) {
-            onlineDoctors.remove(userEntity);
-        } else if (userEntity.getUserType() == UserType.Patient && onlinePatients.containsKey(userEntity)) {
-            onlinePatients.remove(userEntity);
+        if (userEntity.getUserType() == UserType.Doctor && onlineDoctors.containsKey(userEntity.getId())) {
+            onlineDoctors.remove(userEntity.getId());
+        } else if (userEntity.getUserType() == UserType.Patient && onlinePatients.containsKey(userEntity.getId())) {
+            onlinePatients.remove(userEntity.getId());
         }
     }
 
@@ -125,8 +125,8 @@ public class ChatService {
             chatRepository.save(chatEntity);
             chatId = chatEntity.getChatId();
             subscribeUser(session, fromUserEntity, chatId);
-            for (Map.Entry<UserEntity, WebSocketSession> map : onlineDoctors.entrySet()) {
-                subscribeUser(map.getValue(), map.getKey(), chatId);
+            for (Map.Entry<Integer, UserEntity> map : onlineDoctors.entrySet()) {
+                subscribeUser(map.getValue().getSession(), map.getValue(), chatId);
             }
         }
 
