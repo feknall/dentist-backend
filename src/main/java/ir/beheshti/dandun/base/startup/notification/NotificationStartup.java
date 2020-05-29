@@ -30,10 +30,10 @@ public class NotificationStartup implements Insert {
         notificationTimingRepository.save(panjshanbeHa);
 
         NotificationGroupEntity group1 = new NotificationGroupEntity();
-        group1.setName("زردها");
+        group1.setName(NotificationGroupType.GREEN.getValue());
 
         NotificationGroupEntity group2 = new NotificationGroupEntity();
-        group2.setName("دکترها");
+        group2.setName(NotificationGroupType.DOCTOR.getValue());
 
         List<NotificationGroupEntity> groupEntityList = Arrays.asList(group1, group2);
         notificationGroupRepository.saveAll(groupEntityList);

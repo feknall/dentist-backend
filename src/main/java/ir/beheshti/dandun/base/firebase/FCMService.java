@@ -15,7 +15,7 @@ public class FCMService {
 
     public void sendPushNotification(PushNotificationRequest request) {
         try {
-            sendMessage(getPayloadData(request.getTitle(), request.getDescription()), request);
+            sendMessage(getPayloadData(request), request);
         } catch (InterruptedException | ExecutionException e) {
             log.error(e.getMessage());
         }
@@ -41,7 +41,8 @@ public class FCMService {
 
     private AndroidConfig getAndroidConfig(String topic) {
         return AndroidConfig.builder()
-                .setTtl(Duration.ofMinutes(2).toMillis()).setCollapseKey(topic)
+                .setTtl(Duration.ofMinutes(2).toMillis())
+                .setCollapseKey(topic)
                 .setPriority(AndroidConfig.Priority.HIGH)
                 .setNotification(AndroidNotification.builder().setSound(NotificationParameter.SOUND.getValue())
                         .setColor(NotificationParameter.COLOR.getValue()).setTag(topic).build()).build();
@@ -74,12 +75,16 @@ public class FCMService {
                         new Notification(request.getTitle(), request.getDescription()));
     }
 
-    private Map<String, String> getPayloadData(String title, String description) {
+    private Map<String, String> getPayloadData(PushNotificationRequest request) {
         Map<String, String> pushData = new HashMap<>();
         pushData.put("title", "new title");
         pushData.put("click_action", "FLUTTER_NOTIFICATION_CLICK");
-        pushData.put("notification_title", title);
-        pushData.put("notification_description", description);
+        pushData.put("notification_title", request.getTitle());
+        pushData.put("notification_description", request.getDescription());
+        pushData.put("notification_type", request.getMessageType().getValue());
+        if (request.getMessageType() == MessageType.CHAT) {
+            pushData.put("notification_chat_output", request.getChatOutputDto().toJson());
+        }
         return pushData;
     }
 

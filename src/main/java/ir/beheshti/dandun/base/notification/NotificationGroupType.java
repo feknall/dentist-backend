@@ -1,10 +1,10 @@
-package ir.beheshti.dandun.base.firebase;
+package ir.beheshti.dandun.base.notification;
 
-public enum TopicType {
+public enum NotificationGroupType {
     PATIENT("Patient"), GREEN("Green"), YELLOW("Yellow"), RED("Red"), DOCTOR("Doctor");
 
     private String value;
-    TopicType(String value) {
+    NotificationGroupType(String value) {
         this.value = value;
     }
 

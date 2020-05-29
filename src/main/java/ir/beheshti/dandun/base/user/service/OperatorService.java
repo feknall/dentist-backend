@@ -41,14 +41,14 @@ public class OperatorService {
     @Autowired
     private PushNotificationService pushNotificationService;
 
-    public void fillPatientState(PatientStateInputDto patientStateInputDto) {
+    public void changePatientState(PatientStateInputDto patientStateInputDto) {
         Optional<PatientUserEntity> patientUserEntityOptional = patientRepository.findById(patientStateInputDto.getPatientId());
         if (patientUserEntityOptional.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
         patientUserEntityOptional.get().setPatientStateType(patientStateInputDto.getPatientStateType());
         patientRepository.save(patientUserEntityOptional.get());
-        pushNotificationService.sendChangePatientStateNotification(patientUserEntityOptional.get().getPatientId());
+        pushNotificationService.sendChangePatientStateNotification(patientUserEntityOptional.get().getUserEntity().getNotificationToken());
     }
 
     public PatientOutputDto getPatientStateByUser() {
@@ -111,14 +111,14 @@ public class OperatorService {
                 .collect(Collectors.toList());
     }
 
-    public void fillDoctorState(DoctorStateInputDto doctorStateInputDto) {
+    public void changeDoctorState(DoctorStateInputDto doctorStateInputDto) {
         Optional<DoctorUserEntity> doctorUserEntityOptional = doctorRepository.findById(doctorStateInputDto.getDoctorId());
         if (doctorUserEntityOptional.isEmpty()) {
             throw new UserException(ErrorCodeAndMessage.USER_NOT_FOUND_CODE, ErrorCodeAndMessage.USER_NOT_FOUND_MESSAGE);
         }
         doctorUserEntityOptional.get().setDoctorStateType(doctorStateInputDto.getDoctorStateType());
         doctorRepository.save(doctorUserEntityOptional.get());
-        pushNotificationService.sendChangeDoctorStateNotification(doctorUserEntityOptional.get().getDoctorId());
+        pushNotificationService.sendChangeDoctorStateNotification(doctorUserEntityOptional.get().getUserEntity().getNotificationToken(), doctorStateInputDto.getDoctorStateType().getValue());
     }
 
     public List<UserQuestionAnswerOutputDto> getUserAnswers(int userId) {

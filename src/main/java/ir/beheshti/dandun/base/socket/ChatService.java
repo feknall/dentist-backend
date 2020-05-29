@@ -1,7 +1,5 @@
 package ir.beheshti.dandun.base.socket;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.beheshti.dandun.base.firebase.PushNotificationService;
 import ir.beheshti.dandun.base.user.common.UserException;
 import ir.beheshti.dandun.base.user.dto.socket.MessageOutputDto;
@@ -91,29 +89,32 @@ public class ChatService {
                 .orElseThrow(() -> new UserException(10000, "user not found"));
         int chatId;
         Optional<UserEntity> toUserEntity = Optional.empty();
+        ChatEntity chatEntity;
         if (chatMessageInputDto.getChatId() != null) {
-            Optional<ChatEntity> chatEntity = chatRepository.findById(chatMessageInputDto.getChatId());
-            if (chatEntity.isEmpty()) {
+            Optional<ChatEntity> oldChatEntity = chatRepository.findById(chatMessageInputDto.getChatId());
+            if (oldChatEntity.isEmpty()) {
                 throw new UserException(10000, "chat entity not found.");
-            } else if (chatEntity.get().getChatStateType() == ChatStateType.CLOSED) {
+            }
+            chatEntity = oldChatEntity.get();
+            if (chatEntity.getChatStateType() == ChatStateType.CLOSED) {
                 throw new UserException(CHAT_IS_CLOSED_CODE, "chat is closed");
             } else if (fromUserEntity.getUserType() == UserType.Patient) {
-                if (chatEntity.get().getPatientId() != fromUserEntity.getId()) {
+                if (chatEntity.getPatientId() != fromUserEntity.getId()) {
                     throw new UserException(10000, "this patient is not allowed to send message in this chat.");
                 }
             } else if (fromUserEntity.getUserType() == UserType.Doctor) {
-                if (chatEntity.get().getDoctorId() != null && chatEntity.get().getDoctorId() != fromUserEntity.getId()) {
+                if (chatEntity.getDoctorId() != null && chatEntity.getDoctorId() != fromUserEntity.getId()) {
                     throw new UserException(10000, "this doctor is not allowed to send message in this chat.");
                 }
-                toUserEntity = Optional.of(chatEntity.get().getPatientEntity());
-                chatEntity.get().setDoctorId(fromUserEntity.getId());
-                chatEntity.get().setChatStateType(ChatStateType.OPEN);
-                chatRepository.save(chatEntity.get());
-                subscribeUser(session, fromUserEntity, chatEntity.get().getChatId());
+                toUserEntity = Optional.of(chatEntity.getPatientEntity());
+                chatEntity.setDoctorId(fromUserEntity.getId());
+                chatEntity.setChatStateType(ChatStateType.OPEN);
+                chatRepository.save(chatEntity);
+                subscribeUser(session, fromUserEntity, chatEntity.getChatId());
             }
-            chatId = chatEntity.get().getChatId();
+            chatId = chatEntity.getChatId();
         } else {
-            ChatEntity chatEntity = new ChatEntity();
+            chatEntity = new ChatEntity();
             chatEntity.setChatStateType(ChatStateType.SEARCHING);
             if (fromUserEntity.getUserType() == UserType.Patient) {
                 chatEntity.setPatientId(fromUserEntity.getId());
@@ -149,14 +150,14 @@ public class ChatService {
             chatEntityPublisherMap.get(chatId).notifySubscribers(fromUserEntity.getId(), responseDto);
 
         try {
-            pushNotification(chatMessageInputDto, toUserEntity.orElse(null));
+            pushNotification(chatEntity, toUserEntity.orElse(null));
         } catch (Exception e) {
             log.debug("Error during pushing notification", e);
         }
         return chatId;
     }
 
-    public void pushNotification(ChatMessageInputDto chatMessageInputDto, UserEntity toUserEntity) {
+    public void pushNotification(ChatEntity chatEntity, UserEntity toUserEntity) {
         List<Pair<Integer, String>> idAndTokenPairSendToList;
         if (toUserEntity == null) {
             idAndTokenPairSendToList = doctorRepository
@@ -172,12 +173,7 @@ public class ChatService {
             idAndTokenPairSendToList = Collections.singletonList(Pair.of(toUserEntity.getId(), toUserEntity.getNotificationToken()));
         }
         idAndTokenPairSendToList.forEach(e -> {
-            try {
-                String data = new ObjectMapper().writeValueAsString(chatMessageInputDto.getMessage() == null ? "یک عکس برای شما ارسال شده است" : chatMessageInputDto.getMessage());
-                pushNotificationService.doChat(data, e.getSecond());
-            } catch (JsonProcessingException jsonProcessingException) {
-                log.info(jsonProcessingException);
-            }
+            pushNotificationService.doChat(e.getSecond(), ChatOutputDto.fromEntity(chatEntity));
         });
     }
 

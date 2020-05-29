@@ -3,7 +3,7 @@ package ir.beheshti.dandun.base.firebase;
 
 public enum NotificationParameter {
     SOUND("default"),
-    COLOR("#FFFF00");
+    COLOR("#00cbcf");
 
     private String value;
 

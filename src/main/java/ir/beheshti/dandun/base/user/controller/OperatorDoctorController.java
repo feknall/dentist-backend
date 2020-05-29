@@ -41,8 +41,8 @@ public class OperatorDoctorController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseOutputDto> fillDoctorState(@Valid @RequestBody DoctorStateInputDto doctorStateInputDto) {
-        operatorService.fillDoctorState(doctorStateInputDto);
+    public ResponseEntity<BaseOutputDto> changeDoctorState(@Valid @RequestBody DoctorStateInputDto doctorStateInputDto) {
+        operatorService.changeDoctorState(doctorStateInputDto);
         return ResponseEntity.ok(new BaseOutputDto("doctor state completed successfully"));
     }
 

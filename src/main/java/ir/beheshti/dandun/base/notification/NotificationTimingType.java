@@ -1,6 +1,6 @@
 package ir.beheshti.dandun.base.notification;
 
-public class NotificationTiming {
+public class NotificationTimingType {
     public static final String TYPE_1 = "CRON";
     public static final String TYPE_2 = "CRON";
     public static final String TYPE_3 = "CRON";
