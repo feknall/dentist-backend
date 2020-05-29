@@ -10,17 +10,17 @@ import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
-@Configuration
-@EnableScheduling
+@Service
+@Transactional
 public class NotificationScheduledService {
 
     @Autowired
@@ -81,8 +81,8 @@ public class NotificationScheduledService {
     }
 
     private void push(List<NotificationEntity> notificationEntities, List<UserEntity> userEntities) {
-        for (NotificationEntity notificationEntity: notificationEntities) {
-            for (UserEntity userEntity: userEntities) {
+        for (NotificationEntity notificationEntity : notificationEntities) {
+            for (UserEntity userEntity : userEntities) {
                 try {
                     PushNotificationRequest request = PushNotificationRequest.sendGeneralToToken(notificationEntity.getTitle(), notificationEntity.getDescription(), userEntity.getNotificationToken());
                     pushNotificationService.sendScheduledNotification(request);

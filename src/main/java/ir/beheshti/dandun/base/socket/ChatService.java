@@ -146,6 +146,7 @@ public class ChatService {
         responseDto.setOk(true);
         responseDto.setShow(true);
         responseDto.setChatMessageDto(chatMessageInputDto);
+        responseDto.setChatOutputDto(ChatOutputDto.fromEntity(chatEntity));
         if (chatEntityPublisherMap.containsKey(chatId))
             chatEntityPublisherMap.get(chatId).notifySubscribers(fromUserEntity.getId(), responseDto);
 

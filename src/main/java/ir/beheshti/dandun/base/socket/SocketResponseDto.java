@@ -12,6 +12,7 @@ public class SocketResponseDto {
     private boolean close = false;
     private String error;
     private ChatMessageInputDto chatMessageDto;
+    private ChatOutputDto chatOutputDto;
 
     public String toString() {
         ObjectMapper objectMapper = new ObjectMapper();
