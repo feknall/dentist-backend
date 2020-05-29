@@ -1,7 +1,7 @@
 package ir.beheshti.dandun.base.firebase;
 
 public enum MessageType {
-    GENERAL("general"), CHAT("chat"), USER_STATE("userState");
+    GENERAL("GENERAL"), CHAT("CHAT"), USER_STATE("USER_STATE");
 
     private String value;
     MessageType(String value) {
