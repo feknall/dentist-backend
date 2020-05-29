@@ -7,6 +7,9 @@ import ir.beheshti.dandun.base.user.entity.MessageEntity;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Collection;
+import java.util.Collections;
+
 @Log4j2
 @Data
 public class ChatOutputDto {
@@ -49,6 +52,11 @@ public class ChatOutputDto {
         }
         dto.setChatStateType(entity.getChatStateType());
         return dto;
+    }
+
+    public static ChatOutputDto fromEntity(ChatEntity entity, MessageEntity lastMessage) {
+        entity.setMessageEntityList(Collections.singletonList(lastMessage));
+        return fromEntity(entity);
     }
 
     public String toJson() {

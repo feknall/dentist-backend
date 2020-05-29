@@ -8,10 +8,7 @@ import ir.beheshti.dandun.base.user.dto.operator.DoctorStateInputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientOutputDto;
 import ir.beheshti.dandun.base.user.dto.operator.PatientStateInputDto;
 import ir.beheshti.dandun.base.user.dto.question.UserQuestionAnswerOutputDto;
-import ir.beheshti.dandun.base.user.entity.DoctorUserEntity;
-import ir.beheshti.dandun.base.user.entity.PatientUserEntity;
-import ir.beheshti.dandun.base.user.entity.UserEntity;
-import ir.beheshti.dandun.base.user.entity.UserMultipleChoiceQuestionAnswerEntity;
+import ir.beheshti.dandun.base.user.entity.*;
 import ir.beheshti.dandun.base.user.repository.DoctorRepository;
 import ir.beheshti.dandun.base.user.repository.PatientRepository;
 import ir.beheshti.dandun.base.user.repository.UserRepository;
@@ -118,6 +115,7 @@ public class OperatorService {
         }
         doctorUserEntityOptional.get().setDoctorStateType(doctorStateInputDto.getDoctorStateType());
         doctorRepository.save(doctorUserEntityOptional.get());
+
         pushNotificationService.sendChangeDoctorStateNotification(doctorUserEntityOptional.get().getUserEntity().getNotificationToken(), doctorStateInputDto.getDoctorStateType().getValue());
     }
 

@@ -70,6 +70,9 @@ public class ChatService {
 
     public void subscribeUser(WebSocketSession session, UserEntity userEntity, Integer chatId) {
         userEntity.setSession(session);
+        if (userEntity.getUserType() != UserType.Doctor && userEntity.getUserType() != UserType.Patient) {
+            throw new UserException(1000, "Unknown user trying to connect");
+        }
         if (chatEntityPublisherMap.containsKey(chatId)) {
             chatEntityPublisherMap.get(chatId).addSubscriber(userEntity.getId(), userEntity);
         } else {
@@ -146,19 +149,19 @@ public class ChatService {
         responseDto.setOk(true);
         responseDto.setShow(true);
         responseDto.setChatMessageDto(chatMessageInputDto);
-        responseDto.setChatOutputDto(ChatOutputDto.fromEntity(chatEntity));
+        responseDto.setChatOutputDto(ChatOutputDto.fromEntity(chatEntity, messageEntity));
         if (chatEntityPublisherMap.containsKey(chatId))
             chatEntityPublisherMap.get(chatId).notifySubscribers(fromUserEntity.getId(), responseDto);
 
         try {
-            pushNotification(chatEntity, toUserEntity.orElse(null));
+            pushNotification(ChatOutputDto.fromEntity(chatEntity, messageEntity), toUserEntity.orElse(null));
         } catch (Exception e) {
             log.debug("Error during pushing notification", e);
         }
         return chatId;
     }
 
-    public void pushNotification(ChatEntity chatEntity, UserEntity toUserEntity) {
+    public void pushNotification(ChatOutputDto chatOutputDto, UserEntity toUserEntity) {
         List<Pair<Integer, String>> idAndTokenPairSendToList;
         if (toUserEntity == null) {
             idAndTokenPairSendToList = doctorRepository
@@ -174,7 +177,7 @@ public class ChatService {
             idAndTokenPairSendToList = Collections.singletonList(Pair.of(toUserEntity.getId(), toUserEntity.getNotificationToken()));
         }
         idAndTokenPairSendToList.forEach(e -> {
-            pushNotificationService.doChat(e.getSecond(), ChatOutputDto.fromEntity(chatEntity));
+            pushNotificationService.doChat(e.getSecond(), chatOutputDto);
         });
     }
 

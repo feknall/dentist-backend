@@ -1,7 +1,7 @@
 package ir.beheshti.dandun.base.notification;
 
 public enum NotificationGroupType {
-    PATIENT("Patient"), GREEN("Green"), YELLOW("Yellow"), RED("Red"), DOCTOR("Doctor");
+    PATIENT("PATIENT"), GREEN("GREEN"), YELLOW("YELLOW"), RED("RED"), DOCTOR("DOCTOR");
 
     private String value;
     NotificationGroupType(String value) {
