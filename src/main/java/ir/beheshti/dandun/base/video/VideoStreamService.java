@@ -123,9 +123,8 @@ public class VideoStreamService {
      *
      * @return String.
      */
-    private Path getFilePath(String filename) throws IOException {
-        File file = new ClassPathResource("static/video/".concat(filename))
-                .getFile();
+    private Path getFilePath(String filename) {
+        File file = new File("/opt/static/video/".concat(filename));
         return file.toPath();
     }
 
@@ -137,14 +136,7 @@ public class VideoStreamService {
      */
     private Long getFileSize(String fileName) {
         return Optional.ofNullable(fileName)
-                .map(file -> {
-                    try {
-                        return getFilePath(fileName);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                })
+                .map(file -> getFilePath(fileName))
                 .map(this::sizeFromFile)
                 .orElse(0L);
     }
