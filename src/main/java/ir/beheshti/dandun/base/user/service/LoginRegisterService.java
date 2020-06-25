@@ -24,8 +24,10 @@ import ir.beheshti.dandun.base.user.repository.UserRepository;
 import ir.beheshti.dandun.base.user.util.DoctorStateType;
 import ir.beheshti.dandun.base.user.util.PatientStateType;
 import ir.beheshti.dandun.base.user.util.UserType;
+import kavenegar.sdk.KavenegarApi;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -52,10 +54,18 @@ public class LoginRegisterService {
     @Autowired
     private UtilityService utilityService;
 
+    @Value("${kavenegar.key}")
+    private String kavenegarKey;
+
     public void sendVerificationCodeBySms(SmsInputDto smsInputDto) {
         String verificationCode = verificationCodeService.generateCode();
-        // todo remove this line of code after getting sms panel
-        verificationCode = "1234";
+
+        KavenegarApi api = new KavenegarApi(kavenegarKey);
+        String sender = "10008663";
+        String receptor = "0" + smsInputDto.getPhoneNumber().substring(2);
+//        String message = "با سلام، جهت ورود به اپلیکیشن از این کد استفاده کنید: " + verificationCode;
+        api.verifyLookup(receptor, verificationCode, "dandunet");
+
         setVerificationCodeToUserEntity(smsInputDto, verificationCode);
         verificationCodeService.sendSms(smsInputDto.getPhoneNumber(), verificationCode);
     }
