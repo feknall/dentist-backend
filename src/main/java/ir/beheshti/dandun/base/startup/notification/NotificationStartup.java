@@ -19,37 +19,42 @@ public class NotificationStartup implements Insert {
     private NotificationGroupRepository notificationGroupRepository;
     @Override
     public void insert() {
-        NotificationTimingEntity charshanbeHa = new NotificationTimingEntity();
-        charshanbeHa.setName("چهارشنبه‌ شب‌ها");
-        charshanbeHa.setCron("*");
-        notificationTimingRepository.save(charshanbeHa);
+        NotificationTimingEntity first = new NotificationTimingEntity();
+        first.setNotificationTimingId(1);
+        first.setName("شنبه‌ها ساعت ۱۴");
+        notificationTimingRepository.save(first);
 
-        NotificationTimingEntity panjshanbeHa = new NotificationTimingEntity();
-        panjshanbeHa.setName("پنجشنبه‌ شب‌ها");
-        panjshanbeHa.setCron("*");
-        notificationTimingRepository.save(panjshanbeHa);
+        NotificationTimingEntity second = new NotificationTimingEntity();
+        second.setNotificationTimingId(2);
+        second.setName("شنبه‌ها ساعت ۲۰");
+        notificationTimingRepository.save(second);
 
-        NotificationGroupEntity group1 = new NotificationGroupEntity();
-        group1.setName(NotificationGroupType.GREEN.getValue());
+        NotificationTimingEntity third = new NotificationTimingEntity();
+        third.setNotificationTimingId(3);
+        third.setName("جمعه‌ها ساعت ۱۴");
+        notificationTimingRepository.save(third);
 
-        NotificationGroupEntity group2 = new NotificationGroupEntity();
-        group2.setName(NotificationGroupType.DOCTOR.getValue());
+        NotificationTimingEntity fourth = new NotificationTimingEntity();
+        fourth.setNotificationTimingId(4);
+        fourth.setName("جمعه‌ها ساعت ۲۰");
 
-        List<NotificationGroupEntity> groupEntityList = Arrays.asList(group1, group2);
+        notificationTimingRepository.save(fourth);
+
+        NotificationGroupEntity green = new NotificationGroupEntity();
+        green.setName(NotificationGroupType.GREEN.getValue());
+
+        NotificationGroupEntity red = new NotificationGroupEntity();
+        red.setName(NotificationGroupType.RED.getValue());
+
+        NotificationGroupEntity yellow = new NotificationGroupEntity();
+        yellow.setName(NotificationGroupType.YELLOW.getValue());
+
+        NotificationGroupEntity doctor = new NotificationGroupEntity();
+        doctor.setName(NotificationGroupType.DOCTOR.getValue());
+
+        List<NotificationGroupEntity> groupEntityList =
+                Arrays.asList(green, red, yellow, doctor);
+
         notificationGroupRepository.saveAll(groupEntityList);
-
-        NotificationEntity ent1 = new NotificationEntity();
-        ent1.setTitle("title1");
-        ent1.setDescription("desc1");
-        ent1.setNotificationTimingId(charshanbeHa.getNotificationTimingId());
-        ent1.setNotificationGroupEntityList(groupEntityList);
-        notificationRepository.save(ent1);
-
-        NotificationEntity ent2 = new NotificationEntity();
-        ent2.setTitle("title2");
-        ent2.setDescription("desc2");
-        ent2.setNotificationTimingId(panjshanbeHa.getNotificationTimingId());
-        ent2.setNotificationGroupEntityList(Arrays.asList(group1));
-        notificationRepository.save(ent2);
     }
 }
