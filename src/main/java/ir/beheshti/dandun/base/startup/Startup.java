@@ -1,6 +1,5 @@
 package ir.beheshti.dandun.base.startup;
 
-import ir.beheshti.dandun.base.startup.chat.ChatStartup;
 import ir.beheshti.dandun.base.startup.notification.NotificationStartup;
 import ir.beheshti.dandun.base.startup.question.CommonStartup;
 import ir.beheshti.dandun.base.startup.question.DoctorStartup;
@@ -34,8 +33,6 @@ public class Startup {
     private PatientUser patientUser;
     @Autowired
     private NotificationStartup notificationStartup;
-    @Autowired
-    private ChatStartup chatStartup;
 
     @Value("${dandun.questions.insert}")
     private Boolean insertQuestions;
@@ -49,15 +46,8 @@ public class Startup {
     @Value("${dandun.notification.insert}")
     private Boolean insertNotification;
 
-    @Value("${dandun.chat.insert}")
-    private Boolean insertChat;
-
     @EventListener
     public void appReady(ApplicationReadyEvent event) {
-        if (insertChat) {
-            chatStartup.insert();
-            log.info("Startup, Insert chat");
-        }
         if (insertNotification) {
             notificationStartup.insert();
             log.info("Startup, Insert notification");
@@ -71,7 +61,6 @@ public class Startup {
             patientUser.insert();
             log.info("Startup, Insert patient and doctor");
         }
-
         if (insertQuestions) {
             commonStartup.insert();
             doctorStartup.insert();
